@@ -18,6 +18,7 @@ defmodule SongbookWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    get "/search", SpotifyController, :search
   end
 
   # Other scopes may use custom stacks.

@@ -14,6 +14,7 @@ defmodule Songbook.Application do
       {Phoenix.PubSub, name: Songbook.PubSub},
       # Start the Finch HTTP client for sending emails
       {Finch, name: Songbook.Finch},
+      Songbook.Spotify.Auth,
       # Start a worker by calling: Songbook.Worker.start_link(arg)
       # {Songbook.Worker, arg},
       # Start to serve requests, typically the last entry
