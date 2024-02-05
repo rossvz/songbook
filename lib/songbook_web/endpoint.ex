@@ -49,7 +49,13 @@ defmodule SongbookWeb.Endpoint do
   plug Plug.MethodOverride
   plug Plug.Head
   plug Plug.Session, @session_options
-  plug CORSPlug, origin: ["http://localhost:3000"]
+
+  plug CORSPlug,
+    origin: [
+      "http://localhost:3000",
+      "https://rg-music--rewrite-9auwixv0.web.app",
+      "https://randygodwinmusic.com"
+    ]
 
   plug SongbookWeb.Router
 end
