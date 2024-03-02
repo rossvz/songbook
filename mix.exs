@@ -60,7 +60,8 @@ defmodule Songbook.MixProject do
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.2"},
-      {:tesla, "~> 1.8"}
+      {:tesla, "~> 1.8"},
+      {:mimic, "~> 1.7", only: :test}
     ]
   end
 

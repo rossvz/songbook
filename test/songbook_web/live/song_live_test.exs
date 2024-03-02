@@ -3,9 +3,15 @@ defmodule SongbookWeb.SongLiveTest do
 
   import Phoenix.LiveViewTest
   import Songbook.TracksFixtures
+  use Mimic
 
-  @create_attrs %{title: "some title", artist: "some artist", album: "some album", album_artwork_url: "some album_artwork_url", spotify_id: "some spotify_id"}
-  @update_attrs %{title: "some updated title", artist: "some updated artist", album: "some updated album", album_artwork_url: "some updated album_artwork_url", spotify_id: "some updated spotify_id"}
+  @update_attrs %{
+    title: "some updated title",
+    artist: "some updated artist",
+    album: "some updated album",
+    album_artwork_url: "some updated album_artwork_url",
+    spotify_id: "some updated spotify_id"
+  }
   @invalid_attrs %{title: nil, artist: nil, album: nil, album_artwork_url: nil, spotify_id: nil}
 
   defp create_song(_) do
@@ -23,7 +29,7 @@ defmodule SongbookWeb.SongLiveTest do
       assert html =~ song.title
     end
 
-    test "saves new song", %{conn: conn} do
+    test "searches for new song", %{conn: conn} do
       {:ok, index_live, _html} = live(conn, ~p"/songs")
 
       assert index_live |> element("a", "New Song") |> render_click() =~
@@ -31,19 +37,40 @@ defmodule SongbookWeb.SongLiveTest do
 
       assert_patch(index_live, ~p"/songs/new")
 
-      assert index_live
-             |> form("#song-form", song: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
+      refute index_live |> has_element?("#song-form")
+      assert index_live |> has_element?("#search-form")
+
+      Songbook.Spotify.Search
+      |> expect(:search_song, fn _ ->
+        [
+          %{
+            "name" => "Result Title",
+            "artists" => [%{"name" => "Result Artist"}],
+            "album" => %{
+              "name" => "Result Album",
+              "images" => [%{"url" => "https://picsum.photos/200/300"}]
+            },
+            "id" => "some spotify_id"
+          }
+        ]
+      end)
 
       assert index_live
-             |> form("#song-form", song: @create_attrs)
+             |> form("#search-form", %{
+               "title" => "some title",
+               "artist" => "some artist"
+             })
              |> render_submit()
 
-      assert_patch(index_live, ~p"/songs")
+      assert index_live |> has_element?("#song-form")
+
+      assert index_live
+             |> form("#song-form")
+             |> render_submit()
 
       html = render(index_live)
       assert html =~ "Song created successfully"
-      assert html =~ "some title"
+      assert html =~ "Result Title"
     end
 
     test "updates song in listing", %{conn: conn, song: song} do

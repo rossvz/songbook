@@ -28,6 +28,7 @@ defmodule SongbookWeb.SongLive.FormComponent do
         :if={@form.data.spotify_id || @form.params["spotify_id"]}
         for={@form}
         id="song-form"
+        phx-change="validate"
         phx-target={@myself}
         phx-submit="save"
       >
@@ -154,7 +155,6 @@ defmodule SongbookWeb.SongLive.FormComponent do
       form: to_form(changeset),
       search_form: to_form(%{"title" => "", "artist" => ""})
     )
-    |> dbg()
   end
 
   defp notify_parent(msg), do: send(self(), {__MODULE__, msg})

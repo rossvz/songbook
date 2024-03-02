@@ -1,0 +1,75 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"command": "mix test",
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			},
+			"label": "Mix Test",
+			"detail": "mix test"
+		},
+		{
+			"type": "shell",
+			"command": "mix compile",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"label": "Mix Compile",
+			"detail": "mix compile"
+		},
+		{
+			"type": "shell",
+			"command": "mix deps.get",
+			"group": "build",
+			"label": "Pull Dependencies",
+			"detail": "mix deps.get"
+		},
+		{
+			"type": "shell",
+			"command": "mix ecto.migrate",
+			"group": "build",
+			"label": "Run Migrations",
+			"detail": "mix ecto.migrate"
+		},
+		{
+			"label": "test all",
+			"type": "shell",
+			"command": "mix test",
+			"problemMatcher": [],
+			"group": "test",
+			"presentation": {
+				"focus": true
+			}
+		},
+		{
+			"label": "test current file",
+			"type": "shell",
+			"command": "mix test ${relativeFile}",
+			"problemMatcher": [],
+			"group": "test",
+			"presentation": {
+				"focus": true
+			}
+		},
+		{
+			"label": "test current line",
+			"type": "shell",
+			"command": "mix test ${relativeFile}:${lineNumber}",
+			"presentation": {
+				"focus": true
+			}
+		},
+		{
+			"label": "debug current line",
+			"type": "shell",
+			"command": "iex --dbg pry -S mix test --timeout 999999999 ${relativeFile}:${lineNumber}",
+			"presentation": {
+				"focus": true
+			}
+		}
+	]
+}
