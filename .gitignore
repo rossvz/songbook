@@ -36,3 +36,6 @@ npm-debug.log
 /assets/node_modules/
 
 .envrc
+
+## docker database
+data/

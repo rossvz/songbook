@@ -1,0 +1,14 @@
+{
+  "name": "Elixr Phoenix",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "JakeBecker.elixir-ls"
+      ]
+    }
+  },
+  "postAttachCommand": "mix setup && mix phx.server"
+}
