@@ -19,6 +19,13 @@ defmodule SongbookWeb.Router do
 
     get "/", PageController, :home
     get "/search", SpotifyController, :search
+
+    live "/songs", SongLive.Index, :index
+    live "/songs/new", SongLive.Index, :new
+    live "/songs/:id/edit", SongLive.Index, :edit
+
+    live "/songs/:id", SongLive.Show, :show
+    live "/songs/:id/show/edit", SongLive.Show, :edit
   end
 
   # Other scopes may use custom stacks.
