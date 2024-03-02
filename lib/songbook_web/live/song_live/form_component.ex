@@ -12,7 +12,13 @@ defmodule SongbookWeb.SongLive.FormComponent do
         <:subtitle>Use this form to manage song records in your database.</:subtitle>
       </.header>
 
-      <.simple_form for={@search_form} id="search-form" phx-target={@myself} phx-submit="search">
+      <.simple_form
+        :if={@action == :new}
+        for={@search_form}
+        id="search-form"
+        phx-target={@myself}
+        phx-submit="search"
+      >
         <.input field={@search_form[:title]} type="text" label="Title" />
         <.input field={@search_form[:artist]} type="text" label="Artist" />
         <:actions>
