@@ -20,6 +20,7 @@ defmodule SongbookWeb.ConnCase do
   using do
     quote do
       use SongbookWeb, :verified_routes
+
       import Phoenix.ConnTest
       import Plug.Conn
       import SongbookWeb.ConnCase
