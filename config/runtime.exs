@@ -17,11 +17,6 @@ import Config
 # Alternatively, you can use `mix phx.gen.release` to generate a `bin/server`
 # script that automatically sets the env var above.
 
-###### Spotify API
-config :songbook, Songbook.Spotify,
-  client_id: System.get_env("SPOTIFY_CLIENT_ID"),
-  secret_key: System.get_env("SPOTIFY_SECRET_KEY")
-
 if System.get_env("PHX_SERVER") do
   config :songbook, SongbookWeb.Endpoint, server: true
 end
@@ -120,4 +115,17 @@ if config_env() == :prod do
   #     config :swoosh, :api_client, Swoosh.ApiClient.Hackney
   #
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
+end
+
+###### Spotify API
+case config_env() do
+  env when env in [:prod, :dev] ->
+    config :songbook, Songbook.Spotify,
+      client_id: System.get_env("SPOTIFY_CLIENT_ID"),
+      secret_key: System.get_env("SPOTIFY_SECRET_KEY")
+
+  :test ->
+    config :songbook, Songbook.Spotify,
+      client_id: "test_client_id",
+      secret_key: "test_secret_key"
 end
