@@ -122,10 +122,12 @@ case config_env() do
   env when env in [:prod, :dev] ->
     config :songbook, Songbook.Spotify,
       client_id: System.get_env("SPOTIFY_CLIENT_ID"),
-      secret_key: System.get_env("SPOTIFY_SECRET_KEY")
+      secret_key: System.get_env("SPOTIFY_SECRET_KEY"),
+      start_auth: true
 
   :test ->
     config :songbook, Songbook.Spotify,
       client_id: "test_client_id",
-      secret_key: "test_secret_key"
+      secret_key: "test_secret_key",
+      start_auth: false
 end

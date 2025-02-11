@@ -38,9 +38,9 @@ defmodule Songbook.Application do
   end
 
   defp spotify_auth do
-    if Mix.env() == :test do
-      nil
-    else
+    config = Application.get_env(:songbook, Songbook.Spotify)
+
+    if config[:start_auth] do
       Auth
     end
   end
