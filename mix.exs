@@ -13,6 +13,14 @@ defmodule Songbook.MixProject do
     ]
   end
 
+  def cli do
+    [
+      preferred_envs: [
+        ci: :test
+      ]
+    ]
+  end
+
   # Configuration for the OTP application.
   #
   # Type `mix help compile.app` for more information.
@@ -80,7 +88,8 @@ defmodule Songbook.MixProject do
         "tailwind songbook --minify",
         "esbuild songbook --minify",
         "phx.digest"
-      ]
+      ],
+      ci: ["format --check-formatted", "test"]
     ]
   end
 end
