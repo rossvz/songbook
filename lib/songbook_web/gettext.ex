@@ -20,5 +20,5 @@ defmodule SongbookWeb.Gettext do
 
   See the [Gettext Docs](https://hexdocs.pm/gettext) for detailed usage.
   """
-  use Gettext, otp_app: :songbook
+  use Gettext.Backend, otp_app: :songbook
 end
