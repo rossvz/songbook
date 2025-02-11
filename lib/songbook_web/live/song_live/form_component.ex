@@ -1,4 +1,5 @@
 defmodule SongbookWeb.SongLive.FormComponent do
+  @moduledoc false
   use SongbookWeb, :live_component
 
   alias Songbook.Tracks
@@ -8,7 +9,7 @@ defmodule SongbookWeb.SongLive.FormComponent do
     ~H"""
     <div>
       <.header>
-        <%= @title %>
+        {@title}
         <:subtitle>Use this form to manage song records in your database.</:subtitle>
       </.header>
 
@@ -27,7 +28,7 @@ defmodule SongbookWeb.SongLive.FormComponent do
       </.simple_form>
 
       <div :if={!Enum.empty?(@results)}>
-        <%= @result_index %>/<%= length(@results) %> results
+        {@result_index}/{length(@results)} results
       </div>
 
       <.simple_form
@@ -76,9 +77,9 @@ defmodule SongbookWeb.SongLive.FormComponent do
   @impl true
   def handle_event("search", search, socket) do
     results =
-      Songbook.Spotify.Search.search_song(search["title"]) |> format_results()
+      search["title"] |> Songbook.Spotify.Search.search_song() |> format_results()
 
-    socket = assign(socket, :results, results) |> next_result(0)
+    socket = socket |> assign(:results, results) |> next_result(0)
     {:noreply, socket}
   end
 
@@ -123,7 +124,7 @@ defmodule SongbookWeb.SongLive.FormComponent do
       |> Tracks.change_song(spotify_data)
       |> Map.put(:action, :validate)
 
-    assign(socket, :result_index, index) |> assign_form(changeset)
+    socket |> assign(:result_index, index) |> assign_form(changeset)
   end
 
   defp save_song(socket, :edit, song_params) do

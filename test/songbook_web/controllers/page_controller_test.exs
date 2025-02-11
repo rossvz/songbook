@@ -6,4 +6,3 @@ defmodule SongbookWeb.PageControllerTest do
     assert html_response(conn, 200) =~ "Hello World"
   end
 end
-  

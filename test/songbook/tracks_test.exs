@@ -4,9 +4,9 @@ defmodule Songbook.TracksTest do
   alias Songbook.Tracks
 
   describe "songs" do
-    alias Songbook.Tracks.Song
-
     import Songbook.TracksFixtures
+
+    alias Songbook.Tracks.Song
 
     @invalid_attrs %{title: nil, artist: nil, album: nil, album_artwork_url: nil, spotify_id: nil}
 
@@ -21,7 +21,13 @@ defmodule Songbook.TracksTest do
     end
 
     test "create_song/1 with valid data creates a song" do
-      valid_attrs = %{title: "some title", artist: "some artist", album: "some album", album_artwork_url: "some album_artwork_url", spotify_id: "some spotify_id"}
+      valid_attrs = %{
+        title: "some title",
+        artist: "some artist",
+        album: "some album",
+        album_artwork_url: "some album_artwork_url",
+        spotify_id: "some spotify_id"
+      }
 
       assert {:ok, %Song{} = song} = Tracks.create_song(valid_attrs)
       assert song.title == "some title"
@@ -37,7 +43,14 @@ defmodule Songbook.TracksTest do
 
     test "update_song/2 with valid data updates the song" do
       song = song_fixture()
-      update_attrs = %{title: "some updated title", artist: "some updated artist", album: "some updated album", album_artwork_url: "some updated album_artwork_url", spotify_id: "some updated spotify_id"}
+
+      update_attrs = %{
+        title: "some updated title",
+        artist: "some updated artist",
+        album: "some updated album",
+        album_artwork_url: "some updated album_artwork_url",
+        spotify_id: "some updated spotify_id"
+      }
 
       assert {:ok, %Song{} = song} = Tracks.update_song(song, update_attrs)
       assert song.title == "some updated title"

@@ -1,4 +1,5 @@
 defmodule Songbook.Spotify.Search do
+  @moduledoc false
   def query(q, type) do
     q = URI.encode_www_form(q)
 

@@ -1,4 +1,5 @@
 defmodule SongbookWeb.SongLive.Index do
+  @moduledoc false
   use SongbookWeb, :live_view
 
   alias Songbook.Tracks

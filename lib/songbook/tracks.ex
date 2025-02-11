@@ -4,8 +4,8 @@ defmodule Songbook.Tracks do
   """
 
   import Ecto.Query, warn: false
-  alias Songbook.Repo
 
+  alias Songbook.Repo
   alias Songbook.Tracks.Song
 
   @doc """

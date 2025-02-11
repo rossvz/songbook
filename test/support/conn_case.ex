@@ -19,15 +19,14 @@ defmodule SongbookWeb.ConnCase do
 
   using do
     quote do
+      use SongbookWeb, :verified_routes
+      import Phoenix.ConnTest
+      import Plug.Conn
+      import SongbookWeb.ConnCase
       # The default endpoint for testing
       @endpoint SongbookWeb.Endpoint
 
-      use SongbookWeb, :verified_routes
-
       # Import conveniences for testing with connections
-      import Plug.Conn
-      import Phoenix.ConnTest
-      import SongbookWeb.ConnCase
     end
   end
 

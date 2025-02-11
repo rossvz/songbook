@@ -1,5 +1,7 @@
 defmodule Songbook.Tracks.Song do
+  @moduledoc false
   use Ecto.Schema
+
   import Ecto.Changeset
 
   schema "songs" do

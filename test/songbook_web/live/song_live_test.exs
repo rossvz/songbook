@@ -1,9 +1,9 @@
 defmodule SongbookWeb.SongLiveTest do
   use SongbookWeb.ConnCase
+  use Mimic
 
   import Phoenix.LiveViewTest
   import Songbook.TracksFixtures
-  use Mimic
 
   @update_attrs %{
     title: "some updated title",
@@ -37,11 +37,10 @@ defmodule SongbookWeb.SongLiveTest do
 
       assert_patch(index_live, ~p"/songs/new")
 
-      refute index_live |> has_element?("#song-form")
-      assert index_live |> has_element?("#search-form")
+      refute has_element?(index_live, "#song-form")
+      assert has_element?(index_live, "#search-form")
 
-      Songbook.Spotify.Search
-      |> expect(:search_song, fn _ ->
+      expect(Songbook.Spotify.Search, :search_song, fn _ ->
         [
           %{
             "name" => "Result Title",
@@ -62,7 +61,7 @@ defmodule SongbookWeb.SongLiveTest do
              })
              |> render_submit()
 
-      assert index_live |> has_element?("#song-form")
+      assert has_element?(index_live, "#song-form")
 
       assert index_live
              |> form("#song-form")
