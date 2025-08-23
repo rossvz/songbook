@@ -9,7 +9,7 @@ defmodule Songbook.Tracks do
   alias Songbook.Tracks.Song
 
   @doc """
-  Returns the list of songs.
+  Returns the list of songs ordered by votes descending.
 
   ## Examples
 
@@ -18,7 +18,7 @@ defmodule Songbook.Tracks do
 
   """
   def list_songs do
-    Repo.all(Song)
+    Repo.all(from s in Song, order_by: [desc: s.votes, asc: s.inserted_at])
   end
 
   @doc """
@@ -100,5 +100,50 @@ defmodule Songbook.Tracks do
   """
   def change_song(%Song{} = song, attrs \\ %{}) do
     Song.changeset(song, attrs)
+  end
+
+  @doc """
+  Increments the vote count for a song.
+
+  ## Examples
+
+      iex> upvote_song(song)
+      {:ok, %Song{}}
+
+  """
+  def upvote_song(%Song{} = song) do
+    song
+    |> Ecto.Changeset.change(votes: song.votes + 1)
+    |> Repo.update()
+  end
+
+  @doc """
+  Decrements the vote count for a song.
+
+  ## Examples
+
+      iex> downvote_song(song)
+      {:ok, %Song{}}
+
+  """
+  def downvote_song(%Song{} = song) do
+    new_votes = max(0, song.votes - 1)
+
+    song
+    |> Ecto.Changeset.change(votes: new_votes)
+    |> Repo.update()
+  end
+
+  @doc """
+  Resets all songs' votes to 0.
+
+  ## Examples
+
+      iex> reset_all_votes()
+      {5, nil}
+
+  """
+  def reset_all_votes do
+    Repo.update_all(from(s in Song, update: [set: [votes: 0]]), [])
   end
 end

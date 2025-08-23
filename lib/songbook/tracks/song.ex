@@ -10,6 +10,7 @@ defmodule Songbook.Tracks.Song do
     field :album, :string
     field :album_artwork_url, :string
     field :spotify_id, :string
+    field :votes, :integer, default: 0
 
     timestamps(type: :utc_datetime)
   end

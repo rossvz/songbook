@@ -9,7 +9,8 @@ defmodule Songbook.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      listeners: [Phoenix.CodeReloader]
     ]
   end
 
@@ -67,7 +68,8 @@ defmodule Songbook.MixProject do
       {:tailwind, "~> 0.3", runtime: Mix.env() == :dev},
       {:telemetry_metrics, "~> 1.1"},
       {:telemetry_poller, "~> 1.1"},
-      {:tesla, "~> 1.14"}
+      {:tesla, "~> 1.14"},
+      {:tidewave, "~> 0.4", only: :dev}
     ]
   end
 

@@ -17,8 +17,10 @@ defmodule SongbookWeb.Router do
   scope "/", SongbookWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", VoteLive.Index, :index
     get "/search", SpotifyController, :search
+
+    live "/vote", VoteLive.Index, :index
 
     live "/songs", SongLive.Index, :index
     live "/songs/new", SongLive.Index, :new
