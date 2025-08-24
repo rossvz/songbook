@@ -1,7 +1,7 @@
 defmodule Songbook.TracksFixtures do
   @moduledoc """
   This module defines test helpers for creating
-  entities via the `Songbook.Tracks` context.
+  entities via the `Songbook.Music` context.
   """
 
   @doc """
@@ -17,7 +17,7 @@ defmodule Songbook.TracksFixtures do
         spotify_id: "some spotify_id",
         title: "some title"
       })
-      |> Songbook.Tracks.create_song()
+      |> Songbook.Music.create_track()
 
     song
   end

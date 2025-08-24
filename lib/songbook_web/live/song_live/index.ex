@@ -43,7 +43,7 @@ defmodule SongbookWeb.SongLive.Index do
     song = Music.get_track!(id)
 
     case Music.delete_track(song) do
-      {:ok, _} ->
+      :ok ->
         {:noreply, stream_delete(socket, :songs, song)}
 
       {:error, _changeset} ->

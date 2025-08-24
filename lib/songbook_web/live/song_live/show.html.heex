@@ -1,30 +1,35 @@
 <.header>
-  Song {@song.id}
+  Song {@track.id}
   <:subtitle>This is a song record from your database.</:subtitle>
   <:actions>
-    <.link patch={~p"/songs/#{@song}/show/edit"} phx-click={JS.push_focus()}>
+    <.link patch={~p"/songs/#{@track}/show/edit"} phx-click={JS.push_focus()}>
       <.button>Edit song</.button>
     </.link>
   </:actions>
 </.header>
 
 <.list>
-  <:item title="Title">{@song.title}</:item>
-  <:item title="Artist">{@song.artist}</:item>
-  <:item title="Album">{@song.album}</:item>
-  <:item title="Album artwork url">{@song.album_artwork_url}</:item>
-  <:item title="Spotify">{@song.spotify_id}</:item>
+  <:item title="Title">{@track.title}</:item>
+  <:item title="Artist">{@track.artist}</:item>
+  <:item title="Album">{@track.album}</:item>
+  <:item title="Album artwork url">{@track.album_artwork_url}</:item>
+  <:item title="Spotify">{@track.spotify_id}</:item>
 </.list>
 
 <.back navigate={~p"/songs"}>Back to songs</.back>
 
-<.modal :if={@live_action == :edit} id="song-modal" show on_cancel={JS.patch(~p"/songs/#{@song}")}>
+<.modal
+  :if={@live_action == :edit}
+  id="song-modal"
+  show
+  on_cancel={JS.patch(~p"/songs/#{@track}")}
+>
   <.live_component
     module={SongbookWeb.SongLive.FormComponent}
-    id={@song.id}
+    id={@track.id}
     title={@page_title}
     action={@live_action}
-    song={@song}
-    patch={~p"/songs/#{@song}"}
+    track={@track}
+    patch={~p"/songs/#{@track}"}
   />
 </.modal>
