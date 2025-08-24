@@ -1,4 +1,4 @@
-defmodule Songbook.TracksFixtures do
+defmodule Songbook.MusicFixtures do
   @moduledoc """
   This module defines test helpers for creating
   entities via the `Songbook.Music` context.
@@ -7,8 +7,8 @@ defmodule Songbook.TracksFixtures do
   @doc """
   Generate a song.
   """
-  def song_fixture(attrs \\ %{}) do
-    {:ok, song} =
+  def track_fixture(attrs \\ %{}) do
+    {:ok, track} =
       attrs
       |> Enum.into(%{
         album: "some album",
@@ -19,6 +19,6 @@ defmodule Songbook.TracksFixtures do
       })
       |> Songbook.Music.create_track()
 
-    song
+    track
   end
 end

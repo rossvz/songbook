@@ -3,19 +3,10 @@ defmodule SongbookWeb.SongLiveTest do
   use Mimic
 
   import Phoenix.LiveViewTest
-  import Songbook.TracksFixtures
-
-  @update_attrs %{
-    title: "some updated title",
-    artist: "some updated artist",
-    album: "some updated album",
-    album_artwork_url: "some updated album_artwork_url",
-    spotify_id: "some updated spotify_id"
-  }
-  @invalid_attrs %{title: nil, artist: nil, album: nil, album_artwork_url: nil, spotify_id: nil}
+  import Songbook.MusicFixtures
 
   defp create_song(_) do
-    song = song_fixture()
+    song = track_fixture()
     %{song: song}
   end
 
@@ -33,11 +24,9 @@ defmodule SongbookWeb.SongLiveTest do
       {:ok, index_live, _html} = live(conn, ~p"/songs")
 
       assert index_live |> element("a", "New Song") |> render_click() =~
-               "New Song"
+               "Search by title, artist, album"
 
       assert_patch(index_live, ~p"/songs/new")
-
-      refute has_element?(index_live, "#song-form")
       assert has_element?(index_live, "#search-form")
 
       expect(Songbook.Spotify.Search, :search_song, fn _ ->
@@ -56,43 +45,19 @@ defmodule SongbookWeb.SongLiveTest do
 
       assert index_live
              |> form("#search-form", %{
-               "title" => "some title",
-               "artist" => "some artist"
+               "form" => %{"query" => "some title"}
              })
              |> render_submit()
 
-      assert has_element?(index_live, "#song-form")
+      assert has_element?(index_live, "#result-list")
 
       assert index_live
-             |> form("#song-form")
-             |> render_submit()
+             |> element("[phx-value-spotify_id='some spotify_id']")
+             |> render_click()
 
       html = render(index_live)
       assert html =~ "Song created successfully"
       assert html =~ "Result Title"
-    end
-
-    test "updates song in listing", %{conn: conn, song: song} do
-      {:ok, index_live, _html} = live(conn, ~p"/songs")
-
-      assert index_live |> element("#songs-#{song.id} a", "Edit") |> render_click() =~
-               "Edit Song"
-
-      assert_patch(index_live, ~p"/songs/#{song}/edit")
-
-      assert index_live
-             |> form("#song-form", song: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
-
-      assert index_live
-             |> form("#song-form", song: @update_attrs)
-             |> render_submit()
-
-      assert_patch(index_live, ~p"/songs")
-
-      html = render(index_live)
-      assert html =~ "Song updated successfully"
-      assert html =~ "some updated title"
     end
 
     test "deletes song in listing", %{conn: conn, song: song} do
@@ -111,29 +76,6 @@ defmodule SongbookWeb.SongLiveTest do
 
       assert html =~ "Show Song"
       assert html =~ song.title
-    end
-
-    test "updates song within modal", %{conn: conn, song: song} do
-      {:ok, show_live, _html} = live(conn, ~p"/songs/#{song}")
-
-      assert show_live |> element("a", "Edit") |> render_click() =~
-               "Edit Song"
-
-      assert_patch(show_live, ~p"/songs/#{song}/show/edit")
-
-      assert show_live
-             |> form("#song-form", song: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
-
-      assert show_live
-             |> form("#song-form", song: @update_attrs)
-             |> render_submit()
-
-      assert_patch(show_live, ~p"/songs/#{song}")
-
-      html = render(show_live)
-      assert html =~ "Song updated successfully"
-      assert html =~ "some updated title"
     end
   end
 end

@@ -24,6 +24,14 @@ defmodule Songbook.Music.Track do
     end
   end
 
+  validations do
+    validate present(:title)
+    validate present(:artist)
+    validate present(:album)
+    validate present(:album_artwork_url)
+    validate present(:spotify_id)
+  end
+
   attributes do
     uuid_primary_key :id
     attribute :title, :string
