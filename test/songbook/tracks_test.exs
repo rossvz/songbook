@@ -2,6 +2,7 @@ defmodule Songbook.TracksTest do
   use Songbook.DataCase
 
   import Songbook.MusicFixtures
+  import Ash.Test
 
   alias Songbook.Music
 
@@ -12,24 +13,20 @@ defmodule Songbook.TracksTest do
 
     test "list_tracks/0 returns all tracks" do
       track = track_fixture()
-      [result] = Music.list_tracks!()
-      assert result.id == track.id
-      assert result.title == track.title
-      assert result.artist == track.artist
-      assert result.album == track.album
-      assert result.album_artwork_url == track.album_artwork_url
-      assert result.spotify_id == track.spotify_id
+      assert_stripped Music.list_tracks!() == [track]
+    end
+
+    test "list_tracks/0 returns the tracks sorted by votes" do
+      track1 = track_fixture(%{votes: 1})
+      track2 = track_fixture(%{votes: 5})
+      track3 = track_fixture(%{votes: 12})
+
+      assert_stripped Music.list_tracks!() == [track3, track2, track1]
     end
 
     test "get_track!/1 returns the track with given id" do
       track = track_fixture()
-      result = Music.get_track!(track.id)
-      assert result.id == track.id
-      assert result.title == track.title
-      assert result.artist == track.artist
-      assert result.album == track.album
-      assert result.album_artwork_url == track.album_artwork_url
-      assert result.spotify_id == track.spotify_id
+      assert_stripped Music.get_track!(track.id) == track
     end
 
     test "create_track/1 with valid data creates a track" do

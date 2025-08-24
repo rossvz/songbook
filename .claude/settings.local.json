@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(mix test:*)"
+      "Bash(mix test:*)",
+      "WebSearch",
+      "WebFetch(domain:hexdocs.pm)"
     ],
     "deny": [],
     "ask": []

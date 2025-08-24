@@ -24,6 +24,10 @@ defmodule Songbook.Music.Track do
     end
   end
 
+  preparations do
+    prepare build(sort: [votes: :desc, inserted_at: :desc])
+  end
+
   validations do
     validate present(:title)
     validate present(:artist)

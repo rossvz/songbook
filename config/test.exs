@@ -1,6 +1,8 @@
 import Config
 
-config :ash, policies: [show_policy_breakdowns?: true], disable_async?: true
+config :ash,
+  policies: [show_policy_breakdowns?: true],
+  disable_async?: true
 
 # Print only warnings and errors during test
 config :logger, level: :warning
