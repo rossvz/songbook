@@ -2,44 +2,55 @@ defmodule SongbookWeb.SongLive.FormComponent do
   @moduledoc false
   use SongbookWeb, :live_component
 
-  alias Songbook.Tracks
+  alias Songbook.Music
 
   @impl true
 
-  def update(%{song: song} = assigns, socket) do
-    changeset = Tracks.change_song(song)
+  def update(assigns, socket) do
+    form = to_form(%{})
 
     {:ok,
      socket
      |> assign(assigns)
      |> assign(results: [])
-     |> assign_form(changeset)}
+     |> assign(form: form)}
   end
 
   @impl true
   def render(assigns) do
     ~H"""
     <div class="">
-      <.header>
-        {@title}
-        <:subtitle>Use this form to manage song records in your database.</:subtitle>
-      </.header>
-
       <.simple_form
-        :if={@action == :new}
-        for={@search_form}
+        :let={form}
+        for={@form}
+        as={:form}
         id="search-form"
         phx-target={@myself}
         phx-submit="search"
       >
-        <.input field={@search_form[:title]} type="text" label="Title" />
-        <.input field={@search_form[:artist]} type="text" label="Artist" />
+        <.input
+          field={form[:query]}
+          type="text"
+          placeholder="Search by title, artist, album"
+        />
         <:actions>
-          <.button phx-disable-with="Searching...">Search</.button>
+          <div class="w-full flex justify-end gap-2">
+            <.button
+              type="button"
+              class="text-zinc-700 border-2"
+              phx-click={JS.patch(~p"/songs")}
+              phx-target={@myself}
+            >
+              Cancel
+            </.button>
+            <.button phx-disable-with="Searching..." class="bg-zinc-900 hover:bg-zinc-700">
+              Search
+            </.button>
+          </div>
         </:actions>
       </.simple_form>
 
-      <div :if={@results}>
+      <div :if={length(@results) > 0}>
         {length(@results)} results
       </div>
 
@@ -73,7 +84,7 @@ defmodule SongbookWeb.SongLive.FormComponent do
   def handle_event("add_track", %{"spotify_id" => spotify_id}, socket) do
     result = Enum.find(socket.assigns.results, fn result -> result.spotify_id == spotify_id end)
 
-    case Tracks.create_song(result) do
+    case Music.create_track(result) do
       {:ok, song} ->
         notify_parent({:saved, song})
 
@@ -88,11 +99,8 @@ defmodule SongbookWeb.SongLive.FormComponent do
   end
 
   @impl true
-  def handle_event("search", %{"search" => search}, socket) do
-    title = search["title"] || ""
-    artist = search["artist"] || ""
-
-    query = String.trim("#{title} #{artist}")
+  def handle_event("search", %{"form" => form}, socket) do
+    query = form["query"] || ""
 
     results =
       if String.length(query) > 0 do
@@ -117,15 +125,6 @@ defmodule SongbookWeb.SongLive.FormComponent do
         artist: get_in(result, ["artists", Access.at(0), "name"])
       }
     end)
-  end
-
-  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
-    search_params = %{"title" => "", "artist" => ""}
-
-    assign(socket,
-      form: to_form(changeset),
-      search_form: to_form(search_params, as: :search)
-    )
   end
 
   defp notify_parent(msg), do: send(self(), {__MODULE__, msg})

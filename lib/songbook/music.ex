@@ -1,7 +1,8 @@
 defmodule Songbook.Music do
   @moduledoc false
   use Ash.Domain,
-    otp_app: :songbook
+    otp_app: :songbook,
+    extensions: [AshPhoenix]
 
   resources do
     resource Songbook.Music.Track do

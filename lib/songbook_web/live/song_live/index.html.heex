@@ -8,7 +8,7 @@
       Reset All Votes
     </.button>
     <.link patch={~p"/songs/new"}>
-      <.button>New Song</.button>
+      <.button class="bg-zinc-900 hover:bg-zinc-700 ">New Song</.button>
     </.link>
   </:actions>
 </.header>
@@ -28,23 +28,18 @@
   <:col :let={{_id, song}} label="Votes">{song.votes}</:col>
 
   <:action :let={{id, song}}>
-    <.link
-      phx-click={JS.push("delete", value: %{id: song.id}) |> hide("##{id}")}
-      data-confirm="Are you sure?"
-    >
+    <.link phx-click={JS.push("delete", value: %{id: song.id}) |> hide("##{id}")}>
       Delete
     </.link>
   </:action>
 </.table>
 
-<.modal :if={@live_action in [:new, :edit]} id="song-modal" show on_cancel={JS.patch(~p"/songs")}>
+<.modal :if={@live_action == :new} id="song-modal" show on_cancel={JS.patch(~p"/songs")}>
   <.live_component
     module={SongbookWeb.SongLive.FormComponent}
-    id={@song.id || :new}
+    id="new-song-form"
     title={@page_title}
     action={@live_action}
-    results={[]}
-    song={@song}
     patch={~p"/songs"}
   />
 </.modal>

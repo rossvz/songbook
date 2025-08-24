@@ -2,12 +2,12 @@ defmodule SongbookWeb.SongLive.Index do
   @moduledoc false
   use SongbookWeb, :live_view
 
-  alias Songbook.Tracks
-  alias Songbook.Tracks.Song
+  alias Songbook.Music
+  alias Songbook.Music.Track
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :songs, Tracks.list_songs())}
+    {:ok, stream(socket, :songs, Music.list_tracks!())}
   end
 
   @impl true
@@ -18,13 +18,13 @@ defmodule SongbookWeb.SongLive.Index do
   defp apply_action(socket, :edit, %{"id" => id}) do
     socket
     |> assign(:page_title, "Edit Song")
-    |> assign(:song, Tracks.get_song!(id))
+    |> assign(:song, Music.get_track!(id))
   end
 
   defp apply_action(socket, :new, _params) do
     socket
     |> assign(:page_title, "New Song")
-    |> assign(:song, %Song{})
+    |> assign(:song, %Track{})
   end
 
   defp apply_action(socket, :index, _params) do
@@ -40,15 +40,22 @@ defmodule SongbookWeb.SongLive.Index do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    song = Tracks.get_song!(id)
-    {:ok, _} = Tracks.delete_song(song)
+    song = Music.get_track!(id)
 
-    {:noreply, stream_delete(socket, :songs, song)}
+    case Music.delete_track(song) do
+      {:ok, _} ->
+        {:noreply, stream_delete(socket, :songs, song)}
+
+      {:error, _changeset} ->
+        {:noreply, put_flash(socket, :error, "Unable to delete song")}
+    end
   end
 
   @impl true
   def handle_event("reset_votes", _params, socket) do
-    {_count, _} = Tracks.reset_all_votes()
+    Enum.each(Music.list_tracks!(), fn track ->
+      Music.reset_votes(track)
+    end)
 
     # Broadcast vote reset to all connected voting clients
     Phoenix.PubSub.broadcast(Songbook.PubSub, "votes", :votes_reset)
@@ -57,6 +64,6 @@ defmodule SongbookWeb.SongLive.Index do
     {:noreply,
      socket
      |> put_flash(:info, "All votes have been reset to 0")
-     |> stream(:songs, Tracks.list_songs(), reset: true)}
+     |> stream(:songs, Music.list_tracks!(), reset: true)}
   end
 end
