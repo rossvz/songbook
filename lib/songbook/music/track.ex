@@ -9,23 +9,29 @@ defmodule Songbook.Music.Track do
 
   actions do
     defaults [:read, :create, :update, :destroy]
-    default_accept [:title, :artist, :album, :album_artwork_url, :spotify_id, :votes]
-
-    update :upvote_track do
-      change increment(:votes, amount: 1)
-    end
-
-    update :downvote_track do
-      change increment(:votes, amount: -1)
-    end
+    default_accept [:title, :artist, :album, :album_artwork_url, :spotify_id]
 
     update :reset_votes do
-      change set_attribute(:votes, 0)
+      require_atomic? false
+
+      change after_action(fn _changeset, result, _context ->
+        # Delete all votes for this track by loading them first
+        track_with_votes = Songbook.Music.get_track!(result.id, load: [:track_votes])
+
+        track_with_votes.track_votes
+        |> Enum.each(fn vote ->
+          vote
+          |> Ash.Changeset.for_destroy(:destroy)
+          |> Songbook.Music.destroy!()
+        end)
+
+        {:ok, result}
+      end)
     end
   end
 
   preparations do
-    prepare build(sort: [votes: :desc, inserted_at: :desc])
+    prepare build(sort: [vote_count: :desc, inserted_at: :desc], load: [:vote_count])
   end
 
   validations do
@@ -43,7 +49,17 @@ defmodule Songbook.Music.Track do
     attribute :album, :string
     attribute :album_artwork_url, :string
     attribute :spotify_id, :string
-    attribute :votes, :integer, default: 0
     timestamps(type: :utc_datetime)
+  end
+
+  aggregates do
+    count :vote_count, :track_votes
+  end
+
+  relationships do
+    has_many :track_votes, Songbook.Music.Vote do
+      source_attribute :id
+      destination_attribute :track_id
+    end
   end
 end

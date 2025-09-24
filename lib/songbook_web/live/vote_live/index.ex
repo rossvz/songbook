@@ -5,10 +5,19 @@ defmodule SongbookWeb.VoteLive.Index do
   alias Songbook.Music
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
     if connected?(socket), do: Phoenix.PubSub.subscribe(Songbook.PubSub, "votes")
 
-    {:ok, stream(socket, :songs, Music.list_tracks!())}
+    # Get voter_id from session (set by our plug)
+    voter_id = session["voter_id"]
+
+    socket =
+      socket
+      |> assign(:voter_id, voter_id)
+      |> assign(:voted_tracks, get_voted_tracks(voter_id))
+      |> stream(:songs, Music.list_tracks!())
+
+    {:ok, socket}
   end
 
   @impl true
@@ -22,18 +31,41 @@ defmodule SongbookWeb.VoteLive.Index do
 
   @impl true
   def handle_event("vote", %{"id" => id}, socket) do
-    song = Music.get_track!(id)
+    voter_id = socket.assigns.voter_id
+    voted_tracks = socket.assigns.voted_tracks
 
-    case Music.upvote_track(song) do
-      {:ok, updated_song} ->
-        # Broadcast to all connected users
-        Phoenix.PubSub.broadcast(Songbook.PubSub, "votes", {:vote_updated, updated_song})
+    cond do
+      # Check if we have a voter_id
+      is_nil(voter_id) or voter_id == "" ->
+        {:noreply, put_flash(socket, :error, "Unable to identify voter")}
 
-        # Reload the entire sorted list
-        {:noreply, stream(socket, :songs, Music.list_tracks!(), reset: true)}
+      # Check if user has already voted for this track
+      MapSet.member?(voted_tracks, id) ->
+        {:noreply, put_flash(socket, :error, "You have already voted for this track")}
 
-      {:error, _changeset} ->
-        {:noreply, put_flash(socket, :error, "Unable to process vote")}
+      true ->
+        song = Music.get_track!(id)
+
+        # Create the vote record
+        case Music.cast_vote(%{voter_id: voter_id, track_id: id}) do
+          {:ok, _vote} ->
+            # Update local state
+            updated_voted_tracks = MapSet.put(voted_tracks, id)
+
+            socket =
+              socket
+              |> assign(:voted_tracks, updated_voted_tracks)
+              |> stream(:songs, Music.list_tracks!(), reset: true)
+
+            # Broadcast to all connected users
+            Phoenix.PubSub.broadcast(Songbook.PubSub, "votes", {:vote_updated, song})
+
+            {:noreply, socket}
+
+          {:error, changeset} ->
+            dbg(changeset)
+            {:noreply, put_flash(socket, :error, "Unable to record vote")}
+        end
     end
   end
 
@@ -46,6 +78,26 @@ defmodule SongbookWeb.VoteLive.Index do
   @impl true
   def handle_info(:votes_reset, socket) do
     # Reload the entire sorted list when votes are reset
-    {:noreply, stream(socket, :songs, Music.list_tracks!(), reset: true)}
+    # Also reload the voted_tracks for this user since they should now be able to vote again
+    voter_id = socket.assigns.voter_id
+
+    socket =
+      socket
+      |> assign(:voted_tracks, get_voted_tracks(voter_id))
+      |> stream(:songs, Music.list_tracks!(), reset: true)
+
+    {:noreply, socket}
   end
+
+  defp get_voted_tracks(voter_id) when is_binary(voter_id) do
+    voter_id
+    |> Music.get_votes_by_voter()
+    |> case do
+      {:ok, votes} -> votes
+      {:error, _reason} -> []
+    end
+    |> MapSet.new(& &1.track_id)
+  end
+
+  defp get_voted_tracks(_), do: MapSet.new()
 end

@@ -2,13 +2,18 @@
   Vote for Songs
   <:subtitle>Click on a song to vote for it! Songs are ordered by votes.</:subtitle>
 </.header>
-
 <div class="mt-8 space-y-4" id="songs-list" phx-update="stream">
   <div
     :for={{id, song} <- @streams.songs}
     id={id}
-    class="flex items-center space-x-4 p-4 bg-white rounded-lg shadow hover:shadow-lg transition-shadow cursor-pointer border-2 hover:border-blue-300"
-    phx-click="vote"
+    class={[
+      "flex items-center space-x-4 p-4 rounded-lg shadow transition-shadow border-2",
+      if(MapSet.member?(@voted_tracks, song.id),
+        do: "bg-gray-100 border-gray-300 cursor-not-allowed opacity-75",
+        else: "bg-white hover:shadow-lg cursor-pointer hover:border-blue-300"
+      )
+    ]}
+    phx-click={unless MapSet.member?(@voted_tracks, song.id), do: "vote"}
     phx-value-id={song.id}
   >
     <img src={song.album_artwork_url} alt={song.album} class="h-16 w-16 rounded-md" />
@@ -21,18 +26,39 @@
 
     <div class="flex items-center space-x-2">
       <div class="text-center">
-        <div class="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full hover:bg-blue-200 transition-colors">
-          <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-            <path
-              fill-rule="evenodd"
-              d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z"
-              clip-rule="evenodd"
-            >
-            </path>
-          </svg>
+        <div class={[
+          "flex items-center justify-center w-12 h-12 rounded-full transition-colors",
+          if(MapSet.member?(@voted_tracks, song.id),
+            do: "bg-green-100 cursor-not-allowed",
+            else: "bg-blue-100 hover:bg-blue-200"
+          )
+        ]}>
+          <%= if MapSet.member?(@voted_tracks, song.id) do %>
+            <!-- Check mark icon for voted -->
+            <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fill-rule="evenodd"
+                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                clip-rule="evenodd"
+              >
+              </path>
+            </svg>
+          <% else %>
+            <!-- Up arrow icon for voting -->
+            <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fill-rule="evenodd"
+                d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z"
+                clip-rule="evenodd"
+              >
+              </path>
+            </svg>
+          <% end %>
         </div>
-        <span class="text-lg font-bold text-gray-900 mt-1 block">{song.votes}</span>
-        <span class="text-xs text-gray-500">votes</span>
+        <span class="text-lg font-bold text-gray-900 mt-1 block">{song.vote_count}</span>
+        <span class="text-xs text-gray-500">
+          {if MapSet.member?(@voted_tracks, song.id), do: "voted", else: "votes"}
+        </span>
       </div>
     </div>
   </div>
