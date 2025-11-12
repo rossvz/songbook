@@ -1,6 +1,6 @@
 <.header>
-  Song {@track.id}
-  <:subtitle>This is a song record from your database.</:subtitle>
+  {@track.title}
+  <:subtitle>by {@track.artist}</:subtitle>
   <:actions>
     <.link patch={~p"/songs/#{@track}/show/edit"} phx-click={JS.push_focus()}>
       <.button>Edit song</.button>
@@ -8,12 +8,13 @@
   </:actions>
 </.header>
 
+<div :if={@track.album_artwork_url} class="mb-6">
+  <img src={@track.album_artwork_url} alt={"#{@track.title} album artwork"} class="rounded-lg shadow-lg max-w-md" />
+</div>
+
 <.list>
-  <:item title="Title">{@track.title}</:item>
-  <:item title="Artist">{@track.artist}</:item>
   <:item title="Album">{@track.album}</:item>
-  <:item title="Album artwork url">{@track.album_artwork_url}</:item>
-  <:item title="Spotify">{@track.spotify_id}</:item>
+  <:item title="Spotify ID">{@track.spotify_id}</:item>
 </.list>
 
 <.back navigate={~p"/songs"}>Back to songs</.back>
