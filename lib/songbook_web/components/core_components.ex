@@ -51,7 +51,7 @@ defmodule SongbookWeb.CoreComponents do
       data-cancel={JS.exec(@on_cancel, "phx-remove")}
       class="relative z-50 hidden"
     >
-      <div id={"#{@id}-bg"} class="bg-zinc-50/90 fixed inset-0 transition-opacity" aria-hidden="true" />
+      <div id={"#{@id}-bg"} class="bg-zinc-50/90 dark:bg-zinc-900/90 fixed inset-0 transition-opacity" aria-hidden="true" />
       <div
         class="fixed inset-0 overflow-y-auto"
         aria-labelledby={"#{@id}-title"}
@@ -67,7 +67,7 @@ defmodule SongbookWeb.CoreComponents do
               phx-window-keydown={JS.exec("data-cancel", to: "##{@id}")}
               phx-key="escape"
               phx-click-away={JS.exec("data-cancel", to: "##{@id}")}
-              class="shadow-zinc-700/10 ring-zinc-700/10 relative hidden rounded-2xl bg-white p-14 shadow-lg ring-1 transition"
+              class="shadow-zinc-700/10 dark:shadow-zinc-900/50 ring-zinc-700/10 dark:ring-zinc-600/50 relative hidden rounded-2xl bg-white dark:bg-gray-800 p-14 shadow-lg ring-1 transition"
             >
               <div class="absolute top-6 right-5">
                 <button
@@ -117,8 +117,8 @@ defmodule SongbookWeb.CoreComponents do
       role="alert"
       class={[
         "fixed top-2 right-2 mr-2 w-80 sm:w-96 z-50 rounded-lg p-3 ring-1",
-        @kind == :info && "bg-emerald-50 text-emerald-800 ring-emerald-500 fill-cyan-900",
-        @kind == :error && "bg-rose-50 text-rose-900 shadow-md ring-rose-500 fill-rose-900"
+        @kind == :info && "bg-emerald-50 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200 ring-emerald-500 dark:ring-emerald-700 fill-cyan-900 dark:fill-cyan-100",
+        @kind == :error && "bg-rose-50 dark:bg-rose-900 text-rose-900 dark:text-rose-200 shadow-md ring-rose-500 dark:ring-rose-700 fill-rose-900 dark:fill-rose-100"
       ]}
       {@rest}
     >
@@ -309,7 +309,7 @@ defmodule SongbookWeb.CoreComponents do
 
     ~H"""
     <div phx-feedback-for={@name}>
-      <label class="flex items-center gap-4 text-sm leading-6 text-zinc-600">
+      <label class="flex items-center gap-4 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
         <input type="hidden" name={@name} value="false" />
         <input
           type="checkbox"
@@ -317,7 +317,7 @@ defmodule SongbookWeb.CoreComponents do
           name={@name}
           value="true"
           checked={@checked}
-          class="rounded border-zinc-300 text-zinc-900 focus:ring-0"
+          class="rounded border-zinc-300 dark:border-zinc-600 text-zinc-900 dark:text-zinc-100 dark:bg-gray-800 focus:ring-0"
           {@rest}
         />
         {@label}
@@ -334,7 +334,7 @@ defmodule SongbookWeb.CoreComponents do
       <select
         id={@id}
         name={@name}
-        class="mt-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-zinc-400 focus:ring-0 sm:text-sm"
+        class="mt-2 block w-full rounded-md border border-gray-300 dark:border-zinc-600 bg-white dark:bg-gray-800 text-zinc-900 dark:text-zinc-100 shadow-sm focus:border-zinc-400 dark:focus:border-zinc-500 focus:ring-0 sm:text-sm"
         multiple={@multiple}
         {@rest}
       >
@@ -354,10 +354,10 @@ defmodule SongbookWeb.CoreComponents do
         id={@id}
         name={@name}
         class={[
-          "mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6",
-          "min-h-[6rem] phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400",
-          @errors == [] && "border-zinc-300 focus:border-zinc-400",
-          @errors != [] && "border-rose-400 focus:border-rose-400"
+          "mt-2 block w-full rounded-lg text-zinc-900 dark:text-zinc-100 dark:bg-gray-800 focus:ring-0 sm:text-sm sm:leading-6",
+          "min-h-[6rem] phx-no-feedback:border-zinc-300 dark:phx-no-feedback:border-zinc-600 phx-no-feedback:focus:border-zinc-400 dark:phx-no-feedback:focus:border-zinc-500",
+          @errors == [] && "border-zinc-300 dark:border-zinc-600 focus:border-zinc-400 dark:focus:border-zinc-500",
+          @errors != [] && "border-rose-400 dark:border-rose-500 focus:border-rose-400 dark:focus:border-rose-500"
         ]}
         {@rest}
       ><%= Phoenix.HTML.Form.normalize_value("textarea", @value) %></textarea>
@@ -377,10 +377,10 @@ defmodule SongbookWeb.CoreComponents do
         id={@id}
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
         class={[
-          "mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6",
-          "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400",
-          @errors == [] && "border-zinc-300 focus:border-zinc-400",
-          @errors != [] && "border-rose-400 focus:border-rose-400"
+          "mt-2 block w-full rounded-lg text-zinc-900 dark:text-zinc-100 dark:bg-gray-800 focus:ring-0 sm:text-sm sm:leading-6",
+          "phx-no-feedback:border-zinc-300 dark:phx-no-feedback:border-zinc-600 phx-no-feedback:focus:border-zinc-400 dark:phx-no-feedback:focus:border-zinc-500",
+          @errors == [] && "border-zinc-300 dark:border-zinc-600 focus:border-zinc-400 dark:focus:border-zinc-500",
+          @errors != [] && "border-rose-400 dark:border-rose-500 focus:border-rose-400 dark:focus:border-rose-500"
         ]}
         {@rest}
       />
@@ -397,7 +397,7 @@ defmodule SongbookWeb.CoreComponents do
 
   def label(assigns) do
     ~H"""
-    <label for={@for} class="block text-sm font-semibold leading-6 text-zinc-800">
+    <label for={@for} class="block text-sm font-semibold leading-6 text-zinc-800 dark:text-zinc-200">
       {render_slot(@inner_block)}
     </label>
     """
@@ -410,7 +410,7 @@ defmodule SongbookWeb.CoreComponents do
 
   def error(assigns) do
     ~H"""
-    <p class="mt-3 flex gap-3 text-sm leading-6 text-rose-600 phx-no-feedback:hidden">
+    <p class="mt-3 flex gap-3 text-sm leading-6 text-rose-600 dark:text-rose-400 phx-no-feedback:hidden">
       <.icon name="hero-exclamation-circle-mini" class="mt-0.5 h-5 w-5 flex-none" />
       {render_slot(@inner_block)}
     </p>
@@ -430,10 +430,10 @@ defmodule SongbookWeb.CoreComponents do
     ~H"""
     <header class={[@actions != [] && "flex items-center justify-between gap-6", @class]}>
       <div>
-        <h1 class="text-lg font-semibold leading-8 text-zinc-800">
+        <h1 class="text-lg font-semibold leading-8 text-zinc-800 dark:text-zinc-200">
           {render_slot(@inner_block)}
         </h1>
-        <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-zinc-600">
+        <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-400">
           {render_slot(@subtitle)}
         </p>
       </div>
@@ -476,7 +476,7 @@ defmodule SongbookWeb.CoreComponents do
     ~H"""
     <div class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
       <table class="w-[40rem] mt-11 sm:w-full">
-        <thead class="text-sm text-left leading-6 text-zinc-500">
+        <thead class="text-sm text-left leading-6 text-zinc-500 dark:text-zinc-400">
           <tr>
             <th :for={col <- @col} class="p-0 pb-4 pr-6 font-normal">{col[:label]}</th>
             <th :if={@action != []} class="relative p-0 pb-4">
@@ -487,27 +487,27 @@ defmodule SongbookWeb.CoreComponents do
         <tbody
           id={@id}
           phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"}
-          class="relative divide-y divide-zinc-100 border-t border-zinc-200 text-sm leading-6 text-zinc-700"
+          class="relative divide-y divide-zinc-100 dark:divide-zinc-700 border-t border-zinc-200 dark:border-zinc-700 text-sm leading-6 text-zinc-700 dark:text-zinc-300"
         >
-          <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="group hover:bg-zinc-50">
+          <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="group hover:bg-zinc-50 dark:hover:bg-gray-800">
             <td
               :for={{col, i} <- Enum.with_index(@col)}
               phx-click={@row_click && @row_click.(row)}
               class={["relative p-0", @row_click && "hover:cursor-pointer"]}
             >
               <div class="block py-4 pr-6">
-                <span class="absolute -inset-y-px right-0 -left-4 group-hover:bg-zinc-50 sm:rounded-l-xl" />
-                <span class={["relative", i == 0 && "font-semibold text-zinc-900"]}>
+                <span class="absolute -inset-y-px right-0 -left-4 group-hover:bg-zinc-50 dark:group-hover:bg-gray-800 sm:rounded-l-xl" />
+                <span class={["relative", i == 0 && "font-semibold text-zinc-900 dark:text-zinc-100"]}>
                   {render_slot(col, @row_item.(row))}
                 </span>
               </div>
             </td>
             <td :if={@action != []} class="relative w-14 p-0">
               <div class="relative whitespace-nowrap py-4 text-right text-sm font-medium">
-                <span class="absolute -inset-y-px -right-4 left-0 group-hover:bg-zinc-50 sm:rounded-r-xl" />
+                <span class="absolute -inset-y-px -right-4 left-0 group-hover:bg-zinc-50 dark:group-hover:bg-gray-800 sm:rounded-r-xl" />
                 <span
                   :for={action <- @action}
-                  class="relative ml-4 font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
+                  class="relative ml-4 font-semibold leading-6 text-zinc-900 dark:text-zinc-100 hover:text-zinc-700 dark:hover:text-zinc-300"
                 >
                   {render_slot(action, @row_item.(row))}
                 </span>
@@ -669,5 +669,34 @@ defmodule SongbookWeb.CoreComponents do
   """
   def translate_errors(errors, field) when is_list(errors) do
     for {^field, {msg, opts}} <- errors, do: translate_error({msg, opts})
+  end
+
+  @doc """
+  Renders a theme toggle button with three states: light, dark, and system.
+
+  ## Examples
+
+      <.theme_toggle />
+  """
+  attr :class, :string, default: nil
+
+  def theme_toggle(assigns) do
+    ~H"""
+    <div
+      id="theme-toggle"
+      phx-hook="ThemeToggle"
+      class={["flex items-center gap-2", @class]}
+    >
+      <button
+        type="button"
+        class="inline-flex items-center gap-2 rounded-lg bg-gray-100 dark:bg-gray-800 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+        aria-label="Toggle theme"
+      >
+        <.icon name="hero-sun" class="h-5 w-5 dark:hidden" />
+        <.icon name="hero-moon" class="h-5 w-5 hidden dark:block" />
+        <span class="hidden sm:inline">Theme</span>
+      </button>
+    </div>
+    """
   end
 end
