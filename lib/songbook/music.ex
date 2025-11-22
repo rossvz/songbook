@@ -22,5 +22,13 @@ defmodule Songbook.Music do
       define :get_votes_by_voter, action: :read, get_by: :voter_id
       define :has_voted?, action: :read, get_by: [:voter_id, :track_id]
     end
+
+    resource Songbook.Music.Show do
+      define :list_shows, action: :read
+      define :get_show, action: :read, get_by: :id
+      define :create_show, action: :create
+      define :update_show, action: :update
+      define :delete_show, action: :destroy
+    end
   end
 end

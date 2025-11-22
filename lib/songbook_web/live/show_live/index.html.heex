@@ -1,0 +1,104 @@
+<.header>
+  Upcoming Shows
+  <:subtitle>View our upcoming performances</:subtitle>
+  <:actions>
+    <.link patch={~p"/shows/new"}>
+      <.button class="bg-zinc-900 hover:bg-zinc-700">New Show</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<!-- Calendar Component -->
+<div class="mt-8 max-w-2xl mx-auto">
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg border-2 border-gray-200 dark:border-gray-700 p-6">
+    <!-- Month Header -->
+    <div class="text-center font-semibold text-xl mb-4 text-blue-600 dark:text-blue-400">
+      {@calendar_data.month_name}
+    </div>
+
+    <!-- Weekday Labels -->
+    <div class="grid grid-cols-7 gap-1 mb-2">
+      <div class="text-center text-sm font-medium text-gray-500 dark:text-gray-400">Su</div>
+      <div class="text-center text-sm font-medium text-gray-500 dark:text-gray-400">Mo</div>
+      <div class="text-center text-sm font-medium text-gray-500 dark:text-gray-400">Tu</div>
+      <div class="text-center text-sm font-medium text-gray-500 dark:text-gray-400">We</div>
+      <div class="text-center text-sm font-medium text-gray-500 dark:text-gray-400">Th</div>
+      <div class="text-center text-sm font-medium text-gray-500 dark:text-gray-400">Fr</div>
+      <div class="text-center text-sm font-medium text-gray-500 dark:text-gray-400">Sa</div>
+    </div>
+
+    <!-- Calendar Grid -->
+    <div class="grid grid-cols-7 gap-1">
+      <div :for={day <- @calendar_data.days} class={[
+        "aspect-square flex items-center justify-center text-sm rounded relative",
+        if(Map.get(day, :empty), do: "bg-transparent", else: "bg-gray-50 dark:bg-gray-700/30"),
+        if(Map.get(day, :is_today), do: "border-2 border-blue-500 dark:border-blue-400 font-semibold text-blue-600 dark:text-blue-400", else: "text-gray-900 dark:text-gray-100")
+      ]}>
+        <span :if={!Map.get(day, :empty)}>{day.date}</span>
+        <!-- Show Indicator -->
+        <div :if={Map.get(day, :has_show)} class="absolute bottom-1 w-1.5 h-1.5 bg-blue-600 dark:bg-blue-400 rounded-full"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="mt-8 space-y-4" id="shows-list" phx-update="stream">
+  <div
+    :for={{id, show} <- @streams.shows}
+    id={id}
+    class="flex flex-col p-6 rounded-lg shadow-lg bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 transition-all"
+  >
+    <div class="flex items-start justify-between mb-4 pb-4 border-b border-gray-200 dark:border-gray-700">
+      <div class="flex items-center space-x-3">
+        <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+        </svg>
+        <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
+          {format_date(show.date)}
+        </h3>
+      </div>
+    </div>
+
+    <div class="space-y-3">
+      <div class="flex items-center space-x-3">
+        <svg class="w-5 h-5 text-gray-500 dark:text-gray-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+        </svg>
+        <a
+          href={google_maps_url(show)}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-lg text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 hover:underline transition-colors"
+        >
+          {show.venue}
+        </a>
+      </div>
+
+      <div :if={show.time} class="flex items-center space-x-3">
+        <svg class="w-5 h-5 text-gray-500 dark:text-gray-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
+        </svg>
+        <span class="text-gray-700 dark:text-gray-300">{show.time}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div :if={!@has_shows} class="mt-8 text-center py-12">
+  <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+  </svg>
+  <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100">No upcoming shows</h3>
+  <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Check back soon for new performance dates!</p>
+</div>
+
+<.modal :if={@live_action == :new} id="show-modal" show on_cancel={JS.patch(~p"/shows")}>
+  <.live_component
+    module={SongbookWeb.ShowLive.FormComponent}
+    id="new-show-form"
+    page_title={@page_title}
+    action={@live_action}
+    show={@show}
+    patch={~p"/shows"}
+  />
+</.modal>

@@ -29,6 +29,9 @@ defmodule SongbookWeb.Router do
 
     live "/songs/:id", SongLive.Show, :show
     live "/songs/:id/show/edit", SongLive.Show, :edit
+
+    live "/shows", ShowLive.Index, :index
+    live "/shows/new", ShowLive.Index, :new
   end
 
   # Other scopes may use custom stacks.
