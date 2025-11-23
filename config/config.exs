@@ -18,6 +18,9 @@ config :ash,
   read_action_after_action_hooks_in_order?: true,
   bulk_actions_default_to_errors?: true
 
+# Configure timezone database
+config :elixir, :time_zone_database, Tzdata.TimeZoneDatabase
+
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.17.11",

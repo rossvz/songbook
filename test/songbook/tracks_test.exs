@@ -2,7 +2,6 @@ defmodule Songbook.TracksTest do
   use Songbook.DataCase
 
   import Songbook.MusicFixtures
-  import Ash.Test
 
   alias Songbook.Music
 
@@ -13,20 +12,54 @@ defmodule Songbook.TracksTest do
 
     test "list_tracks/0 returns all tracks" do
       track = track_fixture()
-      assert_stripped Music.list_tracks!() == [track]
+      tracks = Music.list_tracks!()
+      assert length(tracks) == 1
+      assert hd(tracks).id == track.id
+      assert hd(tracks).vote_count == 0
     end
 
     test "list_tracks/0 returns the tracks sorted by votes" do
-      track1 = track_fixture(%{votes: 1})
-      track2 = track_fixture(%{votes: 5})
-      track3 = track_fixture(%{votes: 12})
+      track1 = track_fixture()
+      track2 = track_fixture()
+      track3 = track_fixture()
 
-      assert_stripped Music.list_tracks!() == [track3, track2, track1]
+      # Cast votes for each track
+      Music.cast_vote(%{voter_id: "voter1", track_id: track1.id})
+
+      Music.cast_vote(%{voter_id: "voter2", track_id: track2.id})
+      Music.cast_vote(%{voter_id: "voter3", track_id: track2.id})
+      Music.cast_vote(%{voter_id: "voter4", track_id: track2.id})
+      Music.cast_vote(%{voter_id: "voter5", track_id: track2.id})
+      Music.cast_vote(%{voter_id: "voter6", track_id: track2.id})
+
+      Music.cast_vote(%{voter_id: "voter7", track_id: track3.id})
+      Music.cast_vote(%{voter_id: "voter8", track_id: track3.id})
+      Music.cast_vote(%{voter_id: "voter9", track_id: track3.id})
+      Music.cast_vote(%{voter_id: "voter10", track_id: track3.id})
+      Music.cast_vote(%{voter_id: "voter11", track_id: track3.id})
+      Music.cast_vote(%{voter_id: "voter12", track_id: track3.id})
+      Music.cast_vote(%{voter_id: "voter13", track_id: track3.id})
+      Music.cast_vote(%{voter_id: "voter14", track_id: track3.id})
+      Music.cast_vote(%{voter_id: "voter15", track_id: track3.id})
+      Music.cast_vote(%{voter_id: "voter16", track_id: track3.id})
+      Music.cast_vote(%{voter_id: "voter17", track_id: track3.id})
+      Music.cast_vote(%{voter_id: "voter18", track_id: track3.id})
+
+      tracks = Music.list_tracks!()
+      assert length(tracks) == 3
+      assert Enum.at(tracks, 0).id == track3.id
+      assert Enum.at(tracks, 0).vote_count == 12
+      assert Enum.at(tracks, 1).id == track2.id
+      assert Enum.at(tracks, 1).vote_count == 5
+      assert Enum.at(tracks, 2).id == track1.id
+      assert Enum.at(tracks, 2).vote_count == 1
     end
 
     test "get_track!/1 returns the track with given id" do
       track = track_fixture()
-      assert_stripped Music.get_track!(track.id) == track
+      fetched = Music.get_track!(track.id)
+      assert fetched.id == track.id
+      assert fetched.vote_count == 0
     end
 
     test "create_track/1 with valid data creates a track" do
@@ -50,22 +83,45 @@ defmodule Songbook.TracksTest do
       assert {:error, %Ash.Error.Invalid{}} = Music.create_track(@invalid_attrs)
     end
 
-    test "upvote_track/1 increases the votes by 1" do
+    test "cast_vote/1 creates a vote for a track" do
       track = track_fixture()
-      Music.upvote_track(track)
-      assert Music.get_track!(track.id).votes == 1
+      voter_id = "test-voter"
+
+      assert {:ok, _vote} = Music.cast_vote(%{voter_id: voter_id, track_id: track.id})
+
+      updated_track = Music.get_track!(track.id)
+      assert updated_track.vote_count == 1
     end
 
-    test "downvote_track/1 decreases the votes by 1" do
+    test "cast_vote/1 prevents duplicate votes from same voter" do
       track = track_fixture()
-      assert Music.downvote_track(track) == {:ok, %{track | votes: -1}}
-      assert Music.get_track!(track.id).votes == -1
+      voter_id = "test-voter"
+
+      {:ok, _vote} = Music.cast_vote(%{voter_id: voter_id, track_id: track.id})
+
+      # Second vote from same voter should fail
+      assert {:error, _} = Music.cast_vote(%{voter_id: voter_id, track_id: track.id})
+
+      updated_track = Music.get_track!(track.id)
+      assert updated_track.vote_count == 1
     end
 
-    test "reset_votes/1 resets the votes to 0" do
+    test "reset_votes/1 resets all votes for a track to 0" do
       track = track_fixture()
-      assert Music.reset_votes(track) == {:ok, %{track | votes: 0}}
-      assert Music.get_track!(track.id).votes == 0
+
+      # Cast some votes
+      Music.cast_vote(%{voter_id: "voter1", track_id: track.id})
+      Music.cast_vote(%{voter_id: "voter2", track_id: track.id})
+      Music.cast_vote(%{voter_id: "voter3", track_id: track.id})
+
+      # Verify votes exist
+      assert Music.get_track!(track.id).vote_count == 3
+
+      # Reset votes
+      {:ok, _} = Music.reset_votes(track)
+
+      # Verify votes are gone
+      assert Music.get_track!(track.id).vote_count == 0
     end
 
     test "delete_track/1 deletes the track" do

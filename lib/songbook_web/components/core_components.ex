@@ -51,7 +51,11 @@ defmodule SongbookWeb.CoreComponents do
       data-cancel={JS.exec(@on_cancel, "phx-remove")}
       class="relative z-50 hidden"
     >
-      <div id={"#{@id}-bg"} class="bg-zinc-50/90 dark:bg-zinc-900/90 fixed inset-0 transition-opacity" aria-hidden="true" />
+      <div
+        id={"#{@id}-bg"}
+        class="bg-zinc-50/90 dark:bg-zinc-900/90 fixed inset-0 transition-opacity"
+        aria-hidden="true"
+      />
       <div
         class="fixed inset-0 overflow-y-auto"
         aria-labelledby={"#{@id}-title"}
@@ -117,8 +121,10 @@ defmodule SongbookWeb.CoreComponents do
       role="alert"
       class={[
         "fixed top-2 right-2 mr-2 w-80 sm:w-96 z-50 rounded-lg p-3 ring-1",
-        @kind == :info && "bg-emerald-50 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200 ring-emerald-500 dark:ring-emerald-700 fill-cyan-900 dark:fill-cyan-100",
-        @kind == :error && "bg-rose-50 dark:bg-rose-900 text-rose-900 dark:text-rose-200 shadow-md ring-rose-500 dark:ring-rose-700 fill-rose-900 dark:fill-rose-100"
+        @kind == :info &&
+          "bg-emerald-50 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200 ring-emerald-500 dark:ring-emerald-700 fill-cyan-900 dark:fill-cyan-100",
+        @kind == :error &&
+          "bg-rose-50 dark:bg-rose-900 text-rose-900 dark:text-rose-200 shadow-md ring-rose-500 dark:ring-rose-700 fill-rose-900 dark:fill-rose-100"
       ]}
       {@rest}
     >
@@ -203,7 +209,7 @@ defmodule SongbookWeb.CoreComponents do
   def simple_form(assigns) do
     ~H"""
     <.form :let={f} for={@for} as={@as} {@rest}>
-      <div class="mt-10 space-y-8 bg-white">
+      <div class="mt-10 space-y-8 bg-white dark:bg-transparent">
         {render_slot(@inner_block, f)}
         <div :for={action <- @actions} class="mt-2 flex items-center justify-between gap-6">
           {render_slot(action, f)}
@@ -354,10 +360,12 @@ defmodule SongbookWeb.CoreComponents do
         id={@id}
         name={@name}
         class={[
-          "mt-2 block w-full rounded-lg text-zinc-900 dark:text-zinc-100 dark:bg-gray-800 focus:ring-0 sm:text-sm sm:leading-6",
+          "mt-2 block w-full rounded-lg bg-white text-zinc-900 dark:text-zinc-100 dark:bg-gray-700 dark:[color-scheme:dark] focus:ring-0 sm:text-sm sm:leading-6",
           "min-h-[6rem] phx-no-feedback:border-zinc-300 dark:phx-no-feedback:border-zinc-600 phx-no-feedback:focus:border-zinc-400 dark:phx-no-feedback:focus:border-zinc-500",
-          @errors == [] && "border-zinc-300 dark:border-zinc-600 focus:border-zinc-400 dark:focus:border-zinc-500",
-          @errors != [] && "border-rose-400 dark:border-rose-500 focus:border-rose-400 dark:focus:border-rose-500"
+          @errors == [] &&
+            "border-zinc-300 dark:border-zinc-600 focus:border-zinc-400 dark:focus:border-zinc-500",
+          @errors != [] &&
+            "border-rose-400 dark:border-rose-500 focus:border-rose-400 dark:focus:border-rose-500"
         ]}
         {@rest}
       ><%= Phoenix.HTML.Form.normalize_value("textarea", @value) %></textarea>
@@ -377,10 +385,12 @@ defmodule SongbookWeb.CoreComponents do
         id={@id}
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
         class={[
-          "mt-2 block w-full rounded-lg text-zinc-900 dark:text-zinc-100 dark:bg-gray-800 focus:ring-0 sm:text-sm sm:leading-6",
+          "mt-2 block w-full rounded-lg bg-white text-zinc-900 dark:text-zinc-100 dark:bg-gray-700 dark:[color-scheme:dark] focus:ring-0 sm:text-sm sm:leading-6",
           "phx-no-feedback:border-zinc-300 dark:phx-no-feedback:border-zinc-600 phx-no-feedback:focus:border-zinc-400 dark:phx-no-feedback:focus:border-zinc-500",
-          @errors == [] && "border-zinc-300 dark:border-zinc-600 focus:border-zinc-400 dark:focus:border-zinc-500",
-          @errors != [] && "border-rose-400 dark:border-rose-500 focus:border-rose-400 dark:focus:border-rose-500"
+          @errors == [] &&
+            "border-zinc-300 dark:border-zinc-600 focus:border-zinc-400 dark:focus:border-zinc-500",
+          @errors != [] &&
+            "border-rose-400 dark:border-rose-500 focus:border-rose-400 dark:focus:border-rose-500"
         ]}
         {@rest}
       />
@@ -489,14 +499,14 @@ defmodule SongbookWeb.CoreComponents do
           phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"}
           class="relative divide-y divide-zinc-100 dark:divide-zinc-700 border-t border-zinc-200 dark:border-zinc-700 text-sm leading-6 text-zinc-700 dark:text-zinc-300"
         >
-          <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="group hover:bg-zinc-50 dark:hover:bg-gray-800">
+          <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="group">
             <td
               :for={{col, i} <- Enum.with_index(@col)}
               phx-click={@row_click && @row_click.(row)}
               class={["relative p-0", @row_click && "hover:cursor-pointer"]}
             >
               <div class="block py-4 pr-6">
-                <span class="absolute -inset-y-px right-0 -left-4 group-hover:bg-zinc-50 dark:group-hover:bg-gray-800 sm:rounded-l-xl" />
+                <span class="absolute -inset-y-px right-0 -left-4 sm:rounded-l-xl" />
                 <span class={["relative", i == 0 && "font-semibold text-zinc-900 dark:text-zinc-100"]}>
                   {render_slot(col, @row_item.(row))}
                 </span>
@@ -504,10 +514,10 @@ defmodule SongbookWeb.CoreComponents do
             </td>
             <td :if={@action != []} class="relative w-14 p-0">
               <div class="relative whitespace-nowrap py-4 text-right text-sm font-medium">
-                <span class="absolute -inset-y-px -right-4 left-0 group-hover:bg-zinc-50 dark:group-hover:bg-gray-800 sm:rounded-r-xl" />
+                <span class="absolute -inset-y-px -right-4 left-0 sm:rounded-r-xl" />
                 <span
                   :for={action <- @action}
-                  class="relative ml-4 font-semibold leading-6 text-zinc-900 dark:text-zinc-100 hover:text-zinc-700 dark:hover:text-zinc-300"
+                  class="relative ml-4 font-semibold leading-6 text-white dark:text-white bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-800 px-3 py-1.5 rounded-md inline-block"
                 >
                   {render_slot(action, @row_item.(row))}
                 </span>

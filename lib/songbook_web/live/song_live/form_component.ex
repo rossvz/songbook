@@ -38,7 +38,7 @@ defmodule SongbookWeb.SongLive.FormComponent do
             <.button
               type="button"
               class="text-zinc-700 border-2"
-              phx-click={JS.patch(~p"/songs")}
+              phx-click={JS.patch(~p"/admin/songs")}
               phx-target={@myself}
             >
               Cancel

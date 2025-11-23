@@ -15,18 +15,17 @@ defmodule Songbook.Music.Track do
       require_atomic? false
 
       change after_action(fn _changeset, result, _context ->
-        # Delete all votes for this track by loading them first
-        track_with_votes = Songbook.Music.get_track!(result.id, load: [:track_votes])
+               # Delete all votes for this track by loading them first
+               track_with_votes = Songbook.Music.get_track!(result.id, load: [:track_votes])
 
-        track_with_votes.track_votes
-        |> Enum.each(fn vote ->
-          vote
-          |> Ash.Changeset.for_destroy(:destroy)
-          |> Songbook.Music.destroy!()
-        end)
+               Enum.each(track_with_votes.track_votes, fn vote ->
+                 vote
+                 |> Ash.Changeset.for_destroy(:destroy)
+                 |> Songbook.Music.destroy!()
+               end)
 
-        {:ok, result}
-      end)
+               {:ok, result}
+             end)
     end
   end
 
@@ -52,14 +51,14 @@ defmodule Songbook.Music.Track do
     timestamps(type: :utc_datetime)
   end
 
-  aggregates do
-    count :vote_count, :track_votes
-  end
-
   relationships do
     has_many :track_votes, Songbook.Music.Vote do
       source_attribute :id
       destination_attribute :track_id
     end
+  end
+
+  aggregates do
+    count :vote_count, :track_votes
   end
 end

@@ -9,8 +9,10 @@
     class={[
       "flex items-center space-x-4 p-4 rounded-lg shadow transition-shadow border-2",
       if(MapSet.member?(@voted_tracks, song.id),
-        do: "bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700 cursor-not-allowed opacity-75",
-        else: "bg-white dark:bg-gray-800 hover:shadow-lg cursor-pointer hover:border-blue-300 dark:hover:border-blue-600 border-gray-200 dark:border-gray-700"
+        do:
+          "bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700 cursor-not-allowed opacity-75",
+        else:
+          "bg-white dark:bg-gray-800 hover:shadow-lg cursor-pointer hover:border-blue-300 dark:hover:border-blue-600 border-gray-200 dark:border-gray-700"
       )
     ]}
     phx-click={unless MapSet.member?(@voted_tracks, song.id), do: "vote"}
@@ -35,7 +37,11 @@
         ]}>
           <%= if MapSet.member?(@voted_tracks, song.id) do %>
             <!-- Check mark icon for voted -->
-            <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
+            <svg
+              class="w-6 h-6 text-green-600 dark:text-green-400"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
               <path
                 fill-rule="evenodd"
                 d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -45,7 +51,11 @@
             </svg>
           <% else %>
             <!-- Up arrow icon for voting -->
-            <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+            <svg
+              class="w-6 h-6 text-blue-600 dark:text-blue-400"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
               <path
                 fill-rule="evenodd"
                 d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z"
@@ -55,7 +65,9 @@
             </svg>
           <% end %>
         </div>
-        <span class="text-lg font-bold text-gray-900 dark:text-gray-100 mt-1 block">{song.vote_count}</span>
+        <span class="text-lg font-bold text-gray-900 dark:text-gray-100 mt-1 block">
+          {song.vote_count}
+        </span>
         <span class="text-xs text-gray-500 dark:text-gray-400">
           {if MapSet.member?(@voted_tracks, song.id), do: "voted", else: "votes"}
         </span>

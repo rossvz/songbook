@@ -10,18 +10,20 @@ defmodule SongbookWeb.Plugs.VoterSession do
 
   def call(conn, _opts) do
     {conn, voter_id} = get_or_create_voter_id(conn)
-    conn
-    |> assign(:voter_id, voter_id)
+
+    assign(conn, :voter_id, voter_id)
   end
 
   defp get_or_create_voter_id(conn) do
     case get_session(conn, @cookie_name) do
       nil ->
         voter_id = generate_voter_id()
+
         updated_conn =
           conn
           |> put_session(@cookie_name, voter_id)
           |> configure_session(renew: true)
+
         {updated_conn, voter_id}
 
       voter_id when is_binary(voter_id) ->

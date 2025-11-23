@@ -76,6 +76,7 @@ defmodule Songbook.MixProject do
       {:telemetry_poller, "~> 1.1"},
       {:tesla, "~> 1.14"},
       {:tidewave, "~> 0.4", only: :dev},
+      {:tzdata, "~> 1.1"},
       {:igniter, "~> 0.6", only: [:dev, :test]}
     ]
   end
