@@ -8,10 +8,11 @@ defmodule SongbookWeb.ShowLive.Index do
   @impl true
   def mount(_params, _session, socket) do
     shows = get_future_shows()
-    calendar_data = build_calendar(shows)
+    calendar_data = build_calendar(shows, nil)
 
     {:ok, socket
       |> assign(:has_shows, length(shows) > 0)
+      |> assign(:selected_date, nil)
       |> assign(:calendar_data, calendar_data)
       |> stream(:shows, shows)}
   end
@@ -24,6 +25,33 @@ defmodule SongbookWeb.ShowLive.Index do
   defp apply_action(socket, :index, _params) do
     socket
     |> assign(:page_title, "Upcoming Shows")
+  end
+
+  @impl true
+  def handle_event("select_date", %{"date" => date_string}, socket) do
+    selected_date = Date.from_iso8601!(date_string)
+    all_shows = get_future_shows()
+
+    filtered_shows = Enum.filter(all_shows, fn show ->
+      Date.compare(show.date, selected_date) == :eq
+    end)
+
+    calendar_data = build_calendar(all_shows, selected_date)
+
+    {:noreply, socket
+      |> assign(:selected_date, selected_date)
+      |> assign(:calendar_data, calendar_data)
+      |> stream(:shows, filtered_shows, reset: true)}
+  end
+
+  def handle_event("clear_date_filter", _params, socket) do
+    all_shows = get_future_shows()
+    calendar_data = build_calendar(all_shows, nil)
+
+    {:noreply, socket
+      |> assign(:selected_date, nil)
+      |> assign(:calendar_data, calendar_data)
+      |> stream(:shows, all_shows, reset: true)}
   end
 
   def format_date(date) do
@@ -50,7 +78,7 @@ defmodule SongbookWeb.ShowLive.Index do
     |> Enum.filter(fn show -> Date.compare(show.date, today) != :lt end)
   end
 
-  defp build_calendar(shows) do
+  defp build_calendar(shows, selected_date) do
     # Use Eastern timezone for everything
     eastern_now = DateTime.now!("America/New_York")
     today = DateTime.to_date(eastern_now)
@@ -79,8 +107,10 @@ defmodule SongbookWeb.ShowLive.Index do
       date = Date.new!(current_month.year, current_month.month, day)
       %{
         date: day,
+        full_date: Date.to_iso8601(date),
         has_show: MapSet.member?(show_dates, date),
-        is_today: Date.compare(date, today) == :eq
+        is_today: Date.compare(date, today) == :eq,
+        is_selected: selected_date && Date.compare(date, selected_date) == :eq
       }
     end)
 

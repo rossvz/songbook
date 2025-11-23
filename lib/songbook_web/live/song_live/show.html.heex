@@ -2,7 +2,7 @@
   {@track.title}
   <:subtitle>by {@track.artist}</:subtitle>
   <:actions>
-    <.link patch={~p"/songs/#{@track}/show/edit"} phx-click={JS.push_focus()}>
+    <.link patch={~p"/admin/songs/#{@track}/show/edit"} phx-click={JS.push_focus()}>
       <.button>Edit song</.button>
     </.link>
   </:actions>
@@ -17,13 +17,13 @@
   <:item title="Spotify ID">{@track.spotify_id}</:item>
 </.list>
 
-<.back navigate={~p"/songs"}>Back to songs</.back>
+<.back navigate={~p"/admin/songs"}>Back to songs</.back>
 
 <.modal
   :if={@live_action == :edit}
   id="song-modal"
   show
-  on_cancel={JS.patch(~p"/songs/#{@track}")}
+  on_cancel={JS.patch(~p"/admin/songs/#{@track}")}
 >
   <.live_component
     module={SongbookWeb.SongLive.FormComponent}
@@ -31,6 +31,6 @@
     title={@page_title}
     action={@live_action}
     track={@track}
-    patch={~p"/songs/#{@track}"}
+    patch={~p"/admin/songs/#{@track}"}
   />
 </.modal>

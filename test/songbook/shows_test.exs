@@ -90,5 +90,80 @@ defmodule Songbook.ShowsTest do
       loaded_show = Music.get_show!(past_show.id, load: [:is_future])
       assert loaded_show.is_future == false
     end
+
+    test "create_show/1 allows past dates" do
+      past_date = ~D[2020-01-01]
+      valid_attrs = %{date: past_date, venue: "Historic Venue"}
+
+      assert {:ok, %Show{} = show} = Music.create_show(valid_attrs)
+      assert show.date == past_date
+    end
+
+    test "create_show/1 requires date field" do
+      invalid_attrs = %{venue: "Some Venue"}
+      assert {:error, %Ash.Error.Invalid{}} = Music.create_show(invalid_attrs)
+    end
+
+    test "create_show/1 requires venue field" do
+      invalid_attrs = %{date: ~D[2025-12-31]}
+      assert {:error, %Ash.Error.Invalid{}} = Music.create_show(invalid_attrs)
+    end
+
+    test "allows multiple shows at the same venue" do
+      venue = "The Blue Note"
+      show1 = show_fixture(%{venue: venue, date: ~D[2025-01-15]})
+      show2 = show_fixture(%{venue: venue, date: ~D[2025-02-20]})
+
+      assert show1.venue == venue
+      assert show2.venue == venue
+      assert show1.id != show2.id
+    end
+
+    test "allows multiple shows on the same date" do
+      date = ~D[2025-12-31]
+      show1 = show_fixture(%{date: date, venue: "Venue A"})
+      show2 = show_fixture(%{date: date, venue: "Venue B"})
+
+      assert show1.date == date
+      assert show2.date == date
+      assert show1.id != show2.id
+    end
+
+    test "update_show/2 can update date" do
+      show = show_fixture()
+      new_date = ~D[2026-06-15]
+      update_attrs = %{date: new_date}
+
+      assert {:ok, %Show{} = updated_show} = Music.update_show(show, update_attrs)
+      assert updated_show.date == new_date
+    end
+
+    test "update_show/2 can clear optional time field" do
+      show = show_fixture(%{time: "9:00 PM"})
+      update_attrs = %{time: nil}
+
+      assert {:ok, %Show{} = updated_show} = Music.update_show(show, update_attrs)
+      assert updated_show.time == nil
+    end
+
+    test "update_show/2 preserves unchanged fields" do
+      show = show_fixture(%{venue: "Original Venue", time: "8:00 PM"})
+      update_attrs = %{time: "9:00 PM"}
+
+      assert {:ok, %Show{} = updated_show} = Music.update_show(show, update_attrs)
+      assert updated_show.venue == "Original Venue"
+      assert updated_show.time == "9:00 PM"
+    end
+
+    test "coordinates stored as Decimal types" do
+      lat = Decimal.new("40.7580")
+      lng = Decimal.new("-73.9855")
+      show = show_fixture(%{latitude: lat, longitude: lng})
+
+      assert show.latitude == lat
+      assert show.longitude == lng
+      assert is_struct(show.latitude, Decimal)
+      assert is_struct(show.longitude, Decimal)
+    end
   end
 end

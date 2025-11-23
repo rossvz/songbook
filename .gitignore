@@ -41,3 +41,4 @@ npm-debug.log
 data/
 
 .playwright-mcp/
+.claude/settings.local.json
