@@ -1,14 +1,12 @@
 name: Elixir CI
 
 # Define workflow that runs when changes are pushed to the
-# `main` branch or pushed to a PR branch that targets the `main`
-# branch. Change the branch name if your project uses a
-# different name for the main branch like "master" or "production".
+# `main` branch or when a PR is opened/updated
 on:
   push:
-    branches: [ "master" ]  # adapt branch for project
+    branches: [ "master" ]
   pull_request:
-    branches: [ "master" ]  # adapt branch for project
+    # Run on all PRs, regardless of target branch
 
 # Sets the ENV `MIX_ENV` to `test` for running tests
 env:
@@ -104,12 +102,6 @@ jobs:
     - name: Compiles without warnings
       run: mix compile --warnings-as-errors
 
-    # Step: Check that the checked in code has already been formatted.
-    # This step fails if something was found unformatted.
-    # Customize this step as desired.
-    - name: Check Formatting
-      run: mix format --check-formatted
-
-    # Step: Execute the tests.
-    - name: Run tests
-      run: mix test
+    # Step: Run CI tasks (format check + tests)
+    - name: Run CI
+      run: mix ci
