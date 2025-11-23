@@ -1,9 +1,10 @@
 defmodule Songbook.ShowsTest do
   use Songbook.DataCase
 
-  import Songbook.MusicFixtures
   import Ash.Test
+  import Songbook.MusicFixtures
 
+  alias Ash.Error.Invalid
   alias Songbook.Music
 
   describe "shows" do
@@ -61,7 +62,7 @@ defmodule Songbook.ShowsTest do
     end
 
     test "create_show/1 with invalid data returns error changeset" do
-      assert {:error, %Ash.Error.Invalid{}} = Music.create_show(@invalid_attrs)
+      assert {:error, %Invalid{}} = Music.create_show(@invalid_attrs)
     end
 
     test "update_show/2 with valid data updates the show" do
@@ -76,7 +77,7 @@ defmodule Songbook.ShowsTest do
     test "delete_show/1 deletes the show" do
       show = show_fixture()
       assert Music.delete_show(show) == :ok
-      assert_raise Ash.Error.Invalid, fn -> Music.get_show!(show.id) end
+      assert_raise Invalid, fn -> Music.get_show!(show.id) end
     end
 
     test "is_future calculation returns true for future shows" do
@@ -101,12 +102,12 @@ defmodule Songbook.ShowsTest do
 
     test "create_show/1 requires date field" do
       invalid_attrs = %{venue: "Some Venue"}
-      assert {:error, %Ash.Error.Invalid{}} = Music.create_show(invalid_attrs)
+      assert {:error, %Invalid{}} = Music.create_show(invalid_attrs)
     end
 
     test "create_show/1 requires venue field" do
       invalid_attrs = %{date: ~D[2025-12-31]}
-      assert {:error, %Ash.Error.Invalid{}} = Music.create_show(invalid_attrs)
+      assert {:error, %Invalid{}} = Music.create_show(invalid_attrs)
     end
 
     test "allows multiple shows at the same venue" do

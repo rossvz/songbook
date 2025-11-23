@@ -6,7 +6,7 @@ defmodule SongbookWeb.ShowLive.FormComponent do
 
   @impl true
   def update(%{show: show} = assigns, socket) do
-    form =
+    if_result =
       if show.id do
         AshPhoenix.Form.for_update(show, :update,
           domain: Music,
@@ -18,7 +18,8 @@ defmodule SongbookWeb.ShowLive.FormComponent do
           as: "show"
         )
       end
-      |> to_form()
+
+    form = to_form(if_result)
 
     {:ok,
      socket
@@ -56,7 +57,10 @@ defmodule SongbookWeb.ShowLive.FormComponent do
         <.input field={@form[:longitude]} type="hidden" />
 
         <:actions>
-          <.button phx-disable-with="Saving..." class="bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600">
+          <.button
+            phx-disable-with="Saving..."
+            class="bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600"
+          >
             Save Show
           </.button>
         </:actions>
@@ -98,7 +102,10 @@ defmodule SongbookWeb.ShowLive.FormComponent do
 
         {:noreply,
          socket
-         |> put_flash(:info, "Show #{if socket.assigns.show.id, do: "updated", else: "created"} successfully")
+         |> put_flash(
+           :info,
+           "Show #{if socket.assigns.show.id, do: "updated", else: "created"} successfully"
+         )
          |> push_patch(to: socket.assigns.patch)}
 
       {:error, form} ->

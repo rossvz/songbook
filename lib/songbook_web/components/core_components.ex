@@ -51,7 +51,11 @@ defmodule SongbookWeb.CoreComponents do
       data-cancel={JS.exec(@on_cancel, "phx-remove")}
       class="relative z-50 hidden"
     >
-      <div id={"#{@id}-bg"} class="bg-zinc-50/90 dark:bg-zinc-900/90 fixed inset-0 transition-opacity" aria-hidden="true" />
+      <div
+        id={"#{@id}-bg"}
+        class="bg-zinc-50/90 dark:bg-zinc-900/90 fixed inset-0 transition-opacity"
+        aria-hidden="true"
+      />
       <div
         class="fixed inset-0 overflow-y-auto"
         aria-labelledby={"#{@id}-title"}
@@ -117,8 +121,10 @@ defmodule SongbookWeb.CoreComponents do
       role="alert"
       class={[
         "fixed top-2 right-2 mr-2 w-80 sm:w-96 z-50 rounded-lg p-3 ring-1",
-        @kind == :info && "bg-emerald-50 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200 ring-emerald-500 dark:ring-emerald-700 fill-cyan-900 dark:fill-cyan-100",
-        @kind == :error && "bg-rose-50 dark:bg-rose-900 text-rose-900 dark:text-rose-200 shadow-md ring-rose-500 dark:ring-rose-700 fill-rose-900 dark:fill-rose-100"
+        @kind == :info &&
+          "bg-emerald-50 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200 ring-emerald-500 dark:ring-emerald-700 fill-cyan-900 dark:fill-cyan-100",
+        @kind == :error &&
+          "bg-rose-50 dark:bg-rose-900 text-rose-900 dark:text-rose-200 shadow-md ring-rose-500 dark:ring-rose-700 fill-rose-900 dark:fill-rose-100"
       ]}
       {@rest}
     >
@@ -356,8 +362,10 @@ defmodule SongbookWeb.CoreComponents do
         class={[
           "mt-2 block w-full rounded-lg bg-white text-zinc-900 dark:text-zinc-100 dark:bg-gray-700 dark:[color-scheme:dark] focus:ring-0 sm:text-sm sm:leading-6",
           "min-h-[6rem] phx-no-feedback:border-zinc-300 dark:phx-no-feedback:border-zinc-600 phx-no-feedback:focus:border-zinc-400 dark:phx-no-feedback:focus:border-zinc-500",
-          @errors == [] && "border-zinc-300 dark:border-zinc-600 focus:border-zinc-400 dark:focus:border-zinc-500",
-          @errors != [] && "border-rose-400 dark:border-rose-500 focus:border-rose-400 dark:focus:border-rose-500"
+          @errors == [] &&
+            "border-zinc-300 dark:border-zinc-600 focus:border-zinc-400 dark:focus:border-zinc-500",
+          @errors != [] &&
+            "border-rose-400 dark:border-rose-500 focus:border-rose-400 dark:focus:border-rose-500"
         ]}
         {@rest}
       ><%= Phoenix.HTML.Form.normalize_value("textarea", @value) %></textarea>
@@ -379,8 +387,10 @@ defmodule SongbookWeb.CoreComponents do
         class={[
           "mt-2 block w-full rounded-lg bg-white text-zinc-900 dark:text-zinc-100 dark:bg-gray-700 dark:[color-scheme:dark] focus:ring-0 sm:text-sm sm:leading-6",
           "phx-no-feedback:border-zinc-300 dark:phx-no-feedback:border-zinc-600 phx-no-feedback:focus:border-zinc-400 dark:phx-no-feedback:focus:border-zinc-500",
-          @errors == [] && "border-zinc-300 dark:border-zinc-600 focus:border-zinc-400 dark:focus:border-zinc-500",
-          @errors != [] && "border-rose-400 dark:border-rose-500 focus:border-rose-400 dark:focus:border-rose-500"
+          @errors == [] &&
+            "border-zinc-300 dark:border-zinc-600 focus:border-zinc-400 dark:focus:border-zinc-500",
+          @errors != [] &&
+            "border-rose-400 dark:border-rose-500 focus:border-rose-400 dark:focus:border-rose-500"
         ]}
         {@rest}
       />

@@ -9,9 +9,10 @@ defmodule SongbookWeb.ShowLive.Admin do
   def mount(_params, _session, socket) do
     shows = Music.list_shows!()
 
-    {:ok, socket
-      |> assign(:page_title, "Manage Shows")
-      |> stream(:shows, shows)}
+    {:ok,
+     socket
+     |> assign(:page_title, "Manage Shows")
+     |> stream(:shows, shows)}
   end
 
   @impl true
@@ -51,7 +52,6 @@ defmodule SongbookWeb.ShowLive.Admin do
   end
 
   def format_date(date) do
-    date
-    |> Calendar.strftime("%A, %B %-d, %Y")
+    Calendar.strftime(date, "%A, %B %-d, %Y")
   end
 end

@@ -9,7 +9,11 @@
 </.header>
 
 <div :if={@track.album_artwork_url} class="mb-6">
-  <img src={@track.album_artwork_url} alt={"#{@track.title} album artwork"} class="rounded-lg shadow-lg max-w-md" />
+  <img
+    src={@track.album_artwork_url}
+    alt={"#{@track.title} album artwork"}
+    class="rounded-lg shadow-lg max-w-md"
+  />
 </div>
 
 <.list>

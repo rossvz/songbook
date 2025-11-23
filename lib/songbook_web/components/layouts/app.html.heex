@@ -2,18 +2,25 @@
   <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
     <div class="flex justify-between items-center">
       <nav class="flex items-center space-x-2">
-        <.link navigate={~p"/"} class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-gray-700 dark:text-white bg-gray-50 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
-          <.icon name="hero-musical-note" class="w-5 h-5" />
-          Songs
+        <.link
+          navigate={~p"/"}
+          class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-gray-700 dark:text-white bg-gray-50 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+        >
+          <.icon name="hero-musical-note" class="w-5 h-5" /> Songs
         </.link>
-        <.link navigate={~p"/shows"} class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-gray-700 dark:text-white bg-gray-50 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
-          <.icon name="hero-calendar-days" class="w-5 h-5" />
-          Shows
+        <.link
+          navigate={~p"/shows"}
+          class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-gray-700 dark:text-white bg-gray-50 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+        >
+          <.icon name="hero-calendar-days" class="w-5 h-5" /> Shows
         </.link>
       </nav>
       <nav class="flex items-center space-x-4">
         <.theme_toggle />
-        <.link navigate={~p"/admin/songs"} class="px-3 py-1 bg-blue-600 dark:bg-blue-500 text-white rounded hover:bg-blue-700 dark:hover:bg-blue-600">
+        <.link
+          navigate={~p"/admin/songs"}
+          class="px-3 py-1 bg-blue-600 dark:bg-blue-500 text-white rounded hover:bg-blue-700 dark:hover:bg-blue-600"
+        >
           Admin
         </.link>
       </nav>

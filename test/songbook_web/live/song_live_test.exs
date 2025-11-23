@@ -12,7 +12,7 @@ defmodule SongbookWeb.SongLiveTest do
 
   defp authenticate(conn) do
     credentials = Plug.BasicAuth.encode_basic_auth("admin", "admin")
-    conn |> Plug.Conn.put_req_header("authorization", credentials)
+    Plug.Conn.put_req_header(conn, "authorization", credentials)
   end
 
   describe "Index" do
