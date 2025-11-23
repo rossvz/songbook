@@ -15,23 +15,40 @@ defmodule SongbookWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :admin do
+    plug :basic_auth
+  end
+
+  defp basic_auth(conn, _opts) do
+    username = Application.get_env(:songbook, :admin_username, "admin")
+    password = Application.get_env(:songbook, :admin_password, "admin")
+
+    Plug.BasicAuth.basic_auth(conn, username: username, password: password)
+  end
+
+  # Public routes
   scope "/", SongbookWeb do
     pipe_through :browser
 
     live "/", VoteLive.Index, :index
     get "/search", SpotifyController, :search
-
     live "/vote", VoteLive.Index, :index
+    live "/shows", ShowLive.Index, :index
+  end
+
+  # Admin routes - protected by BasicAuth
+  scope "/admin", SongbookWeb do
+    pipe_through [:browser, :admin]
 
     live "/songs", SongLive.Index, :index
     live "/songs/new", SongLive.Index, :new
     live "/songs/:id/edit", SongLive.Index, :edit
-
     live "/songs/:id", SongLive.Show, :show
     live "/songs/:id/show/edit", SongLive.Show, :edit
 
-    live "/shows", ShowLive.Index, :index
-    live "/shows/new", ShowLive.Index, :new
+    live "/shows", ShowLive.Admin, :index
+    live "/shows/new", ShowLive.Admin, :new
+    live "/shows/:id/edit", ShowLive.Admin, :edit
   end
 
   # Other scopes may use custom stacks.

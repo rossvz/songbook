@@ -1,22 +1,27 @@
-<header class="bg-white dark:bg-gray-800 shadow dark:shadow-gray-900/50 transition-colors duration-200">
+<header class="bg-white dark:bg-gray-800 shadow-md dark:shadow-gray-900/70 transition-colors duration-200">
   <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
     <div class="flex justify-between items-center">
-      <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">Songbook</h1>
-      <nav class="flex items-center space-x-4">
-        <.link navigate={~p"/"} class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">Vote</.link>
-        <.link navigate={~p"/songs"} class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
-          Manage Songs
+      <nav class="flex items-center space-x-2">
+        <.link navigate={~p"/"} class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-gray-700 dark:text-white bg-gray-50 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+          <.icon name="hero-musical-note" class="w-5 h-5" />
+          Songs
         </.link>
-        <.link navigate={~p"/shows"} class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
+        <.link navigate={~p"/shows"} class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-gray-700 dark:text-white bg-gray-50 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+          <.icon name="hero-calendar-days" class="w-5 h-5" />
           Shows
         </.link>
+      </nav>
+      <nav class="flex items-center space-x-4">
         <.theme_toggle />
+        <.link navigate={~p"/admin/songs"} class="px-3 py-1 bg-blue-600 dark:bg-blue-500 text-white rounded hover:bg-blue-700 dark:hover:bg-blue-600">
+          Admin
+        </.link>
       </nav>
     </div>
   </div>
 </header>
 
-<main class="px-4 py-20 sm:px-6 lg:px-8 bg-white dark:bg-gray-900 min-h-screen transition-colors duration-200">
+<main class="px-4 py-8 sm:px-6 lg:px-8 bg-gray-100 dark:bg-gray-900 min-h-screen transition-colors duration-200">
   <div class="mx-auto max-w-2xl">
     <.flash_group flash={@flash} />
     {@inner_content}

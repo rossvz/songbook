@@ -21,28 +21,9 @@ defmodule SongbookWeb.ShowLive.Index do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
-  @impl true
-  def handle_info({SongbookWeb.ShowLive.FormComponent, {:saved, _show}}, socket) do
-    # Reload all future shows and rebuild calendar to show the new show indicator
-    shows = get_future_shows()
-    calendar_data = build_calendar(shows)
-
-    {:noreply, socket
-      |> assign(:calendar_data, calendar_data)
-      |> assign(:has_shows, length(shows) > 0)
-      |> stream(:shows, shows, reset: true)}
-  end
-
-  defp apply_action(socket, :new, _params) do
-    socket
-    |> assign(:page_title, "New Show")
-    |> assign(:show, %Show{})
-  end
-
   defp apply_action(socket, :index, _params) do
     socket
     |> assign(:page_title, "Upcoming Shows")
-    |> assign(:show, nil)
   end
 
   def format_date(date) do

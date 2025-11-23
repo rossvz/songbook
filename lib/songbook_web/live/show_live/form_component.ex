@@ -31,7 +31,7 @@ defmodule SongbookWeb.ShowLive.FormComponent do
     ~H"""
     <div>
       <.header>
-        {@page_title}
+        {@title}
         <:subtitle>Fill in the show details below</:subtitle>
       </.header>
 
@@ -56,7 +56,7 @@ defmodule SongbookWeb.ShowLive.FormComponent do
         <.input field={@form[:longitude]} type="hidden" />
 
         <:actions>
-          <.button phx-disable-with="Saving..." class="bg-zinc-900 hover:bg-zinc-700">
+          <.button phx-disable-with="Saving..." class="bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600">
             Save Show
           </.button>
         </:actions>

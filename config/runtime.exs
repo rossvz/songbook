@@ -136,3 +136,9 @@ end
 # For Google Places Autocomplete
 # Get your API key from: https://console.cloud.google.com/google/maps-apis
 config :songbook, :google_maps_api_key, System.get_env("GOOGLE_MAPS_API_KEY", "")
+
+###### Admin Authentication
+# BasicAuth credentials for /admin/* routes
+config :songbook,
+  admin_username: System.get_env("ADMIN_USERNAME", "admin"),
+  admin_password: System.get_env("ADMIN_PASSWORD", "admin")
