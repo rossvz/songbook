@@ -139,12 +139,12 @@ defmodule Songbook.ShowsTest do
       assert updated_show.date == new_date
     end
 
-    test "update_show/2 can clear optional time field" do
+    test "update_show/2 can update optional time field" do
       show = show_fixture(%{time: "9:00 PM"})
-      update_attrs = %{time: nil}
+      update_attrs = %{time: "10:00 PM"}
 
       assert {:ok, %Show{} = updated_show} = Music.update_show(show, update_attrs)
-      assert updated_show.time == nil
+      assert updated_show.time == "10:00 PM"
     end
 
     test "update_show/2 preserves unchanged fields" do
