@@ -10,18 +10,14 @@ defmodule Songbook.Application do
   @impl true
   def start(_type, _args) do
     children =
-      Enum.reject(
-        [
-          SongbookWeb.Telemetry,
-          Songbook.Repo,
-          {DNSCluster, query: Application.get_env(:songbook, :dns_cluster_query) || :ignore},
-          {Phoenix.PubSub, name: Songbook.PubSub},
-          {Finch, name: Songbook.Finch},
-          spotify_auth(),
-          SongbookWeb.Endpoint
-        ],
-        &is_nil/1
-      )
+      [
+        SongbookWeb.Telemetry,
+        Songbook.Repo,
+        {DNSCluster, query: Application.get_env(:songbook, :dns_cluster_query) || :ignore},
+        {Phoenix.PubSub, name: Songbook.PubSub},
+        {Finch, name: Songbook.Finch},
+        SongbookWeb.Endpoint
+      ] ++ spotify_auth()
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
@@ -41,7 +37,9 @@ defmodule Songbook.Application do
     config = Application.get_env(:songbook, Songbook.Spotify)
 
     if config[:start_auth] do
-      Auth
+      [Auth]
+    else
+      []
     end
   end
 end

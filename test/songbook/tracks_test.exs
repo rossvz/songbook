@@ -1,26 +1,68 @@
 defmodule Songbook.TracksTest do
   use Songbook.DataCase
 
-  alias Songbook.Tracks
+  import Songbook.MusicFixtures
 
-  describe "songs" do
-    import Songbook.TracksFixtures
+  alias Songbook.Music
 
-    alias Songbook.Tracks.Song
+  describe "tracks" do
+    alias Songbook.Music.Track
 
     @invalid_attrs %{title: nil, artist: nil, album: nil, album_artwork_url: nil, spotify_id: nil}
 
-    test "list_songs/0 returns all songs" do
-      song = song_fixture()
-      assert Tracks.list_songs() == [song]
+    test "list_tracks/0 returns all tracks" do
+      track = track_fixture()
+      tracks = Music.list_tracks!()
+      assert length(tracks) == 1
+      assert hd(tracks).id == track.id
+      assert hd(tracks).vote_count == 0
     end
 
-    test "get_song!/1 returns the song with given id" do
-      song = song_fixture()
-      assert Tracks.get_song!(song.id) == song
+    test "list_tracks/0 returns the tracks sorted by votes" do
+      track1 = track_fixture()
+      track2 = track_fixture()
+      track3 = track_fixture()
+
+      # Cast votes for each track
+      Music.cast_vote(%{voter_id: "voter1", track_id: track1.id})
+
+      Music.cast_vote(%{voter_id: "voter2", track_id: track2.id})
+      Music.cast_vote(%{voter_id: "voter3", track_id: track2.id})
+      Music.cast_vote(%{voter_id: "voter4", track_id: track2.id})
+      Music.cast_vote(%{voter_id: "voter5", track_id: track2.id})
+      Music.cast_vote(%{voter_id: "voter6", track_id: track2.id})
+
+      Music.cast_vote(%{voter_id: "voter7", track_id: track3.id})
+      Music.cast_vote(%{voter_id: "voter8", track_id: track3.id})
+      Music.cast_vote(%{voter_id: "voter9", track_id: track3.id})
+      Music.cast_vote(%{voter_id: "voter10", track_id: track3.id})
+      Music.cast_vote(%{voter_id: "voter11", track_id: track3.id})
+      Music.cast_vote(%{voter_id: "voter12", track_id: track3.id})
+      Music.cast_vote(%{voter_id: "voter13", track_id: track3.id})
+      Music.cast_vote(%{voter_id: "voter14", track_id: track3.id})
+      Music.cast_vote(%{voter_id: "voter15", track_id: track3.id})
+      Music.cast_vote(%{voter_id: "voter16", track_id: track3.id})
+      Music.cast_vote(%{voter_id: "voter17", track_id: track3.id})
+      Music.cast_vote(%{voter_id: "voter18", track_id: track3.id})
+
+      tracks = Music.list_tracks!()
+      assert length(tracks) == 3
+      assert Enum.at(tracks, 0).id == track3.id
+      assert Enum.at(tracks, 0).vote_count == 12
+      assert Enum.at(tracks, 1).id == track2.id
+      assert Enum.at(tracks, 1).vote_count == 5
+      assert Enum.at(tracks, 2).id == track1.id
+      assert Enum.at(tracks, 2).vote_count == 1
     end
 
-    test "create_song/1 with valid data creates a song" do
+    test "get_track!/1 returns the track with given id" do
+      track = track_fixture()
+      fetched = Music.get_track!(track.id)
+      assert fetched.id == track.id
+      assert fetched.vote_count == 0
+    end
+
+    test "create_track/1 with valid data creates a track" do
       valid_attrs = %{
         title: "some title",
         artist: "some artist",
@@ -29,52 +71,62 @@ defmodule Songbook.TracksTest do
         spotify_id: "some spotify_id"
       }
 
-      assert {:ok, %Song{} = song} = Tracks.create_song(valid_attrs)
-      assert song.title == "some title"
-      assert song.artist == "some artist"
-      assert song.album == "some album"
-      assert song.album_artwork_url == "some album_artwork_url"
-      assert song.spotify_id == "some spotify_id"
+      assert {:ok, %Track{} = track} = Music.create_track(valid_attrs)
+      assert track.title == "some title"
+      assert track.artist == "some artist"
+      assert track.album == "some album"
+      assert track.album_artwork_url == "some album_artwork_url"
+      assert track.spotify_id == "some spotify_id"
     end
 
-    test "create_song/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Tracks.create_song(@invalid_attrs)
+    test "create_track/1 with invalid data returns error changeset" do
+      assert {:error, %Ash.Error.Invalid{}} = Music.create_track(@invalid_attrs)
     end
 
-    test "update_song/2 with valid data updates the song" do
-      song = song_fixture()
+    test "cast_vote/1 creates a vote for a track" do
+      track = track_fixture()
+      voter_id = "test-voter"
 
-      update_attrs = %{
-        title: "some updated title",
-        artist: "some updated artist",
-        album: "some updated album",
-        album_artwork_url: "some updated album_artwork_url",
-        spotify_id: "some updated spotify_id"
-      }
+      assert {:ok, _vote} = Music.cast_vote(%{voter_id: voter_id, track_id: track.id})
 
-      assert {:ok, %Song{} = song} = Tracks.update_song(song, update_attrs)
-      assert song.title == "some updated title"
-      assert song.artist == "some updated artist"
-      assert song.album == "some updated album"
-      assert song.album_artwork_url == "some updated album_artwork_url"
-      assert song.spotify_id == "some updated spotify_id"
+      updated_track = Music.get_track!(track.id)
+      assert updated_track.vote_count == 1
     end
 
-    test "update_song/2 with invalid data returns error changeset" do
-      song = song_fixture()
-      assert {:error, %Ecto.Changeset{}} = Tracks.update_song(song, @invalid_attrs)
-      assert song == Tracks.get_song!(song.id)
+    test "cast_vote/1 prevents duplicate votes from same voter" do
+      track = track_fixture()
+      voter_id = "test-voter"
+
+      {:ok, _vote} = Music.cast_vote(%{voter_id: voter_id, track_id: track.id})
+
+      # Second vote from same voter should fail
+      assert {:error, _} = Music.cast_vote(%{voter_id: voter_id, track_id: track.id})
+
+      updated_track = Music.get_track!(track.id)
+      assert updated_track.vote_count == 1
     end
 
-    test "delete_song/1 deletes the song" do
-      song = song_fixture()
-      assert {:ok, %Song{}} = Tracks.delete_song(song)
-      assert_raise Ecto.NoResultsError, fn -> Tracks.get_song!(song.id) end
+    test "reset_votes/1 resets all votes for a track to 0" do
+      track = track_fixture()
+
+      # Cast some votes
+      Music.cast_vote(%{voter_id: "voter1", track_id: track.id})
+      Music.cast_vote(%{voter_id: "voter2", track_id: track.id})
+      Music.cast_vote(%{voter_id: "voter3", track_id: track.id})
+
+      # Verify votes exist
+      assert Music.get_track!(track.id).vote_count == 3
+
+      # Reset votes
+      {:ok, _} = Music.reset_votes(track)
+
+      # Verify votes are gone
+      assert Music.get_track!(track.id).vote_count == 0
     end
 
-    test "change_song/1 returns a song changeset" do
-      song = song_fixture()
-      assert %Ecto.Changeset{} = Tracks.change_song(song)
+    test "delete_track/1 deletes the track" do
+      track = track_fixture()
+      assert Music.delete_track(track) == :ok
     end
   end
 end

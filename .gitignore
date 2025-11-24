@@ -39,3 +39,6 @@ npm-debug.log
 
 ## docker database
 data/
+
+.playwright-mcp/
+.claude/settings.local.json

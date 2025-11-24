@@ -21,11 +21,68 @@ import "phoenix_html"
 import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
 import topbar from "../vendor/topbar"
+import PlacesAutocomplete from "./hooks/places_autocomplete"
+
+let Hooks = {}
+
+Hooks.ThemeToggle = {
+  mounted() {
+    this.initTheme()
+
+    this.el.addEventListener('click', (e) => {
+      if (e.target.closest('button')) {
+        this.toggleTheme()
+      }
+    })
+  },
+
+  initTheme() {
+    const savedTheme = localStorage.getItem('theme')
+    const html = document.documentElement
+
+    if (savedTheme) {
+      if (savedTheme === 'dark') {
+        html.classList.add('dark')
+      }
+    } else {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+      if (prefersDark) {
+        html.classList.add('dark')
+      }
+    }
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+      if (!localStorage.getItem('theme')) {
+        if (e.matches) {
+          html.classList.add('dark')
+        } else {
+          html.classList.remove('dark')
+        }
+      }
+    })
+  },
+
+  toggleTheme() {
+    const html = document.documentElement
+    const isDark = html.classList.contains('dark')
+
+    if (isDark) {
+      html.classList.remove('dark')
+      localStorage.setItem('theme', 'light')
+    } else {
+      html.classList.add('dark')
+      localStorage.setItem('theme', 'dark')
+    }
+  }
+}
+
+Hooks.PlacesAutocomplete = PlacesAutocomplete
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 let liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
-  params: {_csrf_token: csrfToken}
+  params: {_csrf_token: csrfToken},
+  hooks: Hooks
 })
 
 // Show progress bar on live navigation and form submits
@@ -41,4 +98,3 @@ liveSocket.connect()
 // >> liveSocket.enableLatencySim(1000)  // enabled for duration of browser session
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket
-

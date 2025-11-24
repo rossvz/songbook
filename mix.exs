@@ -9,7 +9,9 @@ defmodule Songbook.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      listeners: [Phoenix.CodeReloader],
+      consolidate_protocols: Mix.env() != :dev
     ]
   end
 
@@ -40,6 +42,11 @@ defmodule Songbook.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:usage_rules, "~> 0.1", only: [:dev]},
+      {:sourceror, "~> 1.8", only: [:dev, :test]},
+      {:ash_postgres, "~> 2.0"},
+      {:ash_phoenix, "~> 2.0"},
+      {:ash, "~> 3.0"},
       {:bandit, "~> 1.6"},
       {:cors_plug, "~> 3.0"},
       {:dns_cluster, "~> 0.2"},
@@ -67,7 +74,10 @@ defmodule Songbook.MixProject do
       {:tailwind, "~> 0.3", runtime: Mix.env() == :dev},
       {:telemetry_metrics, "~> 1.1"},
       {:telemetry_poller, "~> 1.1"},
-      {:tesla, "~> 1.14"}
+      {:tesla, "~> 1.14"},
+      {:tidewave, "~> 0.4", only: :dev},
+      {:tzdata, "~> 1.1"},
+      {:igniter, "~> 0.6", only: [:dev, :test]}
     ]
   end
 
@@ -79,10 +89,10 @@ defmodule Songbook.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
-      setup: ["deps.get", "ecto.setup", "assets.setup", "assets.build"],
+      setup: ["deps.get", "ash.setup", "assets.setup", "assets.build", "run priv/repo/seeds.exs"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
+      test: ["ash.setup --quiet", "test"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
       "assets.build": ["tailwind songbook", "esbuild songbook"],
       "assets.deploy": [

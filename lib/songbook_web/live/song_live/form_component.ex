@@ -2,106 +2,117 @@ defmodule SongbookWeb.SongLive.FormComponent do
   @moduledoc false
   use SongbookWeb, :live_component
 
-  alias Songbook.Tracks
+  alias Songbook.Music
+
+  @impl true
+
+  def update(assigns, socket) do
+    form = to_form(%{})
+
+    {:ok,
+     socket
+     |> assign(assigns)
+     |> assign(results: [])
+     |> assign(form: form)}
+  end
 
   @impl true
   def render(assigns) do
     ~H"""
-    <div>
-      <.header>
-        {@title}
-        <:subtitle>Use this form to manage song records in your database.</:subtitle>
-      </.header>
-
+    <div class="">
       <.simple_form
-        :if={@action == :new}
-        for={@search_form}
+        :let={form}
+        for={@form}
+        as={:form}
         id="search-form"
         phx-target={@myself}
         phx-submit="search"
       >
-        <.input field={@search_form[:title]} type="text" label="Title" />
-        <.input field={@search_form[:artist]} type="text" label="Artist" />
+        <.input
+          field={form[:query]}
+          type="text"
+          placeholder="Search by title, artist, album"
+        />
         <:actions>
-          <.button phx-disable-with="Searching...">Search</.button>
+          <div class="w-full flex justify-end gap-2">
+            <.button
+              type="button"
+              class="text-zinc-700 border-2"
+              phx-click={JS.patch(~p"/admin/songs")}
+              phx-target={@myself}
+            >
+              Cancel
+            </.button>
+            <.button phx-disable-with="Searching..." class="bg-zinc-900 hover:bg-zinc-700">
+              Search
+            </.button>
+          </div>
         </:actions>
       </.simple_form>
 
-      <div :if={!Enum.empty?(@results)}>
-        {@result_index}/{length(@results)} results
+      <div :if={length(@results) > 0}>
+        {length(@results)} results
       </div>
 
-      <.simple_form
-        :if={@form.data.spotify_id || @form.params["spotify_id"]}
-        for={@form}
-        id="song-form"
-        phx-change="validate"
-        phx-target={@myself}
-        phx-submit="save"
-      >
-        <.input phx-debounce="1000" field={@form[:title]} type="text" label="Title" />
-        <.input field={@form[:artist]} type="text" label="Artist" />
-        <.input field={@form[:album]} type="text" label="Album" />
-        <img
-          src={@form.data.album_artwork_url || @form.params["album_artwork_url"]}
-          class="h-10 w-10"
-        />
-        <.input
-          class="hidden"
-          field={@form[:album_artwork_url]}
-          type="text"
-          label="Album artwork url"
-        />
-        <.input class="hidden" field={@form[:spotify_id]} type="text" label="Spotify ID" />
-        <:actions>
-          <.button phx-disable-with="Saving...">Save Song</.button>
-        </:actions>
-      </.simple_form>
-      <button phx-click="previous_result" phx-target={@myself}>Previous Result</button>
-      <button phx-click="next_result" phx-target={@myself}>Next Result</button>
+      <div id="result-list" class="flex flex-col">
+        <div :for={result <- @results}>
+          <.spotify_result result={result} myself={@myself} />
+        </div>
+      </div>
+    </div>
+    """
+  end
+
+  def spotify_result(assigns) do
+    ~H"""
+    <div
+      phx-click="add_track"
+      phx-value-spotify_id={@result.spotify_id}
+      phx-target={@myself}
+      class="flex items-center space-x-4 hover:bg-gray-100 p-2 rounded cursor-pointer"
+    >
+      <img src={@result.album_artwork_url} alt={@result.title} class="h-10 w-10" />
+      <div>
+        <h3 class="text-lg font-semibold">{@result.title}</h3>
+        <p class="text-sm text-gray-500">{@result.artist} - {@result.album}</p>
+      </div>
     </div>
     """
   end
 
   @impl true
-  def update(%{song: song} = assigns, socket) do
-    changeset = Tracks.change_song(song)
+  def handle_event("add_track", %{"spotify_id" => spotify_id}, socket) do
+    result = Enum.find(socket.assigns.results, fn result -> result.spotify_id == spotify_id end)
 
-    {:ok,
-     socket
-     |> assign(assigns)
-     |> assign(results: [], result_index: 0)
-     |> assign_form(changeset)}
+    case Music.create_track(result) do
+      {:ok, song} ->
+        notify_parent({:saved, song})
+
+        {:noreply,
+         socket
+         |> put_flash(:info, "Song created successfully")
+         |> push_patch(to: socket.assigns.patch)}
+
+      {:error, _changeset} ->
+        raise "Not implemented"
+    end
   end
 
   @impl true
-  def handle_event("search", search, socket) do
+  def handle_event("search", %{"form" => form}, socket) do
+    query = form["query"] || ""
+
     results =
-      search["title"] |> Songbook.Spotify.Search.search_song() |> format_results()
+      if String.length(query) > 0 do
+        query
+        |> Songbook.Spotify.Search.search_song()
+        |> format_results()
+      else
+        []
+      end
 
-    socket = socket |> assign(:results, results) |> next_result(0)
+    socket = assign(socket, :results, results)
     {:noreply, socket}
-  end
-
-  def handle_event("next_result", _params, socket) do
-    {:noreply, next_result(socket, socket.assigns.result_index + 1)}
-  end
-
-  def handle_event("previous_result", _params, socket) do
-    {:noreply, next_result(socket, socket.assigns.result_index - 1)}
-  end
-
-  def handle_event("validate", %{"song" => song_params}, socket) do
-    changeset =
-      socket.assigns.song
-      |> Tracks.change_song(song_params)
-      |> Map.put(:action, :validate)
-
-    {:noreply, assign_form(socket, changeset)}
-  end
-
-  def handle_event("save", %{"song" => song_params}, socket) do
-    save_song(socket, socket.assigns.action, song_params)
   end
 
   defp format_results(results) do
@@ -114,54 +125,6 @@ defmodule SongbookWeb.SongLive.FormComponent do
         artist: get_in(result, ["artists", Access.at(0), "name"])
       }
     end)
-  end
-
-  defp next_result(socket, index) do
-    spotify_data = Enum.at(socket.assigns.results, index)
-
-    changeset =
-      socket.assigns.song
-      |> Tracks.change_song(spotify_data)
-      |> Map.put(:action, :validate)
-
-    socket |> assign(:result_index, index) |> assign_form(changeset)
-  end
-
-  defp save_song(socket, :edit, song_params) do
-    case Tracks.update_song(socket.assigns.song, song_params) do
-      {:ok, song} ->
-        notify_parent({:saved, song})
-
-        {:noreply,
-         socket
-         |> put_flash(:info, "Song updated successfully")
-         |> push_patch(to: socket.assigns.patch)}
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign_form(socket, changeset)}
-    end
-  end
-
-  defp save_song(socket, :new, song_params) do
-    case Tracks.create_song(song_params) do
-      {:ok, song} ->
-        notify_parent({:saved, song})
-
-        {:noreply,
-         socket
-         |> put_flash(:info, "Song created successfully")
-         |> push_patch(to: socket.assigns.patch)}
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign_form(socket, changeset)}
-    end
-  end
-
-  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
-    assign(socket,
-      form: to_form(changeset),
-      search_form: to_form(%{"title" => "", "artist" => ""})
-    )
   end
 
   defp notify_parent(msg), do: send(self(), {__MODULE__, msg})
