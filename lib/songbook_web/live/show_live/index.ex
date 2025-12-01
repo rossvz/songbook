@@ -12,7 +12,7 @@ defmodule SongbookWeb.ShowLive.Index do
 
     {:ok,
      socket
-     |> assign(:has_shows, length(shows) > 0)
+     |> assign(:has_shows, not Enum.empty?(shows))
      |> assign(:selected_date, nil)
      |> assign(:calendar_data, calendar_data)
      |> stream(:shows, shows)}

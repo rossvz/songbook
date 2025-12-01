@@ -59,30 +59,30 @@ defmodule SongbookWeb.VoteLive.Index do
 
       true ->
         song = Music.get_track!(id)
+        cast_vote(socket, song, voter_id, voted_tracks)
+    end
+  end
 
-        if song.hidden do
-          {:noreply, put_flash(socket, :error, "This song is not available for voting")}
-        else
-          # Create the vote record
-          case Music.cast_vote(%{voter_id: voter_id, track_id: id}) do
-            {:ok, _vote} ->
-              # Update local state
-              updated_voted_tracks = MapSet.put(voted_tracks, id)
+  defp cast_vote(socket, %{hidden: true}, _voter_id, _voted_tracks) do
+    {:noreply, put_flash(socket, :error, "This song is not available for voting")}
+  end
 
-              socket =
-                socket
-                |> assign(:voted_tracks, updated_voted_tracks)
-                |> stream(:songs, Music.list_visible_tracks!(), reset: true)
+  defp cast_vote(socket, song, voter_id, voted_tracks) do
+    case Music.cast_vote(%{voter_id: voter_id, track_id: song.id}) do
+      {:ok, _vote} ->
+        updated_voted_tracks = MapSet.put(voted_tracks, song.id)
 
-              # Broadcast to all connected users
-              Phoenix.PubSub.broadcast(Songbook.PubSub, "votes", {:vote_updated, song})
+        socket =
+          socket
+          |> assign(:voted_tracks, updated_voted_tracks)
+          |> stream(:songs, Music.list_visible_tracks!(), reset: true)
 
-              {:noreply, socket}
+        Phoenix.PubSub.broadcast(Songbook.PubSub, "votes", {:vote_updated, song})
 
-            {:error, _changeset} ->
-              {:noreply, put_flash(socket, :error, "Unable to record vote")}
-          end
-        end
+        {:noreply, socket}
+
+      {:error, _changeset} ->
+        {:noreply, put_flash(socket, :error, "Unable to record vote")}
     end
   end
 
