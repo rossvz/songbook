@@ -1,12 +1,15 @@
 defmodule Songbook.Spotify.Search do
   @moduledoc false
+
+  alias Songbook.Spotify.Auth
+
   def query(q, type) do
     q = URI.encode_www_form(q)
 
     Req.get(
       "https://api.spotify.com/v1/search?q=#{q}&type=#{type}",
       headers: [
-        {"authorization", "Bearer #{Songbook.Spotify.Auth.get_token()}"}
+        {"authorization", "Bearer #{Auth.get_token()}"}
       ]
     )
   end

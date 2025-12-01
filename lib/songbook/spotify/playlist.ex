@@ -1,6 +1,8 @@
 defmodule Songbook.Spotify.Playlist do
   @moduledoc false
 
+  alias Songbook.Spotify.Auth
+
   def get_playlist(playlist_id) do
     url =
       "https://api.spotify.com/v1/playlists/#{playlist_id}?fields=id,name,external_urls,images,tracks.total"
@@ -107,6 +109,6 @@ defmodule Songbook.Spotify.Playlist do
   end
 
   defp auth_headers do
-    [{"authorization", "Bearer #{Songbook.Spotify.Auth.get_token()}"}]
+    [{"authorization", "Bearer #{Auth.get_token()}"}]
   end
 end

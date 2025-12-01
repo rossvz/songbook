@@ -3,6 +3,7 @@ defmodule SongbookWeb.SongLive.FormComponent do
   use SongbookWeb, :live_component
 
   alias Songbook.Music
+  alias Songbook.Spotify.Search
 
   @impl true
 
@@ -105,7 +106,7 @@ defmodule SongbookWeb.SongLive.FormComponent do
     results =
       if String.length(query) > 0 do
         query
-        |> Songbook.Spotify.Search.search_song()
+        |> Search.search_song()
         |> format_results()
       else
         []

@@ -42,6 +42,7 @@ defmodule Songbook.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
       {:usage_rules, "~> 0.1", only: [:dev]},
       {:sourceror, "~> 1.8", only: [:dev, :test]},
       {:ash_postgres, "~> 2.0"},
@@ -101,7 +102,7 @@ defmodule Songbook.MixProject do
         "esbuild songbook --minify",
         "phx.digest"
       ],
-      ci: ["format --check-formatted", "test"]
+      ci: ["format --check-formatted", "credo --strict", "test"]
     ]
   end
 end

@@ -4,6 +4,7 @@ defmodule SongbookWeb.SongLive.Index do
 
   alias Songbook.Music
   alias Songbook.Music.Track
+  alias Songbook.Workers.PlaylistSyncWorker
 
   @impl true
   def mount(_params, _session, socket) do
@@ -112,7 +113,7 @@ defmodule SongbookWeb.SongLive.Index do
   def handle_event("sync_playlist", _params, socket) do
     # Queue an Oban job for full track sync
     %{}
-    |> Songbook.Workers.PlaylistSyncWorker.new()
+    |> PlaylistSyncWorker.new()
     |> Oban.insert()
 
     {:noreply, put_flash(socket, :info, "Playlist sync started. New tracks will be added shortly.")}
