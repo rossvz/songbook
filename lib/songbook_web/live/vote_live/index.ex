@@ -49,13 +49,11 @@ defmodule SongbookWeb.VoteLive.Index do
     voted_tracks = socket.assigns.voted_tracks
 
     cond do
-      # Check if we have a voter_id
       is_nil(voter_id) or voter_id == "" ->
         {:noreply, put_flash(socket, :error, "Unable to identify voter")}
 
-      # Check if user has already voted for this track
       MapSet.member?(voted_tracks, id) ->
-        {:noreply, put_flash(socket, :error, "You have already voted for this track")}
+        remove_vote(socket, id, voter_id, voted_tracks)
 
       true ->
         song = Music.get_track!(id)
@@ -86,6 +84,25 @@ defmodule SongbookWeb.VoteLive.Index do
     end
   end
 
+  defp remove_vote(socket, track_id, voter_id, voted_tracks) do
+    with {:ok, vote} <- Music.find_vote(voter_id, track_id),
+         :ok <- Music.destroy_vote(vote) do
+      updated_voted_tracks = MapSet.delete(voted_tracks, track_id)
+
+      socket =
+        socket
+        |> assign(:voted_tracks, updated_voted_tracks)
+        |> stream(:songs, Music.list_visible_tracks!(), reset: true)
+
+      Phoenix.PubSub.broadcast(Songbook.PubSub, "votes", {:vote_updated, nil})
+
+      {:noreply, socket}
+    else
+      _ ->
+        {:noreply, put_flash(socket, :error, "Unable to remove vote")}
+    end
+  end
+
   @impl true
   def handle_info({:vote_updated, _song}, socket) do
     # Reload the entire sorted list for all connected clients
@@ -107,13 +124,10 @@ defmodule SongbookWeb.VoteLive.Index do
   end
 
   defp get_voted_tracks(voter_id) when is_binary(voter_id) do
-    voter_id
-    |> Music.get_votes_by_voter()
-    |> case do
-      {:ok, votes} -> votes
-      {:error, _reason} -> []
+    case Music.get_votes_by_voter(voter_id) do
+      {:ok, votes} -> MapSet.new(votes, & &1.track_id)
+      {:error, _reason} -> MapSet.new()
     end
-    |> MapSet.new(& &1.track_id)
   end
 
   defp get_voted_tracks(_), do: MapSet.new()

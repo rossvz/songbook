@@ -21,8 +21,10 @@ defmodule Songbook.Music do
     resource Songbook.Music.Vote do
       define :cast_vote, action: :cast_vote
       define :list_votes, action: :read
-      define :get_votes_by_voter, action: :read, get_by: :voter_id
+      define :get_votes_by_voter, action: :by_voter, args: [:voter_id]
       define :has_voted?, action: :read, get_by: [:voter_id, :track_id]
+      define :find_vote, action: :find_vote, args: [:voter_id, :track_id]
+      define :destroy_vote, action: :destroy
     end
 
     resource Songbook.Music.Show do
