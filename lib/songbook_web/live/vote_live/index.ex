@@ -17,7 +17,7 @@ defmodule SongbookWeb.VoteLive.Index do
       |> assign(:voted_tracks, get_voted_tracks(voter_id))
       |> assign(:playlist, get_linked_playlist())
       |> assign(:player_visible, true)
-      |> stream(:songs, Music.list_tracks!())
+      |> stream(:songs, Music.list_visible_tracks!())
 
     {:ok, socket}
   end
@@ -60,25 +60,28 @@ defmodule SongbookWeb.VoteLive.Index do
       true ->
         song = Music.get_track!(id)
 
-        # Create the vote record
-        case Music.cast_vote(%{voter_id: voter_id, track_id: id}) do
-          {:ok, _vote} ->
-            # Update local state
-            updated_voted_tracks = MapSet.put(voted_tracks, id)
+        if song.hidden do
+          {:noreply, put_flash(socket, :error, "This song is not available for voting")}
+        else
+          # Create the vote record
+          case Music.cast_vote(%{voter_id: voter_id, track_id: id}) do
+            {:ok, _vote} ->
+              # Update local state
+              updated_voted_tracks = MapSet.put(voted_tracks, id)
 
-            socket =
-              socket
-              |> assign(:voted_tracks, updated_voted_tracks)
-              |> stream(:songs, Music.list_tracks!(), reset: true)
+              socket =
+                socket
+                |> assign(:voted_tracks, updated_voted_tracks)
+                |> stream(:songs, Music.list_visible_tracks!(), reset: true)
 
-            # Broadcast to all connected users
-            Phoenix.PubSub.broadcast(Songbook.PubSub, "votes", {:vote_updated, song})
+              # Broadcast to all connected users
+              Phoenix.PubSub.broadcast(Songbook.PubSub, "votes", {:vote_updated, song})
 
-            {:noreply, socket}
+              {:noreply, socket}
 
-          {:error, changeset} ->
-            dbg(changeset)
-            {:noreply, put_flash(socket, :error, "Unable to record vote")}
+            {:error, _changeset} ->
+              {:noreply, put_flash(socket, :error, "Unable to record vote")}
+          end
         end
     end
   end
@@ -86,7 +89,7 @@ defmodule SongbookWeb.VoteLive.Index do
   @impl true
   def handle_info({:vote_updated, _song}, socket) do
     # Reload the entire sorted list for all connected clients
-    {:noreply, stream(socket, :songs, Music.list_tracks!(), reset: true)}
+    {:noreply, stream(socket, :songs, Music.list_visible_tracks!(), reset: true)}
   end
 
   @impl true
@@ -98,7 +101,7 @@ defmodule SongbookWeb.VoteLive.Index do
     socket =
       socket
       |> assign(:voted_tracks, get_voted_tracks(voter_id))
-      |> stream(:songs, Music.list_tracks!(), reset: true)
+      |> stream(:songs, Music.list_visible_tracks!(), reset: true)
 
     {:noreply, socket}
   end

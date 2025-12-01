@@ -1,72 +1,80 @@
-<!-- Admin Navigation Tabs -->
-<div class="mb-6 border-b border-gray-200 dark:border-gray-700">
-  <nav class="flex space-x-8" aria-label="Admin">
+<div class="mb-8 border-b border-slate-200 dark:border-slate-700 animate-slide-down">
+  <nav class="flex space-x-1" aria-label="Admin">
     <.link
       navigate={~p"/admin/songs"}
-      class="border-b-2 border-blue-500 py-4 px-1 text-sm font-medium text-blue-600 dark:text-blue-400"
+      class="admin-nav-tab admin-nav-tab-active"
     >
-      Songs
+      <.icon name="hero-musical-note" class="h-4 w-4 inline-block mr-1.5" /> Songs
     </.link>
     <.link
       navigate={~p"/admin/shows"}
-      class="border-b-2 border-transparent py-4 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300"
+      class="admin-nav-tab"
     >
-      Shows
+      <.icon name="hero-calendar-days" class="h-4 w-4 inline-block mr-1.5" /> Shows
     </.link>
   </nav>
 </div>
 
-<!-- Playlist Management Section -->
-<div class="mb-8 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700">
-  <div class="flex items-center justify-between">
-    <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
-      Spotify Playlist
-    </h2>
+<div class="mb-8 admin-card p-6 animate-scale-in stagger-1">
+  <div class="flex items-center justify-between mb-5">
+    <div class="flex items-center gap-3">
+      <div class="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+        <.icon name="hero-musical-note" class="h-5 w-5 text-emerald-700 dark:text-emerald-400" />
+      </div>
+      <h2 class="text-lg font-display font-semibold text-slate-900 dark:text-slate-100">
+        Spotify Playlist
+      </h2>
+    </div>
 
     <%= if @playlist do %>
       <div class="flex items-center gap-2">
-        <.button
+        <button
           phx-click="sync_playlist"
-          class="bg-green-600 hover:bg-green-700"
+          class="admin-button-primary"
         >
-          <.icon name="hero-arrow-path" class="h-4 w-4 mr-1" /> Sync Now
-        </.button>
-        <.button
+          <.icon name="hero-arrow-path" class="h-4 w-4 mr-1.5" /> Sync Now
+        </button>
+        <button
           phx-click="unlink_playlist"
           data-confirm="Are you sure you want to unlink this playlist?"
-          class="bg-red-600 hover:bg-red-700"
+          class="admin-button-danger"
         >
-          Unlink
-        </.button>
+          <.icon name="hero-link-slash" class="h-4 w-4 mr-1.5" /> Unlink
+        </button>
       </div>
     <% else %>
       <.link patch={~p"/admin/songs/link-playlist"}>
-        <.button class="bg-green-600 hover:bg-green-700">
-          <.icon name="hero-link" class="h-4 w-4 mr-1" /> Link Playlist
-        </.button>
+        <button class="admin-button-primary">
+          <.icon name="hero-link" class="h-4 w-4 mr-1.5" /> Link Playlist
+        </button>
       </.link>
     <% end %>
   </div>
 
   <%= if @playlist do %>
-    <div class="mt-4 flex items-center gap-4">
+    <div class="flex items-start gap-5 p-4 bg-slate-50/50 dark:bg-slate-900/30 rounded-lg border border-slate-200/50 dark:border-slate-700/50">
       <img
         :if={@playlist.image_url}
         src={@playlist.image_url}
         alt={@playlist.name}
-        class="h-16 w-16 rounded"
+        class="h-20 w-20 rounded-lg shadow-md object-cover"
       />
-      <div>
-        <h3 class="font-medium text-gray-900 dark:text-gray-100">{@playlist.name}</h3>
-        <p class="text-sm text-gray-600 dark:text-gray-400">
-          {@playlist.track_count} tracks
-        </p>
-        <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">
+      <div class="flex-1">
+        <h3 class="font-semibold text-slate-900 dark:text-slate-100 mb-1">
+          {@playlist.name}
+        </h3>
+        <div class="flex items-center gap-3 mb-2">
+          <span class="admin-badge-emerald">
+            {@playlist.track_count} tracks
+          </span>
+        </div>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">
           Last synced:
           <span
             id="last-synced-time"
             phx-hook="LocalTime"
             data-datetime={SongbookWeb.SongLive.Index.format_sync_time(@playlist.last_synced_at)}
+            class="font-medium text-slate-600 dark:text-slate-300"
           >
             {SongbookWeb.SongLive.Index.format_sync_time(@playlist.last_synced_at)}
           </span>
@@ -74,54 +82,133 @@
         <a
           href={@playlist.external_url}
           target="_blank"
-          class="text-sm text-green-600 dark:text-green-400 hover:underline mt-1 inline-flex items-center"
+          class="inline-flex items-center text-sm font-medium text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 transition-colors duration-200"
         >
-          View on Spotify <.icon name="hero-arrow-top-right-on-square" class="h-3 w-3 ml-1" />
+          <.icon name="hero-arrow-top-right-on-square" class="h-4 w-4 mr-1" /> View on Spotify
         </a>
       </div>
     </div>
   <% else %>
-    <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-      No playlist linked. Link a Spotify playlist to enable the embedded player on the voting page.
-    </p>
+    <div class="p-4 bg-slate-50/50 dark:bg-slate-900/30 rounded-lg border border-dashed border-slate-300 dark:border-slate-700">
+      <p class="text-sm text-slate-600 dark:text-slate-400 text-center">
+        <.icon name="hero-musical-note" class="h-5 w-5 inline-block mr-1 text-slate-400" />
+        No playlist linked. Link a Spotify playlist to enable the embedded player on the voting page.
+      </p>
+    </div>
   <% end %>
 </div>
 
-<.header>
-  Listing Songs
-  <:actions>
-    <.button
+<div class="mb-6 flex items-center justify-between animate-slide-down stagger-2">
+  <div>
+    <h1 class="text-2xl font-display font-semibold text-slate-900 dark:text-slate-100">
+      Song Library
+    </h1>
+    <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
+      Manage your music collection and votes
+    </p>
+  </div>
+  <div class="flex items-center gap-2">
+    <button
       phx-click="reset_votes"
-      class="mr-2 bg-red-600 hover:bg-red-700"
+      class="admin-button-danger"
+      data-confirm="Are you sure you want to reset all votes? This cannot be undone."
     >
-      Reset All Votes
-    </.button>
+      <.icon name="hero-arrow-path" class="h-4 w-4 mr-1.5" /> Reset All Votes
+    </button>
     <.link patch={~p"/admin/songs/new"}>
-      <.button class="bg-zinc-900 hover:bg-zinc-700 ">New Song</.button>
+      <button class="admin-button-secondary">
+        <.icon name="hero-plus" class="h-4 w-4 mr-1.5" /> New Song
+      </button>
     </.link>
-  </:actions>
-</.header>
+  </div>
+</div>
 
-<.table
+<div
   id="songs"
-  rows={@streams.songs}
-  row_click={fn {_id, song} -> JS.navigate(~p"/admin/songs/#{song}") end}
+  phx-update="stream"
+  class="grid grid-cols-1 gap-4 animate-scale-in stagger-3"
 >
-  <:col :let={{_id, song}} label="Artwork">
-    <img src={song.album_artwork_url} alt={song.album} class="h-auto w-20" />
-  </:col>
+  <div
+    :for={{id, song} <- @streams.songs}
+    id={id}
+    class={[
+      "admin-card p-5 group",
+      song.hidden && "opacity-50"
+    ]}
+  >
+    <div class="flex items-start gap-5">
+      <img
+        src={song.album_artwork_url}
+        alt={song.album}
+        class="h-24 w-24 rounded-lg shadow-md object-cover flex-shrink-0"
+      />
 
-  <:col :let={{_id, song}} label="Title">{song.title}</:col>
-  <:col :let={{_id, song}} label="Artist">{song.artist}</:col>
-  <:col :let={{_id, song}} label="Album">{song.album}</:col>
-  <:col :let={{_id, song}} label="Votes">{song.vote_count}</:col>
+      <div class="flex-1 min-w-0 space-y-2">
+        <h3 class="font-semibold text-lg text-slate-900 dark:text-slate-100 leading-tight">
+          {song.title}
+        </h3>
 
-  <:action :let={{id, song}}>
-    <.link phx-click={JS.push("delete", value: %{id: song.id}) |> hide("##{id}")}>
-      Delete
-    </.link>
-  </:action>
-</.table>
+        <div class="flex items-center gap-2 text-sm">
+          <span class="text-slate-700 dark:text-slate-300 font-medium">
+            {song.artist}
+          </span>
+          <span class="text-slate-400 dark:text-slate-600">•</span>
+          <span class="text-slate-600 dark:text-slate-400">
+            {song.album}
+          </span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-4 flex-shrink-0">
+        <div class="text-center">
+          <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-1.5">
+            Votes
+          </p>
+          <span class={[
+            "inline-flex items-center justify-center min-w-[3.5rem] px-3 py-1.5 rounded-full text-base font-bold",
+            if song.vote_count > 0 do
+              "admin-badge-emerald"
+            else
+              "admin-badge"
+            end
+          ]}>
+            {song.vote_count}
+          </span>
+        </div>
+
+        <div class="flex items-center gap-2 pl-4 border-l border-slate-200 dark:border-slate-700">
+          <button
+            type="button"
+            phx-click="toggle_visibility"
+            phx-value-id={song.id}
+            class={[
+              "inline-flex items-center p-2 rounded-lg text-sm font-medium transition-all duration-200",
+              if song.hidden do
+                "text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+              else
+                "text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/30"
+              end
+            ]}
+            title={if song.hidden, do: "Show song", else: "Hide song"}
+          >
+            <.icon name={if song.hidden, do: "hero-eye-slash", else: "hero-eye"} class="h-5 w-5" />
+          </button>
+          <button
+            type="button"
+            phx-click="delete"
+            phx-value-id={song.id}
+            class="inline-flex items-center p-2 rounded-lg text-sm font-medium
+                   text-rose-700 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/30
+                   transition-all duration-200"
+            title="Delete song"
+          >
+            <.icon name="hero-trash" class="h-5 w-5" />
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <.modal :if={@live_action == :new} id="song-modal" show on_cancel={JS.patch(~p"/admin/songs")}>
   <.live_component

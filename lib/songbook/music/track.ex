@@ -9,7 +9,21 @@ defmodule Songbook.Music.Track do
 
   actions do
     defaults [:read, :create, :update, :destroy]
-    default_accept [:title, :artist, :album, :album_artwork_url, :spotify_id]
+    default_accept [:title, :artist, :album, :album_artwork_url, :spotify_id, :hidden]
+
+    read :list_visible do
+      filter expr(hidden != true)
+    end
+
+    update :toggle_visibility do
+      accept []
+      require_atomic? false
+
+      change fn changeset, _context ->
+        current_hidden = changeset.data.hidden == true
+        Ash.Changeset.force_change_attribute(changeset, :hidden, not current_hidden)
+      end
+    end
 
     update :reset_votes do
       require_atomic? false
@@ -30,7 +44,10 @@ defmodule Songbook.Music.Track do
   end
 
   preparations do
-    prepare build(sort: [vote_count: :desc, inserted_at: :desc], load: [:vote_count])
+    prepare build(
+              sort: [hidden: :asc, vote_count: :desc, inserted_at: :desc],
+              load: [:vote_count]
+            )
   end
 
   validations do
@@ -48,6 +65,7 @@ defmodule Songbook.Music.Track do
     attribute :album, :string
     attribute :album_artwork_url, :string
     attribute :spotify_id, :string
+    attribute :hidden, :boolean, default: false
     timestamps(type: :utc_datetime)
   end
 

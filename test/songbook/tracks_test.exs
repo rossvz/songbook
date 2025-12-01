@@ -128,5 +128,31 @@ defmodule Songbook.TracksTest do
       track = track_fixture()
       assert Music.delete_track(track) == :ok
     end
+
+    test "list_visible_tracks!/0 returns only non-hidden tracks" do
+      visible_track = track_fixture()
+      hidden_track = track_fixture(%{hidden: true})
+
+      tracks = Music.list_visible_tracks!()
+      assert length(tracks) == 1
+      assert hd(tracks).id == visible_track.id
+      refute Enum.any?(tracks, fn t -> t.id == hidden_track.id end)
+    end
+
+    test "toggle_visibility/1 hides a visible track" do
+      track = track_fixture()
+      assert track.hidden == false
+
+      {:ok, updated_track} = Music.toggle_visibility(track)
+      assert updated_track.hidden == true
+    end
+
+    test "toggle_visibility/1 shows a hidden track" do
+      track = track_fixture(%{hidden: true})
+      assert track.hidden == true
+
+      {:ok, updated_track} = Music.toggle_visibility(track)
+      assert updated_track.hidden == false
+    end
   end
 end

@@ -22,12 +22,6 @@ defmodule SongbookWeb.SongLive.Index do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
-  defp apply_action(socket, :edit, %{"id" => id}) do
-    socket
-    |> assign(:page_title, "Edit Song")
-    |> assign(:song, Music.get_track!(id))
-  end
-
   defp apply_action(socket, :new, _params) do
     socket
     |> assign(:page_title, "New Song")
@@ -68,7 +62,21 @@ defmodule SongbookWeb.SongLive.Index do
 
   @impl true
   def handle_info({:track_created, track}, socket) do
+    track = Ash.load!(track, [:vote_count])
     {:noreply, stream_insert(socket, :songs, track, at: 0)}
+  end
+
+  @impl true
+  def handle_event("toggle_visibility", %{"id" => id}, socket) do
+    song = Music.get_track!(id)
+
+    case Music.toggle_visibility(song) do
+      {:ok, _updated_song} ->
+        {:noreply, stream(socket, :songs, Music.list_tracks!(), reset: true)}
+
+      {:error, _changeset} ->
+        {:noreply, put_flash(socket, :error, "Unable to toggle visibility")}
+    end
   end
 
   @impl true
