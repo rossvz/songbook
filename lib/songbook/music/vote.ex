@@ -14,6 +14,20 @@ defmodule Songbook.Music.Vote do
     create :cast_vote do
       accept [:voter_id, :track_id]
     end
+
+    read :by_voter do
+      argument :voter_id, :string, allow_nil?: false
+
+      filter expr(voter_id == ^arg(:voter_id))
+    end
+
+    read :find_vote do
+      argument :voter_id, :string, allow_nil?: false
+      argument :track_id, :uuid, allow_nil?: false
+      get? true
+
+      filter expr(voter_id == ^arg(:voter_id) and track_id == ^arg(:track_id))
+    end
   end
 
   validations do
