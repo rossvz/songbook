@@ -77,7 +77,8 @@ defmodule Songbook.MixProject do
       {:tesla, "~> 1.14"},
       {:tidewave, "~> 0.4", only: :dev},
       {:tzdata, "~> 1.1"},
-      {:igniter, "~> 0.6", only: [:dev, :test]}
+      {:igniter, "~> 0.6", only: [:dev, :test]},
+      {:oban, "~> 2.18"}
     ]
   end
 

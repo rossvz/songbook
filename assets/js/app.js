@@ -78,6 +78,29 @@ Hooks.ThemeToggle = {
 
 Hooks.PlacesAutocomplete = PlacesAutocomplete
 
+Hooks.LocalTime = {
+  mounted() {
+    this.formatTime()
+  },
+  updated() {
+    this.formatTime()
+  },
+  formatTime() {
+    const datetime = this.el.dataset.datetime
+    if (datetime && datetime !== "Never") {
+      const date = new Date(datetime)
+      this.el.textContent = date.toLocaleString(undefined, {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      })
+    }
+  }
+}
+
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 let liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,

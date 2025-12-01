@@ -30,5 +30,14 @@ defmodule Songbook.Music do
       define :update_show, action: :update
       define :delete_show, action: :destroy
     end
+
+    resource Songbook.Music.Playlist do
+      define :list_playlists, action: :read
+      define :get_playlist, action: :read, get_by: :id
+      define :create_playlist, action: :create
+      define :update_playlist, action: :update
+      define :sync_playlist, action: :sync
+      define :delete_playlist, action: :destroy
+    end
   end
 end

@@ -42,6 +42,7 @@ defmodule SongbookWeb.Router do
 
     live "/songs", SongLive.Index, :index
     live "/songs/new", SongLive.Index, :new
+    live "/songs/link-playlist", SongLive.Index, :link_playlist
     live "/songs/:id/edit", SongLive.Index, :edit
     live "/songs/:id", SongLive.Show, :show
     live "/songs/:id/show/edit", SongLive.Show, :edit
