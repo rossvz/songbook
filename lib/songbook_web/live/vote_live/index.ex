@@ -79,8 +79,7 @@ defmodule SongbookWeb.VoteLive.Index do
 
               {:noreply, socket}
 
-            {:error, changeset} ->
-              dbg(changeset)
+            {:error, _changeset} ->
               {:noreply, put_flash(socket, :error, "Unable to record vote")}
           end
         end
