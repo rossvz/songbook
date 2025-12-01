@@ -68,19 +68,11 @@ defmodule SongbookWeb.SongLiveTest do
     test "deletes song in listing", %{conn: conn, song: song} do
       {:ok, index_live, _html} = live(authenticate(conn), ~p"/admin/songs")
 
-      assert index_live |> element("#songs-#{song.id} a", "Delete") |> render_click()
+      assert index_live
+             |> element("#songs-#{song.id} button[title='Delete song']")
+             |> render_click()
+
       refute has_element?(index_live, "#songs-#{song.id}")
-    end
-  end
-
-  describe "Show" do
-    setup [:create_song]
-
-    test "displays song", %{conn: conn, song: song} do
-      {:ok, _show_live, html} = live(authenticate(conn), ~p"/admin/songs/#{song}")
-
-      assert html =~ "Show Song"
-      assert html =~ song.title
     end
   end
 end

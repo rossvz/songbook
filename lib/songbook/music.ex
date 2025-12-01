@@ -7,11 +7,13 @@ defmodule Songbook.Music do
   resources do
     resource Songbook.Music.Track do
       define :list_tracks, action: :read
+      define :list_visible_tracks, action: :list_visible
       define :get_track, action: :read, get_by: :id
       define :get_track_by_spotify_id, action: :read, get_by: :spotify_id
       define :create_track, action: :create
 
       define :reset_votes, action: :reset_votes
+      define :toggle_visibility, action: :toggle_visibility
 
       define :delete_track, action: :destroy
     end
