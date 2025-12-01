@@ -41,8 +41,9 @@ defmodule Songbook.Workers.PlaylistSyncWorker do
 
       {added_count, errors} = add_new_tracks(new_tracks)
 
-      # Update playlist metadata and last_synced_at
-      Music.sync_playlist!(playlist, metadata)
+      # Update playlist metadata and last_synced_at (only pass accepted fields)
+      sync_attrs = Map.take(metadata, [:name, :image_url, :track_count])
+      Music.sync_playlist!(playlist, sync_attrs)
 
       Logger.info("[PlaylistSyncWorker] Sync complete. Added #{added_count} new tracks. Errors: #{length(errors)}")
 
