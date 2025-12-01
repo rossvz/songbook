@@ -16,6 +16,7 @@ defmodule Songbook.Application do
         {DNSCluster, query: Application.get_env(:songbook, :dns_cluster_query) || :ignore},
         {Phoenix.PubSub, name: Songbook.PubSub},
         {Finch, name: Songbook.Finch},
+        {Oban, Application.fetch_env!(:songbook, Oban)},
         SongbookWeb.Endpoint
       ] ++ spotify_auth()
 

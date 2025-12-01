@@ -38,6 +38,17 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+config :songbook, Oban,
+  repo: Songbook.Repo,
+  queues: [default: 10, playlist_sync: 2],
+  plugins: [
+    {Oban.Plugins.Cron,
+     crontab: [
+       # Run playlist sync every 30 minutes
+       {"*/30 * * * *", Songbook.Workers.PlaylistSyncWorker}
+     ]}
+  ]
+
 # Configures the mailer
 #
 # By default it uses the "Local" adapter which stores the emails

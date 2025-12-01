@@ -4,10 +4,13 @@ defmodule SongbookWeb.SongLive.Index do
 
   alias Songbook.Music
   alias Songbook.Music.Track
-  alias Songbook.Spotify.Playlist, as: SpotifyPlaylist
 
   @impl true
   def mount(_params, _session, socket) do
+    if connected?(socket) do
+      Phoenix.PubSub.subscribe(Songbook.PubSub, "tracks")
+    end
+
     {:ok,
      socket
      |> assign(:playlist, get_linked_playlist())
@@ -64,6 +67,11 @@ defmodule SongbookWeb.SongLive.Index do
   end
 
   @impl true
+  def handle_info({:track_created, track}, socket) do
+    {:noreply, stream_insert(socket, :songs, track, at: 0)}
+  end
+
+  @impl true
   def handle_event("delete", %{"id" => id}, socket) do
     song = Music.get_track!(id)
 
@@ -94,24 +102,12 @@ defmodule SongbookWeb.SongLive.Index do
 
   @impl true
   def handle_event("sync_playlist", _params, socket) do
-    playlist = socket.assigns.playlist
+    # Queue an Oban job for full track sync
+    %{}
+    |> Songbook.Workers.PlaylistSyncWorker.new()
+    |> Oban.insert()
 
-    case SpotifyPlaylist.get_playlist(playlist.spotify_playlist_id) do
-      {:ok, metadata} ->
-        case Music.sync_playlist(playlist, metadata) do
-          {:ok, updated} ->
-            {:noreply,
-             socket
-             |> assign(:playlist, updated)
-             |> put_flash(:info, "Playlist synced successfully")}
-
-          {:error, _} ->
-            {:noreply, put_flash(socket, :error, "Failed to update playlist")}
-        end
-
-      {:error, _} ->
-        {:noreply, put_flash(socket, :error, "Failed to sync playlist from Spotify")}
-    end
+    {:noreply, put_flash(socket, :info, "Playlist sync started. New tracks will be added shortly.")}
   end
 
   @impl true

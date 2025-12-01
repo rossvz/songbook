@@ -10,6 +10,9 @@ config :logger, level: :warning
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime
 
+# Disable Oban in tests
+config :songbook, Oban, testing: :inline
+
 # Configure your database
 #
 # The MIX_TEST_PARTITION environment variable can be used
