@@ -123,8 +123,5 @@ defmodule SongbookWeb.SongLive.Index do
   end
 
   def format_sync_time(nil), do: "Never"
-
-  def format_sync_time(datetime) do
-    Calendar.strftime(datetime, "%b %-d, %Y at %-I:%M %p")
-  end
+  def format_sync_time(datetime), do: DateTime.to_iso8601(datetime)
 end

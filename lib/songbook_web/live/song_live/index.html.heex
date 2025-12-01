@@ -62,7 +62,14 @@
           {@playlist.track_count} tracks
         </p>
         <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">
-          Last synced: {SongbookWeb.SongLive.Index.format_sync_time(@playlist.last_synced_at)}
+          Last synced:
+          <span
+            id="last-synced-time"
+            phx-hook="LocalTime"
+            data-datetime={SongbookWeb.SongLive.Index.format_sync_time(@playlist.last_synced_at)}
+          >
+            {SongbookWeb.SongLive.Index.format_sync_time(@playlist.last_synced_at)}
+          </span>
         </p>
         <a
           href={@playlist.external_url}
