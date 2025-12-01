@@ -709,4 +709,33 @@ defmodule SongbookWeb.CoreComponents do
     </div>
     """
   end
+
+  @doc """
+  Renders a Spotify playlist embed iframe.
+
+  ## Examples
+
+      <.spotify_embed playlist_id="37i9dQZF1DXcBWIGoYBM5M" />
+  """
+  attr :playlist_id, :string, required: true
+  attr :class, :string, default: nil
+  attr :compact, :boolean, default: false
+
+  def spotify_embed(assigns) do
+    ~H"""
+    <div class={["spotify-embed", @class]}>
+      <iframe
+        src={"https://open.spotify.com/embed/playlist/#{@playlist_id}?utm_source=generator&theme=0"}
+        width="100%"
+        height={if @compact, do: "352", else: "500"}
+        frameborder="0"
+        allowfullscreen=""
+        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+        loading="lazy"
+        class="rounded-lg"
+      >
+      </iframe>
+    </div>
+    """
+  end
 end

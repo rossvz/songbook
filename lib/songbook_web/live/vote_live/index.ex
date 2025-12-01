@@ -15,9 +15,18 @@ defmodule SongbookWeb.VoteLive.Index do
       socket
       |> assign(:voter_id, voter_id)
       |> assign(:voted_tracks, get_voted_tracks(voter_id))
+      |> assign(:playlist, get_linked_playlist())
+      |> assign(:player_visible, true)
       |> stream(:songs, Music.list_tracks!())
 
     {:ok, socket}
+  end
+
+  defp get_linked_playlist do
+    case Music.list_playlists!() do
+      [playlist | _] -> playlist
+      [] -> nil
+    end
   end
 
   @impl true
@@ -27,6 +36,11 @@ defmodule SongbookWeb.VoteLive.Index do
 
   defp apply_action(socket, :index, _params) do
     assign(socket, :page_title, "Vote for Songs")
+  end
+
+  @impl true
+  def handle_event("toggle_player", _params, socket) do
+    {:noreply, assign(socket, :player_visible, !socket.assigns.player_visible)}
   end
 
   @impl true

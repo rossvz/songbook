@@ -4,10 +4,14 @@ defmodule SongbookWeb.SongLive.Index do
 
   alias Songbook.Music
   alias Songbook.Music.Track
+  alias Songbook.Spotify.Playlist, as: SpotifyPlaylist
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :songs, Music.list_tracks!())}
+    {:ok,
+     socket
+     |> assign(:playlist, get_linked_playlist())
+     |> stream(:songs, Music.list_tracks!())}
   end
 
   @impl true
@@ -27,15 +31,36 @@ defmodule SongbookWeb.SongLive.Index do
     |> assign(:song, %Track{})
   end
 
+  defp apply_action(socket, :link_playlist, _params) do
+    socket
+    |> assign(:page_title, "Link Spotify Playlist")
+    |> assign(:song, nil)
+  end
+
   defp apply_action(socket, :index, _params) do
     socket
     |> assign(:page_title, "Listing Songs")
     |> assign(:song, nil)
   end
 
+  defp get_linked_playlist do
+    case Music.list_playlists!() do
+      [playlist | _] -> playlist
+      [] -> nil
+    end
+  end
+
   @impl true
   def handle_info({SongbookWeb.SongLive.FormComponent, {:saved, song}}, socket) do
     {:noreply, stream_insert(socket, :songs, song)}
+  end
+
+  @impl true
+  def handle_info({SongbookWeb.SongLive.LinkPlaylistComponent, {:linked, playlist}}, socket) do
+    {:noreply,
+     socket
+     |> assign(:playlist, playlist)
+     |> put_flash(:info, "Playlist linked successfully")}
   end
 
   @impl true
@@ -65,5 +90,45 @@ defmodule SongbookWeb.SongLive.Index do
      socket
      |> put_flash(:info, "All votes have been reset to 0")
      |> stream(:songs, Music.list_tracks!(), reset: true)}
+  end
+
+  @impl true
+  def handle_event("sync_playlist", _params, socket) do
+    playlist = socket.assigns.playlist
+
+    case SpotifyPlaylist.get_playlist(playlist.spotify_playlist_id) do
+      {:ok, metadata} ->
+        case Music.sync_playlist(playlist, metadata) do
+          {:ok, updated} ->
+            {:noreply,
+             socket
+             |> assign(:playlist, updated)
+             |> put_flash(:info, "Playlist synced successfully")}
+
+          {:error, _} ->
+            {:noreply, put_flash(socket, :error, "Failed to update playlist")}
+        end
+
+      {:error, _} ->
+        {:noreply, put_flash(socket, :error, "Failed to sync playlist from Spotify")}
+    end
+  end
+
+  @impl true
+  def handle_event("unlink_playlist", _params, socket) do
+    if socket.assigns.playlist do
+      Music.delete_playlist!(socket.assigns.playlist)
+    end
+
+    {:noreply,
+     socket
+     |> assign(:playlist, nil)
+     |> put_flash(:info, "Playlist unlinked")}
+  end
+
+  def format_sync_time(nil), do: "Never"
+
+  def format_sync_time(datetime) do
+    Calendar.strftime(datetime, "%b %-d, %Y at %-I:%M %p")
   end
 end

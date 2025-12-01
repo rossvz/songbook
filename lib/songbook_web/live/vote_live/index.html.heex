@@ -1,77 +1,131 @@
-<.header>
-  Vote for Songs
-  <:subtitle>Click on a song to vote for it! Songs are ordered by votes.</:subtitle>
-</.header>
-<div class="mt-8 space-y-4" id="songs-list" phx-update="stream">
-  <div
-    :for={{id, song} <- @streams.songs}
-    id={id}
-    class={[
-      "flex items-center space-x-4 p-4 rounded-lg shadow transition-shadow border-2",
-      if(MapSet.member?(@voted_tracks, song.id),
-        do:
-          "bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700 cursor-not-allowed opacity-75",
-        else:
-          "bg-white dark:bg-gray-800 hover:shadow-lg cursor-pointer hover:border-blue-300 dark:hover:border-blue-600 border-gray-200 dark:border-gray-700"
-      )
-    ]}
-    phx-click={unless MapSet.member?(@voted_tracks, song.id), do: "vote"}
-    phx-value-id={song.id}
-  >
-    <img src={song.album_artwork_url} alt={song.album} class="h-16 w-16 rounded-md" />
-
-    <div class="flex-grow">
-      <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{song.title}</h3>
-      <p class="text-sm text-gray-600 dark:text-gray-400">{song.artist}</p>
-      <p class="text-xs text-gray-500 dark:text-gray-500">{song.album}</p>
-    </div>
-
-    <div class="flex items-center space-x-2">
-      <div class="text-center">
-        <div class={[
-          "flex items-center justify-center w-12 h-12 rounded-full transition-colors",
-          if(MapSet.member?(@voted_tracks, song.id),
-            do: "bg-green-100 dark:bg-green-900/30 cursor-not-allowed",
-            else: "bg-blue-100 dark:bg-blue-900/30 hover:bg-blue-200 dark:hover:bg-blue-900/50"
+<!-- Spotify embed - desktop only, fixed to left side -->
+<div :if={@playlist} class="hidden lg:block lg:fixed lg:left-8 lg:top-28 lg:z-10">
+  <!-- Toggle button - always visible in same position on the left -->
+  <div class="mb-3">
+    <button
+      phx-click={
+        if @player_visible do
+          JS.hide(
+            to: "#spotify-player",
+            transition: {"ease-out duration-300", "opacity-100 translate-x-0", "opacity-0 -translate-x-8"}
           )
-        ]}>
-          <%= if MapSet.member?(@voted_tracks, song.id) do %>
-            <!-- Check mark icon for voted -->
-            <svg
-              class="w-6 h-6 text-green-600 dark:text-green-400"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                clip-rule="evenodd"
-              >
-              </path>
-            </svg>
-          <% else %>
-            <!-- Up arrow icon for voting -->
-            <svg
-              class="w-6 h-6 text-blue-600 dark:text-blue-400"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z"
-                clip-rule="evenodd"
-              >
-              </path>
-            </svg>
-          <% end %>
+        else
+          JS.show(
+            to: "#spotify-player",
+            transition: {"ease-out duration-500", "opacity-0 -translate-x-8", "opacity-100 translate-x-0"}
+          )
+        end
+        |> JS.push("toggle_player")
+      }
+      class="flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+      title={if @player_visible, do: "Hide Spotify Player", else: "Show Spotify Player"}
+    >
+      <span class="text-xs text-gray-600 dark:text-gray-400">
+        {if @player_visible, do: "Hide Spotify Player", else: "Show Spotify Player"}
+      </span>
+      <svg
+        class="w-4 h-4 text-gray-600 dark:text-gray-400"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d={if @player_visible, do: "M15 19l-7-7 7-7", else: "M9 5l7 7-7 7"}
+        />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Spotify player - always in DOM but hidden/shown with JS -->
+  <div
+    id="spotify-player"
+    class={"lg:w-72 transition-all #{if @player_visible, do: "opacity-100 translate-x-0", else: "opacity-0 -translate-x-8 hidden"}"}
+  >
+    <.spotify_embed playlist_id={@playlist.spotify_playlist_id} compact={true} />
+  </div>
+</div>
+
+<!-- Main voting content - centered -->
+<div class="max-w-3xl mx-auto">
+  <.header>
+    Vote for Songs
+    <:subtitle>Click on a song to vote for it! Songs are ordered by votes.</:subtitle>
+  </.header>
+  <div class="mt-8 space-y-4" id="songs-list" phx-update="stream">
+      <div
+        :for={{id, song} <- @streams.songs}
+        id={id}
+        class={[
+          "flex items-center space-x-4 p-4 rounded-lg shadow transition-shadow border-2",
+          if(MapSet.member?(@voted_tracks, song.id),
+            do:
+              "bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700 cursor-not-allowed opacity-75",
+            else:
+              "bg-white dark:bg-gray-800 hover:shadow-lg cursor-pointer hover:border-blue-300 dark:hover:border-blue-600 border-gray-200 dark:border-gray-700"
+          )
+        ]}
+        phx-click={unless MapSet.member?(@voted_tracks, song.id), do: "vote"}
+        phx-value-id={song.id}
+      >
+        <img src={song.album_artwork_url} alt={song.album} class="h-16 w-16 rounded-md" />
+
+        <div class="flex-grow">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{song.title}</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400">{song.artist}</p>
+          <p class="text-xs text-gray-500 dark:text-gray-500">{song.album}</p>
         </div>
-        <span class="text-lg font-bold text-gray-900 dark:text-gray-100 mt-1 block">
-          {song.vote_count}
-        </span>
-        <span class="text-xs text-gray-500 dark:text-gray-400">
-          {if MapSet.member?(@voted_tracks, song.id), do: "voted", else: "votes"}
-        </span>
+
+        <div class="flex items-center space-x-2">
+          <div class="text-center">
+            <div class={[
+              "flex items-center justify-center w-12 h-12 rounded-full transition-colors",
+              if(MapSet.member?(@voted_tracks, song.id),
+                do: "bg-green-100 dark:bg-green-900/30 cursor-not-allowed",
+                else:
+                  "bg-blue-100 dark:bg-blue-900/30 hover:bg-blue-200 dark:hover:bg-blue-900/50"
+              )
+            ]}>
+              <%= if MapSet.member?(@voted_tracks, song.id) do %>
+                <!-- Check mark icon for voted -->
+                <svg
+                  class="w-6 h-6 text-green-600 dark:text-green-400"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clip-rule="evenodd"
+                  >
+                  </path>
+                </svg>
+              <% else %>
+                <!-- Up arrow icon for voting -->
+                <svg
+                  class="w-6 h-6 text-blue-600 dark:text-blue-400"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z"
+                    clip-rule="evenodd"
+                  >
+                  </path>
+                </svg>
+              <% end %>
+            </div>
+            <span class="text-lg font-bold text-gray-900 dark:text-gray-100 mt-1 block">
+              {song.vote_count}
+            </span>
+            <span class="text-xs text-gray-500 dark:text-gray-400">
+              {if MapSet.member?(@voted_tracks, song.id), do: "voted", else: "votes"}
+            </span>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
 </div>

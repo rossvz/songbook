@@ -16,6 +16,70 @@
   </nav>
 </div>
 
+<!-- Playlist Management Section -->
+<div class="mb-8 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700">
+  <div class="flex items-center justify-between">
+    <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+      Spotify Playlist
+    </h2>
+
+    <%= if @playlist do %>
+      <div class="flex items-center gap-2">
+        <.button
+          phx-click="sync_playlist"
+          class="bg-green-600 hover:bg-green-700"
+        >
+          <.icon name="hero-arrow-path" class="h-4 w-4 mr-1" /> Sync Now
+        </.button>
+        <.button
+          phx-click="unlink_playlist"
+          data-confirm="Are you sure you want to unlink this playlist?"
+          class="bg-red-600 hover:bg-red-700"
+        >
+          Unlink
+        </.button>
+      </div>
+    <% else %>
+      <.link patch={~p"/admin/songs/link-playlist"}>
+        <.button class="bg-green-600 hover:bg-green-700">
+          <.icon name="hero-link" class="h-4 w-4 mr-1" /> Link Playlist
+        </.button>
+      </.link>
+    <% end %>
+  </div>
+
+  <%= if @playlist do %>
+    <div class="mt-4 flex items-center gap-4">
+      <img
+        :if={@playlist.image_url}
+        src={@playlist.image_url}
+        alt={@playlist.name}
+        class="h-16 w-16 rounded"
+      />
+      <div>
+        <h3 class="font-medium text-gray-900 dark:text-gray-100">{@playlist.name}</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          {@playlist.track_count} tracks
+        </p>
+        <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">
+          Last synced: {SongbookWeb.SongLive.Index.format_sync_time(@playlist.last_synced_at)}
+        </p>
+        <a
+          href={@playlist.external_url}
+          target="_blank"
+          class="text-sm text-green-600 dark:text-green-400 hover:underline mt-1 inline-flex items-center"
+        >
+          View on Spotify <.icon name="hero-arrow-top-right-on-square" class="h-3 w-3 ml-1" />
+        </a>
+      </div>
+    </div>
+  <% else %>
+    <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+      No playlist linked. Link a Spotify playlist to enable the embedded player on the voting page.
+    </p>
+  <% end %>
+</div>
+
 <.header>
   Listing Songs
   <:actions>
@@ -58,6 +122,19 @@
     id="new-song-form"
     title={@page_title}
     action={@live_action}
+    patch={~p"/admin/songs"}
+  />
+</.modal>
+
+<.modal
+  :if={@live_action == :link_playlist}
+  id="link-playlist-modal"
+  show
+  on_cancel={JS.patch(~p"/admin/songs")}
+>
+  <.live_component
+    module={SongbookWeb.SongLive.LinkPlaylistComponent}
+    id="link-playlist-form"
     patch={~p"/admin/songs"}
   />
 </.modal>
