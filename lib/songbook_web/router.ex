@@ -19,7 +19,7 @@ defmodule SongbookWeb.Router do
     plug :basic_auth
   end
 
-  defp basic_auth(conn, _opts) do
+  def basic_auth(conn, _opts) do
     username = Application.get_env(:songbook, :admin_username, "admin")
     password = Application.get_env(:songbook, :admin_password, "admin")
 
