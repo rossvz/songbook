@@ -1,25 +1,28 @@
-<header class="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-800 shadow-md dark:shadow-gray-900/70 transition-colors duration-200">
-  <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+<header class="fixed top-0 left-0 right-0 z-50 header-glass">
+  <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
     <div class="flex justify-between items-center">
-      <nav class="flex items-center space-x-2">
+      <nav class="flex items-center gap-2">
         <.link
           navigate={~p"/"}
-          class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-gray-700 dark:text-white bg-gray-50 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+          class="nav-link flex items-center gap-2"
         >
-          <.icon name="hero-musical-note" class="w-5 h-5" /> Songs
+          <.icon name="hero-musical-note" class="w-5 h-5" />
+          <span class="font-medium">Songs</span>
         </.link>
         <.link
           navigate={~p"/shows"}
-          class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-gray-700 dark:text-white bg-gray-50 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+          class="nav-link flex items-center gap-2"
         >
-          <.icon name="hero-calendar-days" class="w-5 h-5" /> Shows
+          <.icon name="hero-calendar-days" class="w-5 h-5" />
+          <span class="font-medium">Shows</span>
         </.link>
       </nav>
-      <nav class="flex items-center space-x-4">
+
+      <nav class="flex items-center gap-3">
         <.theme_toggle />
         <.link
           navigate={~p"/admin/songs"}
-          class="px-3 py-1 bg-blue-600 dark:bg-blue-500 text-white rounded hover:bg-blue-700 dark:hover:bg-blue-600"
+          class="btn-tactile text-sm px-4 py-2"
         >
           Admin
         </.link>
@@ -28,7 +31,7 @@
   </div>
 </header>
 
-<main class="pt-[88px] px-4 py-8 sm:px-6 lg:px-8 bg-gray-100 dark:bg-gray-900 min-h-screen transition-colors duration-200">
+<main class="pt-24 pb-12 px-4 sm:px-6 lg:px-8 min-h-screen">
   <div class="mx-auto max-w-2xl">
     <.flash_group flash={@flash} />
     {@inner_content}

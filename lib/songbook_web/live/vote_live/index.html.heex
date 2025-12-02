@@ -1,131 +1,116 @@
-<%!-- Spotify embed - desktop only, fixed to left side --%>
-<%!-- Commented out for now - can be re-enabled later
-<div :if={@playlist} class="hidden lg:block lg:fixed lg:left-8 lg:top-28 lg:z-10">
-  <div class="mb-3">
-    <button
-      phx-click={
-        if @player_visible do
-          JS.hide(
-            to: "#spotify-player",
-            transition:
-              {"ease-out duration-300", "opacity-100 translate-x-0", "opacity-0 -translate-x-8"}
-          )
-        else
-          JS.show(
-            to: "#spotify-player",
-            transition:
-              {"ease-out duration-500", "opacity-0 -translate-x-8", "opacity-100 translate-x-0"}
-          )
-        end
-        |> JS.push("toggle_player")
-      }
-      class="flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-      title={if @player_visible, do: "Hide Spotify Player", else: "Show Spotify Player"}
-    >
-      <span class="text-xs text-gray-600 dark:text-gray-400">
-        {if @player_visible, do: "Hide Spotify Player", else: "Show Spotify Player"}
-      </span>
-      <svg
-        class="w-4 h-4 text-gray-600 dark:text-gray-400"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d={if @player_visible, do: "M15 19l-7-7 7-7", else: "M9 5l7 7-7 7"}
-        />
-      </svg>
-    </button>
-  </div>
-
-  <div
-    id="spotify-player"
-    class={"lg:w-72 transition-all #{if @player_visible, do: "opacity-100 translate-x-0", else: "opacity-0 -translate-x-8 hidden"}"}
-  >
-    <.spotify_embed playlist_id={@playlist.spotify_playlist_id} compact={true} />
-  </div>
-</div>
---%>
-
-<!-- Main voting content - centered -->
 <div class="max-w-3xl mx-auto">
-  <.header>
-    Vote for Songs
-    <:subtitle>Click on a song to vote! Songs are ordered by votes.</:subtitle>
-  </.header>
-  <div class="mt-8 space-y-4" id="songs-list" phx-update="stream">
-    <div
-      :for={{id, song} <- @streams.songs}
-      id={id}
-      class={[
-        "flex items-center space-x-4 p-4 rounded-lg shadow transition-shadow border-2 cursor-pointer",
-        if(MapSet.member?(@voted_tracks, song.id),
-          do:
-            "bg-green-50 dark:bg-green-900/20 hover:shadow-lg hover:border-green-400 dark:hover:border-green-600 border-green-300 dark:border-green-700",
-          else:
-            "bg-white dark:bg-gray-800 hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-600 border-gray-200 dark:border-gray-700"
-        )
-      ]}
-      phx-click="vote"
-      phx-value-id={song.id}
-    >
-      <img src={song.album_artwork_url} alt={song.album} class="h-16 w-16 rounded-md" />
+  <!-- Header with display font -->
+  <div class="text-center mb-10">
+    <h1 class="font-display text-4xl sm:text-5xl font-semibold text-primary tracking-tight">
+      Vote for Songs
+    </h1>
+    <p class="mt-3 text-secondary text-lg">
+      Tap a song to vote. Songs with the most votes play first.
+    </p>
+  </div>
 
-      <div class="flex-grow">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{song.title}</h3>
-        <p class="text-sm text-gray-600 dark:text-gray-400">{song.artist}</p>
-        <p class="text-xs text-gray-500 dark:text-gray-500">{song.album}</p>
-      </div>
-
-      <div class="flex items-center space-x-2">
-        <div class="text-center">
-          <div class={[
-            "flex items-center justify-center w-12 h-12 rounded-full transition-colors",
-            if(MapSet.member?(@voted_tracks, song.id),
-              do:
-                "bg-green-100 dark:bg-green-900/30 hover:bg-green-200 dark:hover:bg-green-900/50",
-              else: "bg-blue-100 dark:bg-blue-900/30 hover:bg-blue-200 dark:hover:bg-blue-900/50"
-            )
-          ]}>
-            <%= if MapSet.member?(@voted_tracks, song.id) do %>
-              <svg
-                class="w-6 h-6 text-green-600 dark:text-green-400"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                  clip-rule="evenodd"
-                >
-                </path>
-              </svg>
-            <% else %>
-              <svg
-                class="w-6 h-6 text-blue-600 dark:text-blue-400"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z"
-                  clip-rule="evenodd"
-                >
-                </path>
-              </svg>
-            <% end %>
+  <!-- Song cards with physics and chaos -->
+  <div
+    class="space-y-6 pb-8"
+    id="songs-list"
+    phx-update="stream"
+    phx-hook="StaggerList"
+  >
+    <%= for {id, song} <- @streams.songs do %>
+      <div
+        id={id}
+        class="song-card cursor-pointer"
+        phx-hook="CardChaos"
+        data-stagger
+        phx-click="vote"
+        phx-value-id={song.id}
+      >
+        <!-- Album art blur background -->
+        <%= if song.album_artwork_url do %>
+          <div
+            class="song-card-blur-bg"
+            style={"background-image: url('#{song.album_artwork_url}');"}
+          >
           </div>
-          <span class="text-lg font-bold text-gray-900 dark:text-gray-100 mt-1 block">
-            {song.vote_count}
-          </span>
-          <span class="text-xs text-gray-500 dark:text-gray-400">
-            {if song.vote_count == 1, do: "vote", else: "votes"}
-          </span>
+        <% else %>
+          <div
+            class="song-card-gradient-bg"
+            phx-hook="GradientFallback"
+            data-title={song.title}
+            id={"gradient-#{song.id}"}
+          >
+          </div>
+        <% end %>
+
+        <!-- Card content -->
+        <div class="song-card-content p-5 sm:p-6">
+          <div class="flex items-center gap-4 sm:gap-5">
+            <!-- Album artwork -->
+            <div class="flex-shrink-0">
+              <%= if song.album_artwork_url do %>
+                <img
+                  src={song.album_artwork_url}
+                  alt={song.album}
+                  class="album-art w-20 h-20 sm:w-24 sm:h-24 object-cover"
+                />
+              <% else %>
+                <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-accent-soft flex items-center justify-center">
+                  <.icon name="hero-musical-note" class="w-10 h-10 text-accent" />
+                </div>
+              <% end %>
+            </div>
+
+            <!-- Song info -->
+            <div class="flex-1 min-w-0">
+              <h3 class="font-display text-xl sm:text-2xl font-semibold text-primary truncate">
+                {song.title}
+              </h3>
+              <p class="text-secondary text-base sm:text-lg mt-0.5 truncate">
+                {song.artist}
+              </p>
+              <p class="text-tertiary text-sm mt-1 truncate">
+                {song.album}
+              </p>
+            </div>
+
+            <!-- Vote button -->
+            <div class="flex-shrink-0 text-center">
+              <button
+                type="button"
+                class={[
+                  "btn-vote transition-all duration-200",
+                  MapSet.member?(@voted_tracks, song.id) && "voted"
+                ]}
+              >
+                <%= if MapSet.member?(@voted_tracks, song.id) do %>
+                  <.icon name="hero-check-solid" class="w-6 h-6" />
+                <% else %>
+                  <.icon name="hero-chevron-up-solid" class="w-6 h-6" />
+                <% end %>
+              </button>
+              <div class="mt-2">
+                <span class="text-xl font-bold text-primary block">
+                  {song.vote_count}
+                </span>
+                <span class="text-xs text-tertiary">
+                  {if song.vote_count == 1, do: "vote", else: "votes"}
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    <% end %>
   </div>
+
+  <!-- Empty state -->
+  <%= if Enum.empty?(@streams.songs.inserts) do %>
+    <div class="glass rounded-2xl p-12 text-center">
+      <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-accent-soft flex items-center justify-center">
+        <.icon name="hero-musical-note" class="w-8 h-8 text-accent" />
+      </div>
+      <h3 class="font-display text-xl font-semibold text-primary">No songs yet</h3>
+      <p class="text-secondary mt-2">Check back soon for songs to vote on!</p>
+    </div>
+  <% end %>
 </div>

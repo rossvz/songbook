@@ -1,5 +1,5 @@
-<div class="mb-8 border-b border-slate-200 dark:border-slate-700 animate-slide-down">
-  <nav class="flex space-x-1" aria-label="Admin">
+<div class="mb-8 border-b border-glass animate-fade-in">
+  <nav class="flex gap-1" aria-label="Admin">
     <.link
       navigate={~p"/admin/songs"}
       class="admin-nav-tab admin-nav-tab-active"
@@ -15,13 +15,14 @@
   </nav>
 </div>
 
-<div class="mb-8 admin-card p-6 animate-scale-in stagger-1">
+<!-- Spotify Playlist Section -->
+<div class="mb-8 admin-card p-6 animate-scale-in" style="animation-delay: 0.05s;">
   <div class="flex items-center justify-between mb-5">
     <div class="flex items-center gap-3">
-      <div class="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
-        <.icon name="hero-musical-note" class="h-5 w-5 text-emerald-700 dark:text-emerald-400" />
+      <div class="p-2.5 rounded-xl" style="background: var(--accent-primary-soft);">
+        <.icon name="hero-musical-note" class="h-5 w-5 text-accent" />
       </div>
-      <h2 class="text-lg font-display font-semibold text-slate-900 dark:text-slate-100">
+      <h2 class="text-lg font-display font-semibold text-primary">
         Spotify Playlist
       </h2>
     </div>
@@ -52,29 +53,29 @@
   </div>
 
   <%= if @playlist do %>
-    <div class="flex items-start gap-5 p-4 bg-slate-50/50 dark:bg-slate-900/30 rounded-lg border border-slate-200/50 dark:border-slate-700/50">
+    <div class="flex items-start gap-5 p-4 rounded-xl glass">
       <img
         :if={@playlist.image_url}
         src={@playlist.image_url}
         alt={@playlist.name}
-        class="h-20 w-20 rounded-lg shadow-md object-cover"
+        class="h-20 w-20 rounded-xl shadow-raised object-cover"
       />
       <div class="flex-1">
-        <h3 class="font-semibold text-slate-900 dark:text-slate-100 mb-1">
+        <h3 class="font-semibold text-primary mb-1">
           {@playlist.name}
         </h3>
         <div class="flex items-center gap-3 mb-2">
-          <span class="admin-badge-emerald">
+          <span class="admin-badge-success">
             {@playlist.track_count} tracks
           </span>
         </div>
-        <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">
+        <p class="text-xs text-tertiary mb-2">
           Last synced:
           <span
             id="last-synced-time"
             phx-hook="LocalTime"
             data-datetime={SongbookWeb.SongLive.Index.format_sync_time(@playlist.last_synced_at)}
-            class="font-medium text-slate-600 dark:text-slate-300"
+            class="font-medium text-secondary"
           >
             {SongbookWeb.SongLive.Index.format_sync_time(@playlist.last_synced_at)}
           </span>
@@ -82,28 +83,29 @@
         <a
           href={@playlist.external_url}
           target="_blank"
-          class="inline-flex items-center text-sm font-medium text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 transition-colors duration-200"
+          class="inline-flex items-center text-sm font-medium text-accent hover:opacity-80 transition-opacity"
         >
           <.icon name="hero-arrow-top-right-on-square" class="h-4 w-4 mr-1" /> View on Spotify
         </a>
       </div>
     </div>
   <% else %>
-    <div class="p-4 bg-slate-50/50 dark:bg-slate-900/30 rounded-lg border border-dashed border-slate-300 dark:border-slate-700">
-      <p class="text-sm text-slate-600 dark:text-slate-400 text-center">
-        <.icon name="hero-musical-note" class="h-5 w-5 inline-block mr-1 text-slate-400" />
-        No playlist linked. Link a Spotify playlist to enable the embedded player on the voting page.
+    <div class="p-5 rounded-xl border-2 border-dashed border-glass text-center">
+      <.icon name="hero-musical-note" class="h-8 w-8 mx-auto mb-2 text-tertiary" />
+      <p class="text-sm text-secondary">
+        No playlist linked. Link a Spotify playlist to sync your songs.
       </p>
     </div>
   <% end %>
 </div>
 
-<div class="mb-6 flex items-center justify-between animate-slide-down stagger-2">
+<!-- Song Library Header -->
+<div class="mb-6 flex items-center justify-between animate-slide-up" style="animation-delay: 0.1s;">
   <div>
-    <h1 class="text-2xl font-display font-semibold text-slate-900 dark:text-slate-100">
+    <h1 class="text-2xl font-display font-semibold text-primary">
       Song Library
     </h1>
-    <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
+    <p class="mt-1 text-sm text-secondary">
       Manage your music collection and votes
     </p>
   </div>
@@ -113,7 +115,7 @@
       class="admin-button-danger"
       data-confirm="Are you sure you want to reset all votes? This cannot be undone."
     >
-      <.icon name="hero-arrow-path" class="h-4 w-4 mr-1.5" /> Reset All Votes
+      <.icon name="hero-arrow-path" class="h-4 w-4 mr-1.5" /> Reset Votes
     </button>
     <.link patch={~p"/admin/songs/new"}>
       <button class="admin-button-secondary">
@@ -123,92 +125,127 @@
   </div>
 </div>
 
+<!-- Songs Grid -->
 <div
   id="songs"
   phx-update="stream"
-  class="grid grid-cols-1 gap-4 animate-scale-in stagger-3"
+  phx-hook="StaggerList"
+  class="space-y-4"
 >
   <div
     :for={{id, song} <- @streams.songs}
     id={id}
+    data-stagger
     class={[
-      "admin-card p-5 group",
+      "song-card group",
       song.hidden && "opacity-50"
     ]}
   >
-    <div class="flex items-start gap-5">
-      <img
-        src={song.album_artwork_url}
-        alt={song.album}
-        class="h-24 w-24 rounded-lg shadow-md object-cover flex-shrink-0"
-      />
-
-      <div class="flex-1 min-w-0 space-y-2">
-        <h3 class="font-semibold text-lg text-slate-900 dark:text-slate-100 leading-tight">
-          {song.title}
-        </h3>
-
-        <div class="flex items-center gap-2 text-sm">
-          <span class="text-slate-700 dark:text-slate-300 font-medium">
-            {song.artist}
-          </span>
-          <span class="text-slate-400 dark:text-slate-600">•</span>
-          <span class="text-slate-600 dark:text-slate-400">
-            {song.album}
-          </span>
-        </div>
+    <!-- Subtle album blur for admin cards too -->
+    <%= if song.album_artwork_url do %>
+      <div
+        class="song-card-blur-bg opacity-30"
+        style={"background-image: url('#{song.album_artwork_url}');"}
+      >
       </div>
+    <% end %>
 
-      <div class="flex items-center gap-4 flex-shrink-0">
-        <div class="text-center">
-          <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-1.5">
-            Votes
-          </p>
-          <span class={[
-            "inline-flex items-center justify-center min-w-[3.5rem] px-3 py-1.5 rounded-full text-base font-bold",
-            if song.vote_count > 0 do
-              "admin-badge-emerald"
-            else
-              "admin-badge"
-            end
-          ]}>
-            {song.vote_count}
-          </span>
+    <div class="song-card-content p-5">
+      <div class="flex items-start gap-5">
+        <img
+          src={song.album_artwork_url}
+          alt={song.album}
+          class="album-art h-20 w-20 sm:h-24 sm:w-24 object-cover flex-shrink-0"
+        />
+
+        <div class="flex-1 min-w-0 space-y-1.5">
+          <h3 class="font-display font-semibold text-lg text-primary leading-tight truncate">
+            {song.title}
+          </h3>
+
+          <div class="flex items-center gap-2 text-sm">
+            <span class="text-secondary font-medium truncate">
+              {song.artist}
+            </span>
+            <span class="text-tertiary flex-shrink-0">•</span>
+            <span class="text-tertiary truncate">
+              {song.album}
+            </span>
+          </div>
+
+          <%= if song.hidden do %>
+            <span class="admin-badge-warning text-xs">
+              <.icon name="hero-eye-slash-mini" class="h-3 w-3 mr-1" /> Hidden
+            </span>
+          <% end %>
         </div>
 
-        <div class="flex items-center gap-2 pl-4 border-l border-slate-200 dark:border-slate-700">
-          <button
-            type="button"
-            phx-click="toggle_visibility"
-            phx-value-id={song.id}
-            class={[
-              "inline-flex items-center p-2 rounded-lg text-sm font-medium transition-all duration-200",
-              if song.hidden do
-                "text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+        <div class="flex items-center gap-4 flex-shrink-0">
+          <div class="text-center">
+            <p class="text-xs font-semibold uppercase tracking-wide text-tertiary mb-1.5">
+              Votes
+            </p>
+            <span class={[
+              "inline-flex items-center justify-center min-w-[3rem] px-3 py-1.5 rounded-full text-base font-bold",
+              if song.vote_count > 0 do
+                "admin-badge-success"
               else
-                "text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/30"
+                "admin-badge"
               end
-            ]}
-            title={if song.hidden, do: "Show song", else: "Hide song"}
-          >
-            <.icon name={if song.hidden, do: "hero-eye-slash", else: "hero-eye"} class="h-5 w-5" />
-          </button>
-          <button
-            type="button"
-            phx-click="delete"
-            phx-value-id={song.id}
-            class="inline-flex items-center p-2 rounded-lg text-sm font-medium
-                   text-rose-700 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/30
-                   transition-all duration-200"
-            title="Delete song"
-          >
-            <.icon name="hero-trash" class="h-5 w-5" />
-          </button>
+            ]}>
+              {song.vote_count}
+            </span>
+          </div>
+
+          <div class="flex items-center gap-1.5 pl-4 border-l border-glass">
+            <button
+              type="button"
+              phx-click="toggle_visibility"
+              phx-value-id={song.id}
+              class={[
+                "p-2.5 rounded-xl transition-all duration-200",
+                if song.hidden do
+                  "text-tertiary hover:text-primary hover:bg-accent-soft"
+                else
+                  "text-accent hover:bg-accent-soft"
+                end
+              ]}
+              title={if song.hidden, do: "Show song", else: "Hide song"}
+            >
+              <.icon name={if song.hidden, do: "hero-eye-slash", else: "hero-eye"} class="h-5 w-5" />
+            </button>
+            <button
+              type="button"
+              phx-click="delete"
+              phx-value-id={song.id}
+              data-confirm="Delete this song?"
+              class="p-2.5 rounded-xl text-tertiary hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200"
+              title="Delete song"
+            >
+              <.icon name="hero-trash" class="h-5 w-5" />
+            </button>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<!-- Empty state -->
+<%= if @streams.songs.inserts == [] do %>
+  <div class="glass rounded-2xl p-12 text-center animate-scale-in">
+    <div class="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style="background: var(--accent-primary-soft);">
+      <.icon name="hero-musical-note" class="w-8 h-8 text-accent" />
+    </div>
+    <h3 class="font-display text-xl font-semibold text-primary">No songs yet</h3>
+    <p class="text-secondary mt-2 mb-4">Add songs manually or link a Spotify playlist.</p>
+    <.link patch={~p"/admin/songs/new"}>
+      <button class="admin-button-primary">
+        <.icon name="hero-plus" class="h-4 w-4 mr-1.5" /> Add Your First Song
+      </button>
+    </.link>
+  </div>
+<% end %>
 
 <.modal :if={@live_action == :new} id="song-modal" show on_cancel={JS.patch(~p"/admin/songs")}>
   <.live_component

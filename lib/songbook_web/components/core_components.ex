@@ -54,7 +54,8 @@ defmodule SongbookWeb.CoreComponents do
     >
       <div
         id={"#{@id}-bg"}
-        class="bg-zinc-50/90 dark:bg-zinc-900/90 fixed inset-0 transition-opacity"
+        class="fixed inset-0 transition-opacity backdrop-blur-sm"
+        style="background: rgba(0, 0, 0, 0.4);"
         aria-hidden="true"
       />
       <div
@@ -72,13 +73,13 @@ defmodule SongbookWeb.CoreComponents do
               phx-window-keydown={JS.exec("data-cancel", to: "##{@id}")}
               phx-key="escape"
               phx-click-away={JS.exec("data-cancel", to: "##{@id}")}
-              class="shadow-zinc-700/10 dark:shadow-zinc-900/50 ring-zinc-700/10 dark:ring-zinc-600/50 relative hidden rounded-2xl bg-white dark:bg-gray-800 p-14 shadow-lg ring-1 transition"
+              class="relative hidden rounded-3xl glass-strong p-10 sm:p-12 transition animate-scale-in"
             >
-              <div class="absolute top-6 right-5">
+              <div class="absolute top-5 right-5">
                 <button
                   phx-click={JS.exec("data-cancel", to: "##{@id}")}
                   type="button"
-                  class="-m-3 flex-none p-3 opacity-20 hover:opacity-40"
+                  class="p-2 rounded-xl text-tertiary hover:text-primary hover:bg-accent-soft transition-colors"
                   aria-label={gettext("close")}
                 >
                   <.icon name="hero-x-mark-solid" class="h-5 w-5" />
@@ -121,22 +122,24 @@ defmodule SongbookWeb.CoreComponents do
       phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
       role="alert"
       class={[
-        "fixed top-2 right-2 mr-2 w-80 sm:w-96 z-50 rounded-lg p-3 ring-1",
-        @kind == :info &&
-          "bg-emerald-50 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200 ring-emerald-500 dark:ring-emerald-700 fill-cyan-900 dark:fill-cyan-100",
-        @kind == :error &&
-          "bg-rose-50 dark:bg-rose-900 text-rose-900 dark:text-rose-200 shadow-md ring-rose-500 dark:ring-rose-700 fill-rose-900 dark:fill-rose-100"
+        "fixed top-20 right-4 w-80 sm:w-96 z-50 rounded-2xl p-4 glass-strong animate-slide-up",
+        @kind == :info && "border-l-4 border-emerald-500",
+        @kind == :error && "border-l-4 border-rose-500"
       ]}
       {@rest}
     >
-      <p :if={@title} class="flex items-center gap-1.5 text-sm font-semibold leading-6">
-        <.icon :if={@kind == :info} name="hero-information-circle-mini" class="h-4 w-4" />
-        <.icon :if={@kind == :error} name="hero-exclamation-circle-mini" class="h-4 w-4" />
+      <p :if={@title} class={[
+        "flex items-center gap-2 text-sm font-semibold leading-6",
+        @kind == :info && "text-emerald-700 dark:text-emerald-400",
+        @kind == :error && "text-rose-700 dark:text-rose-400"
+      ]}>
+        <.icon :if={@kind == :info} name="hero-check-circle-mini" class="h-5 w-5" />
+        <.icon :if={@kind == :error} name="hero-exclamation-circle-mini" class="h-5 w-5" />
         {@title}
       </p>
-      <p class="mt-2 text-sm leading-5">{msg}</p>
-      <button type="button" class="group absolute top-1 right-1 p-2" aria-label={gettext("close")}>
-        <.icon name="hero-x-mark-solid" class="h-5 w-5 opacity-40 group-hover:opacity-70" />
+      <p class="mt-1.5 text-sm leading-5 text-secondary">{msg}</p>
+      <button type="button" class="group absolute top-3 right-3 p-1.5 rounded-lg hover:bg-accent-soft transition-colors" aria-label={gettext("close")}>
+        <.icon name="hero-x-mark-solid" class="h-4 w-4 text-tertiary group-hover:text-primary" />
       </button>
     </div>
     """
@@ -696,16 +699,15 @@ defmodule SongbookWeb.CoreComponents do
     <div
       id="theme-toggle"
       phx-hook="ThemeToggle"
-      class={["flex items-center gap-2", @class]}
+      class={["flex items-center", @class]}
     >
       <button
         type="button"
-        class="inline-flex items-center gap-2 rounded-lg bg-gray-100 dark:bg-gray-800 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+        class="relative inline-flex items-center justify-center w-10 h-10 rounded-xl glass transition-all duration-200 hover:scale-105 active:scale-95"
         aria-label="Toggle theme"
       >
-        <.icon name="hero-sun" class="h-5 w-5 dark:hidden" />
-        <.icon name="hero-moon" class="h-5 w-5 hidden dark:block" />
-        <span class="hidden sm:inline">Theme</span>
+        <.icon name="hero-sun" class="h-5 w-5 text-amber-500 dark:hidden transition-transform" />
+        <.icon name="hero-moon" class="h-5 w-5 hidden dark:block text-amber-400 transition-transform" />
       </button>
     </div>
     """

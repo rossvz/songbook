@@ -2,167 +2,636 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+/* Typography: Distinctive font pairing */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Outfit:wght@300;400;500;600;700&display=swap');
+
+/* ============================================
+   DESIGN SYSTEM: SONGBOOK IMMERSIVE UI
+   Aesthetic: Tactile skeuomorphism meets fluid chaos
+   ============================================ */
 
 :root {
-  --color-emerald-50: #ecfdf5;
-  --color-emerald-100: #d1fae5;
-  --color-emerald-600: #059669;
-  --color-emerald-700: #047857;
-  --color-emerald-800: #065f46;
+  /* === LIGHT MODE: Soft, ambient, inviting === */
 
-  --color-amber-50: #fffbeb;
-  --color-amber-100: #fef3c7;
-  --color-amber-500: #f59e0b;
-  --color-amber-600: #d97706;
-  --color-amber-700: #b45309;
+  /* Background layers */
+  --bg-base: #f8f7f4;
+  --bg-elevated: #ffffff;
+  --bg-ambient-from: #e8f4f8;
+  --bg-ambient-via: #f5f0fa;
+  --bg-ambient-to: #fdf4f0;
 
-  --color-rose-50: #fff1f2;
-  --color-rose-100: #ffe4e6;
-  --color-rose-600: #e11d48;
-  --color-rose-700: #be123c;
-  --color-rose-800: #9f1239;
+  /* Glass effects */
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.5);
+  --glass-shadow: rgba(0, 0, 0, 0.06);
 
-  --color-slate-50: #f8fafc;
-  --color-slate-100: #f1f5f9;
-  --color-slate-200: #e2e8f0;
-  --color-slate-300: #cbd5e1;
-  --color-slate-400: #94a3b8;
-  --color-slate-500: #64748b;
-  --color-slate-600: #475569;
-  --color-slate-700: #334155;
-  --color-slate-800: #1e293b;
-  --color-slate-900: #0f172a;
-  --color-slate-950: #020617;
+  /* Text hierarchy */
+  --text-primary: #1a1612;
+  --text-secondary: #5c554d;
+  --text-tertiary: #8a837a;
+  --text-inverse: #faf9f7;
+
+  /* Accent colors - muted, sophisticated */
+  --accent-primary: #4a7c8c;
+  --accent-primary-soft: #d4e5ea;
+  --accent-secondary: #7c6a9c;
+  --accent-secondary-soft: #e8e0f4;
+  --accent-warm: #c4856a;
+  --accent-warm-soft: #f8e8e0;
+
+  /* Vote states */
+  --vote-active: #5a9a7c;
+  --vote-active-soft: #e0f2e8;
+  --vote-inactive: #a89e94;
+
+  /* Skeuomorphic shadows */
+  --shadow-raised: 0 1px 2px rgba(26, 22, 18, 0.04),
+                   0 4px 8px rgba(26, 22, 18, 0.04),
+                   0 8px 24px rgba(26, 22, 18, 0.06);
+  --shadow-floating: 0 4px 12px rgba(26, 22, 18, 0.08),
+                     0 16px 48px rgba(26, 22, 18, 0.12);
+  --shadow-pressed: inset 0 2px 4px rgba(26, 22, 18, 0.1);
+  --shadow-glow: 0 0 40px rgba(74, 124, 140, 0.15);
+
+  /* Card chaos values (will be set per-card via JS) */
+  --card-rotate: 0deg;
+  --card-offset-x: 0px;
+  --card-offset-y: 0px;
 }
 
 .dark {
-  --color-emerald-50: #064e3b;
-  --color-emerald-100: #065f46;
-  --color-emerald-600: #34d399;
-  --color-emerald-700: #6ee7b7;
-  --color-emerald-800: #a7f3d0;
+  /* === DARK MODE: Edgier, warm amber undertones === */
+
+  /* Background layers */
+  --bg-base: #121010;
+  --bg-elevated: #1c1917;
+  --bg-ambient-from: #1a1410;
+  --bg-ambient-via: #181214;
+  --bg-ambient-to: #14100c;
+
+  /* Glass effects - warmer in dark mode */
+  --glass-bg: rgba(28, 25, 23, 0.8);
+  --glass-border: rgba(255, 200, 150, 0.08);
+  --glass-shadow: rgba(0, 0, 0, 0.4);
+
+  /* Text hierarchy */
+  --text-primary: #faf6f2;
+  --text-secondary: #c4bab0;
+  --text-tertiary: #8a7f74;
+  --text-inverse: #1a1612;
+
+  /* Accent colors - warm copper/amber */
+  --accent-primary: #d4956a;
+  --accent-primary-soft: rgba(212, 149, 106, 0.15);
+  --accent-secondary: #b89478;
+  --accent-secondary-soft: rgba(184, 148, 120, 0.15);
+  --accent-warm: #e8a070;
+  --accent-warm-soft: rgba(232, 160, 112, 0.15);
+
+  /* Vote states */
+  --vote-active: #7cb890;
+  --vote-active-soft: rgba(124, 184, 144, 0.15);
+  --vote-inactive: #6a6058;
+
+  /* Skeuomorphic shadows - deeper in dark */
+  --shadow-raised: 0 1px 2px rgba(0, 0, 0, 0.2),
+                   0 4px 8px rgba(0, 0, 0, 0.15),
+                   0 8px 24px rgba(0, 0, 0, 0.2);
+  --shadow-floating: 0 4px 12px rgba(0, 0, 0, 0.3),
+                     0 16px 48px rgba(0, 0, 0, 0.4);
+  --shadow-pressed: inset 0 2px 6px rgba(0, 0, 0, 0.4);
+  --shadow-glow: 0 0 60px rgba(212, 149, 106, 0.1);
 }
 
+/* ============================================
+   BASE STYLES
+   ============================================ */
+
 * {
-  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 .font-display {
-  font-family: 'DM Serif Display', Georgia, serif;
+  font-family: 'Fraunces', Georgia, serif;
+  font-optical-sizing: auto;
 }
+
+html {
+  background: var(--bg-base);
+  color: var(--text-primary);
+}
+
+/* Smooth theme transitions */
+html.transitioning,
+html.transitioning *,
+html.transitioning *::before,
+html.transitioning *::after {
+  transition: background-color 0.4s ease,
+              border-color 0.4s ease,
+              color 0.2s ease,
+              box-shadow 0.3s ease !important;
+}
+
+/* ============================================
+   AMBIENT BACKGROUND SYSTEM
+   ============================================ */
+
+.ambient-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse 80% 50% at 20% 20%, var(--bg-ambient-from) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 40% at 80% 80%, var(--bg-ambient-to) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 60% at 50% 50%, var(--bg-ambient-via) 0%, transparent 60%),
+    var(--bg-base);
+  opacity: 1;
+  animation: ambientShift 20s ease-in-out infinite;
+}
+
+@keyframes ambientShift {
+  0%, 100% {
+    background-position: 0% 0%, 100% 100%, 50% 50%;
+  }
+  33% {
+    background-position: 10% 20%, 90% 70%, 40% 60%;
+  }
+  66% {
+    background-position: -5% 10%, 105% 90%, 55% 45%;
+  }
+}
+
+/* Noise texture overlay for depth */
+.ambient-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.015;
+  pointer-events: none;
+}
+
+.dark .ambient-bg::after {
+  opacity: 0.03;
+}
+
+/* ============================================
+   GLASS MORPHISM COMPONENTS
+   ============================================ */
+
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-raised);
+}
+
+.glass-strong {
+  background: var(--glass-bg);
+  backdrop-filter: blur(40px) saturate(1.4);
+  -webkit-backdrop-filter: blur(40px) saturate(1.4);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-floating);
+}
+
+/* ============================================
+   SONG CARD SYSTEM
+   ============================================ */
+
+.song-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-raised);
+  border: 1px solid var(--glass-border);
+
+  /* Chaos transform - set via CSS custom properties */
+  transform:
+    rotate(var(--card-rotate, 0deg))
+    translate(var(--card-offset-x, 0px), var(--card-offset-y, 0px));
+
+  /* Smooth physics-like transitions */
+  transition:
+    transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.3s ease;
+
+  will-change: transform;
+}
+
+/* Album art blur background effect */
+.song-card-blur-bg {
+  position: absolute;
+  inset: -40px;
+  background-size: cover;
+  background-position: center;
+  filter: blur(30px) saturate(1.6);
+  opacity: 0.55;
+  z-index: 0;
+  transition: opacity 0.4s ease, filter 0.4s ease;
+}
+
+.dark .song-card-blur-bg {
+  filter: blur(35px) saturate(1.8);
+  opacity: 0.4;
+}
+
+/* Gradient fallback when no album art */
+.song-card-gradient-bg {
+  position: absolute;
+  inset: -20px;
+  opacity: 0.4;
+  z-index: 0;
+  background: linear-gradient(
+    135deg,
+    var(--gradient-color-1, var(--accent-primary)) 0%,
+    var(--gradient-color-2, var(--accent-secondary)) 50%,
+    var(--gradient-color-3, var(--accent-warm)) 100%
+  );
+  filter: blur(30px);
+}
+
+.song-card-content {
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+}
+
+.dark .song-card-content {
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.1) 0%,
+    rgba(0, 0, 0, 0.2) 100%
+  );
+}
+
+/* Card hover/active states */
+.song-card:hover {
+  box-shadow: var(--shadow-floating), var(--shadow-glow);
+}
+
+.song-card:active {
+  transform:
+    rotate(var(--card-rotate, 0deg))
+    translate(var(--card-offset-x, 0px), var(--card-offset-y, 0px))
+    scale(0.98);
+}
+
+/* Vote bounce animation */
+.song-card.voting {
+  animation: voteBounce 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes voteBounce {
+  0% { transform: rotate(var(--card-rotate)) translate(var(--card-offset-x), var(--card-offset-y)) scale(1); }
+  30% { transform: rotate(var(--card-rotate)) translate(var(--card-offset-x), var(--card-offset-y)) scale(0.92); }
+  60% { transform: rotate(var(--card-rotate)) translate(var(--card-offset-x), var(--card-offset-y)) scale(1.02); }
+  100% { transform: rotate(var(--card-rotate)) translate(var(--card-offset-x), var(--card-offset-y)) scale(1); }
+}
+
+/* ============================================
+   SKEUOMORPHIC BUTTONS
+   ============================================ */
+
+.btn-tactile {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 14px;
+  font-weight: 500;
+  font-size: 0.9375rem;
+  cursor: pointer;
+
+  /* Skeuomorphic depth */
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0) 50%,
+    rgba(0, 0, 0, 0.05) 100%
+  ),
+  var(--accent-primary);
+
+  color: var(--text-inverse);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.2) inset,
+    0 -1px 0 rgba(0, 0, 0, 0.1) inset,
+    var(--shadow-raised);
+
+  transition: all 0.2s ease;
+  transform: translateY(0);
+}
+
+.btn-tactile:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.25) inset,
+    0 -1px 0 rgba(0, 0, 0, 0.1) inset,
+    var(--shadow-floating);
+}
+
+.btn-tactile:active {
+  transform: translateY(1px);
+  box-shadow: var(--shadow-pressed);
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.05) 0%,
+    rgba(0, 0, 0, 0) 50%,
+    rgba(255, 255, 255, 0.05) 100%
+  ),
+  var(--accent-primary);
+}
+
+/* Secondary button variant */
+.btn-tactile-secondary {
+  background: linear-gradient(
+    180deg,
+    var(--bg-elevated) 0%,
+    color-mix(in srgb, var(--bg-elevated) 95%, black) 100%
+  );
+  color: var(--text-primary);
+  border: 1px solid var(--glass-border);
+}
+
+.btn-tactile-secondary:hover {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--bg-elevated) 100%, white 5%) 0%,
+    var(--bg-elevated) 100%
+  );
+}
+
+/* Vote button - special treatment */
+.btn-vote {
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 1.25rem;
+  font-weight: 700;
+
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.2) 0%,
+    rgba(255, 255, 255, 0) 50%,
+    rgba(0, 0, 0, 0.1) 100%
+  ),
+  var(--vote-inactive);
+
+  box-shadow:
+    0 2px 0 rgba(255, 255, 255, 0.15) inset,
+    0 -2px 0 rgba(0, 0, 0, 0.15) inset,
+    var(--shadow-raised);
+}
+
+.btn-vote.voted {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.25) 0%,
+    rgba(255, 255, 255, 0) 50%,
+    rgba(0, 0, 0, 0.1) 100%
+  ),
+  var(--vote-active);
+
+  box-shadow:
+    0 2px 0 rgba(255, 255, 255, 0.2) inset,
+    0 -2px 0 rgba(0, 0, 0, 0.1) inset,
+    var(--shadow-raised),
+    0 0 20px var(--vote-active-soft);
+}
+
+.btn-vote:active {
+  transform: scale(0.9);
+}
+
+/* ============================================
+   ADMIN COMPONENTS (Updated)
+   ============================================ */
 
 @layer components {
   .admin-card {
-    @apply bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700
-           shadow-sm hover:shadow-md transition-all duration-300;
+    @apply relative overflow-hidden rounded-2xl;
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-raised);
+    transition: all 0.3s ease;
+  }
+
+  .admin-card:hover {
+    box-shadow: var(--shadow-floating);
   }
 
   .admin-badge {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-           bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300;
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold tracking-wide;
+    background: var(--accent-primary-soft);
+    color: var(--accent-primary);
   }
 
-  .admin-badge-emerald {
-    @apply bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400
-           ring-1 ring-emerald-600/20 dark:ring-emerald-400/20;
+  .admin-badge-success {
+    background: var(--vote-active-soft);
+    color: var(--vote-active);
   }
 
-  .admin-badge-amber {
-    @apply bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400
-           ring-1 ring-amber-600/20 dark:ring-amber-400/20;
-  }
-
-  .admin-badge-rose {
-    @apply bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400
-           ring-1 ring-rose-600/20 dark:ring-rose-400/20;
+  .admin-badge-warning {
+    background: var(--accent-warm-soft);
+    color: var(--accent-warm);
   }
 
   .admin-button-primary {
-    @apply inline-flex items-center px-4 py-2.5 rounded-lg font-medium text-sm
-           bg-gradient-to-br from-emerald-600 to-emerald-700 dark:from-emerald-500 dark:to-emerald-600
-           text-white shadow-sm hover:shadow-md hover:scale-[1.02]
-           transition-all duration-200 active:scale-[0.98];
+    @apply btn-tactile;
   }
 
   .admin-button-secondary {
-    @apply inline-flex items-center px-4 py-2.5 rounded-lg font-medium text-sm
-           bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300
-           border border-slate-300 dark:border-slate-600
-           shadow-sm hover:shadow-md hover:border-slate-400 dark:hover:border-slate-500
-           transition-all duration-200;
+    @apply btn-tactile btn-tactile-secondary;
   }
 
   .admin-button-danger {
-    @apply inline-flex items-center px-4 py-2.5 rounded-lg font-medium text-sm
-           bg-gradient-to-br from-rose-600 to-rose-700 dark:from-rose-500 dark:to-rose-600
-           text-white shadow-sm hover:shadow-md hover:scale-[1.02]
-           transition-all duration-200 active:scale-[0.98];
+    @apply btn-tactile;
+    --accent-primary: #c45c5c;
   }
 
   .admin-button-warning {
-    @apply inline-flex items-center px-4 py-2.5 rounded-lg font-medium text-sm
-           bg-gradient-to-br from-amber-500 to-amber-600 dark:from-amber-400 dark:to-amber-500
-           text-white shadow-sm hover:shadow-md hover:scale-[1.02]
-           transition-all duration-200 active:scale-[0.98];
+    @apply btn-tactile;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.15) 0%,
+      rgba(255, 255, 255, 0) 50%,
+      rgba(0, 0, 0, 0.05) 100%
+    ),
+    var(--accent-warm);
   }
 
   .admin-nav-tab {
-    @apply relative px-4 py-3 text-sm font-medium text-slate-600 dark:text-slate-400
-           hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-200;
+    @apply relative px-5 py-3 text-sm font-medium transition-all duration-200;
+    color: var(--text-tertiary);
+  }
+
+  .admin-nav-tab:hover {
+    color: var(--text-primary);
   }
 
   .admin-nav-tab-active {
-    @apply text-emerald-700 dark:text-emerald-400;
+    color: var(--accent-primary);
   }
 
   .admin-nav-tab-active::after {
     content: '';
-    @apply absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-emerald-600 to-emerald-500
-           dark:from-emerald-500 dark:to-emerald-400 rounded-full;
+    @apply absolute bottom-0 left-2 right-2 h-0.5 rounded-full;
+    background: var(--accent-primary);
   }
 
   .admin-table-row {
-    @apply border-b border-slate-100 dark:border-slate-800
-           hover:bg-slate-50/50 dark:hover:bg-slate-800/50
-           transition-colors duration-150 cursor-pointer;
+    @apply transition-colors duration-150 cursor-pointer;
+    border-bottom: 1px solid var(--glass-border);
+  }
+
+  .admin-table-row:hover {
+    background: var(--accent-primary-soft);
   }
 
   .admin-input {
-    @apply w-full px-4 py-2.5 rounded-lg
-           bg-white dark:bg-slate-800
-           border border-slate-300 dark:border-slate-600
-           text-slate-900 dark:text-slate-100
-           placeholder-slate-400 dark:placeholder-slate-500
-           focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500
-           transition-all duration-200;
+    @apply w-full px-4 py-3 rounded-xl transition-all duration-200;
+    background: var(--bg-elevated);
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-pressed);
+  }
+
+  .admin-input:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px var(--accent-primary-soft), var(--shadow-pressed);
+  }
+
+  .admin-input::placeholder {
+    color: var(--text-tertiary);
   }
 }
 
-@keyframes slideDown {
+/* ============================================
+   HEADER / NAVIGATION
+   ============================================ */
+
+.header-glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px) saturate(1.3);
+  -webkit-backdrop-filter: blur(24px) saturate(1.3);
+  border-bottom: 1px solid var(--glass-border);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+}
+
+.dark .header-glass {
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+}
+
+.nav-link {
+  position: relative;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.nav-link:hover {
+  color: var(--text-primary);
+  background: var(--accent-primary-soft);
+}
+
+.nav-link-active {
+  color: var(--accent-primary);
+  background: var(--accent-primary-soft);
+}
+
+/* ============================================
+   ALBUM ARTWORK
+   ============================================ */
+
+.album-art {
+  border-radius: 12px;
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.album-art:hover {
+  transform: scale(1.02);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.15) inset;
+}
+
+/* ============================================
+   CALENDAR / SHOWS SPECIFIC
+   ============================================ */
+
+.calendar-day {
+  @apply relative rounded-xl p-2 text-center transition-all duration-200;
+  background: transparent;
+}
+
+.calendar-day:hover {
+  background: var(--accent-primary-soft);
+}
+
+.calendar-day-active {
+  background: var(--accent-primary);
+  color: var(--text-inverse);
+  box-shadow: var(--shadow-raised);
+}
+
+.calendar-day-has-show::after {
+  content: '';
+  @apply absolute bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full;
+  background: var(--accent-warm);
+}
+
+.show-card {
+  @apply song-card;
+  --card-rotate: 0deg;
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@keyframes cardSlideUp {
   from {
     opacity: 0;
-    transform: translateY(-8px);
+    transform:
+      rotate(var(--card-rotate, 0deg))
+      translate(var(--card-offset-x, 0px), calc(var(--card-offset-y, 0px) + 30px));
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform:
+      rotate(var(--card-rotate, 0deg))
+      translate(var(--card-offset-x, 0px), var(--card-offset-y, 0px));
   }
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes scaleIn {
   from {
     opacity: 0;
-    transform: scale(0.95);
+    transform: scale(0.9);
   }
   to {
     opacity: 1;
@@ -170,30 +639,103 @@
   }
 }
 
-.animate-slide-down {
-  animation: slideDown 0.3s ease-out;
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.animate-slide-up {
+  animation: cardSlideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.3s ease-out;
+  animation: fadeIn 0.4s ease forwards;
 }
 
 .animate-scale-in {
-  animation: scaleIn 0.3s ease-out;
+  animation: scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
-.stagger-1 {
-  animation-delay: 0.05s;
+.animate-float {
+  animation: float 3s ease-in-out infinite;
 }
 
-.stagger-2 {
-  animation-delay: 0.1s;
+.animate-pulse-soft {
+  animation: pulse-soft 2s ease-in-out infinite;
 }
 
-.stagger-3 {
-  animation-delay: 0.15s;
+/* Stagger delays for lists */
+.stagger-1 { animation-delay: 0.05s; opacity: 0; }
+.stagger-2 { animation-delay: 0.1s; opacity: 0; }
+.stagger-3 { animation-delay: 0.15s; opacity: 0; }
+.stagger-4 { animation-delay: 0.2s; opacity: 0; }
+.stagger-5 { animation-delay: 0.25s; opacity: 0; }
+.stagger-6 { animation-delay: 0.3s; opacity: 0; }
+
+/* ============================================
+   REDUCED MOTION SUPPORT
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .ambient-bg {
+    animation: none;
+  }
+
+  .song-card {
+    transition: none;
+    transform: none !important;
+  }
 }
 
-.stagger-4 {
-  animation-delay: 0.2s;
+/* ============================================
+   MOBILE OPTIMIZATIONS
+   ============================================ */
+
+@media (max-width: 640px) {
+  .song-card-blur-bg {
+    filter: blur(22px) saturate(1.4);
+  }
+
+  .btn-vote {
+    width: 52px;
+    height: 52px;
+  }
+
+  /* Ensure touch targets are minimum 44px */
+  .btn-tactile {
+    min-height: 44px;
+    min-width: 44px;
+  }
 }
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+.text-primary { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-tertiary { color: var(--text-tertiary); }
+.text-accent { color: var(--accent-primary); }
+
+.bg-base { background: var(--bg-base); }
+.bg-elevated { background: var(--bg-elevated); }
+
+.border-glass { border-color: var(--glass-border); }

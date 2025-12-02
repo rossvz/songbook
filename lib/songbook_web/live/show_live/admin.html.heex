@@ -1,57 +1,104 @@
 <!-- Admin Navigation Tabs -->
-<div class="mb-6 border-b border-gray-200 dark:border-gray-700">
-  <nav class="flex space-x-8" aria-label="Admin">
+<div class="mb-8 border-b border-glass animate-fade-in">
+  <nav class="flex gap-1" aria-label="Admin">
     <.link
       navigate={~p"/admin/songs"}
-      class="border-b-2 border-transparent py-4 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300"
+      class="admin-nav-tab"
     >
-      Songs
+      <.icon name="hero-musical-note" class="h-4 w-4 inline-block mr-1.5" /> Songs
     </.link>
     <.link
       navigate={~p"/admin/shows"}
-      class="border-b-2 border-blue-500 py-4 px-1 text-sm font-medium text-blue-600 dark:text-blue-400"
+      class="admin-nav-tab admin-nav-tab-active"
     >
-      Shows
+      <.icon name="hero-calendar-days" class="h-4 w-4 inline-block mr-1.5" /> Shows
     </.link>
   </nav>
 </div>
 
-<.header>
-  {@page_title}
-  <:actions>
-    <.link patch={~p"/admin/shows/new"}>
-      <.button class="bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600">
-        New Show
-      </.button>
-    </.link>
-  </:actions>
-</.header>
+<!-- Header -->
+<div class="mb-6 flex items-center justify-between animate-slide-up">
+  <div>
+    <h1 class="text-2xl font-display font-semibold text-primary">
+      {@page_title}
+    </h1>
+    <p class="mt-1 text-sm text-secondary">
+      Manage your upcoming performances
+    </p>
+  </div>
+  <.link patch={~p"/admin/shows/new"}>
+    <button class="admin-button-primary">
+      <.icon name="hero-plus" class="h-4 w-4 mr-1.5" /> New Show
+    </button>
+  </.link>
+</div>
 
-<.table
+<!-- Shows List -->
+<div
   id="shows"
-  rows={@streams.shows}
+  phx-update="stream"
+  phx-hook="StaggerList"
+  class="space-y-4"
 >
-  <:col :let={{_id, show}} label="Date">
-    {format_date(show.date)}
-  </:col>
-  <:col :let={{_id, show}} label="Venue">
-    {show.venue}
-  </:col>
-  <:col :let={{_id, show}} label="Time">
-    {show.time || "TBD"}
-  </:col>
-  <:action :let={{_id, show}}>
-    <.link patch={~p"/admin/shows/#{show}/edit"}>Edit</.link>
-  </:action>
-  <:action :let={{id, show}}>
-    <.link
-      phx-click={JS.push("delete", value: %{id: show.id}) |> hide("##{id}")}
-      data-confirm="Are you sure you want to delete this show?"
-    >
-      Delete
+  <div
+    :for={{id, show} <- @streams.shows}
+    id={id}
+    data-stagger
+    class="show-card"
+  >
+    <div class="song-card-content p-5">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <div class="p-3 rounded-xl" style="background: var(--accent-primary-soft);">
+            <.icon name="hero-calendar-days" class="w-6 h-6 text-accent" />
+          </div>
+          <div>
+            <h3 class="font-display text-lg font-semibold text-primary">
+              {format_date(show.date)}
+            </h3>
+            <p class="text-secondary mt-0.5">{show.venue}</p>
+            <p :if={show.time} class="text-sm text-tertiary mt-0.5">{show.time}</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <.link
+            patch={~p"/admin/shows/#{show}/edit"}
+            class="p-2.5 rounded-xl text-accent hover:bg-accent-soft transition-colors"
+            title="Edit show"
+          >
+            <.icon name="hero-pencil-square" class="h-5 w-5" />
+          </.link>
+          <button
+            type="button"
+            phx-click={JS.push("delete", value: %{id: show.id}) |> hide("##{id}")}
+            data-confirm="Are you sure you want to delete this show?"
+            class="p-2.5 rounded-xl text-tertiary hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+            title="Delete show"
+          >
+            <.icon name="hero-trash" class="h-5 w-5" />
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Empty state -->
+<%= if @streams.shows.inserts == [] do %>
+  <div class="glass rounded-2xl p-12 text-center animate-scale-in">
+    <div class="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style="background: var(--accent-primary-soft);">
+      <.icon name="hero-calendar-days" class="w-8 h-8 text-accent" />
+    </div>
+    <h3 class="font-display text-xl font-semibold text-primary">No shows scheduled</h3>
+    <p class="text-secondary mt-2 mb-4">Add your first show to get started.</p>
+    <.link patch={~p"/admin/shows/new"}>
+      <button class="admin-button-primary">
+        <.icon name="hero-plus" class="h-4 w-4 mr-1.5" /> Add Your First Show
+      </button>
     </.link>
-  </:action>
-</.table>
+  </div>
+<% end %>
 
 <.modal
   :if={@live_action in [:new, :edit]}
