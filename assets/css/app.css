@@ -3,7 +3,7 @@
 @import "tailwindcss/utilities";
 
 /* Typography: Distinctive font pairing */
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Outfit:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Quicksand:wght@300;400;500;600;700&display=swap');
 
 /* ============================================
    DESIGN SYSTEM: SONGBOOK IMMERSIVE UI
@@ -108,7 +108,7 @@
    ============================================ */
 
 * {
-  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Quicksand', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 .font-display {
@@ -412,6 +412,12 @@ html.transitioning *::after {
 
 .btn-vote:active {
   transform: scale(0.9);
+}
+
+.btn-vote.btn-vote-sm {
+  width: 44px;
+  height: 44px;
+  font-size: 1rem;
 }
 
 /* ============================================
