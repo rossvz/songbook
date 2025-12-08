@@ -13,6 +13,11 @@ defmodule Songbook.Music.Vote do
 
     create :cast_vote do
       accept [:voter_id, :track_id]
+
+      change after_action(fn _changeset, vote, _context ->
+               Phoenix.PubSub.broadcast(Songbook.PubSub, "votes", {:vote_updated, vote})
+               {:ok, vote}
+             end)
     end
 
     read :by_voter do

@@ -75,8 +75,6 @@ defmodule SongbookWeb.VoteLive.Index do
           |> assign(:voted_tracks, updated_voted_tracks)
           |> stream(:songs, Music.list_visible_tracks!(), reset: true)
 
-        Phoenix.PubSub.broadcast(Songbook.PubSub, "votes", {:vote_updated, song})
-
         {:noreply, socket}
 
       {:error, _changeset} ->
