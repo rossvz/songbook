@@ -14,6 +14,7 @@ defmodule Songbook.Music do
 
       define :reset_votes, action: :reset_votes
       define :toggle_visibility, action: :toggle_visibility
+      define :set_dominant_color, action: :set_dominant_color
 
       define :delete_track, action: :destroy
     end

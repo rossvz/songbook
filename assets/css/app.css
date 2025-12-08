@@ -27,8 +27,8 @@
 
   /* Text hierarchy */
   --text-primary: #1a1612;
-  --text-secondary: #5c554d;
-  --text-tertiary: #8a837a;
+  --text-secondary: #3d3832;
+  --text-tertiary: #5c554d;
   --text-inverse: #faf9f7;
 
   /* Accent colors - muted, sophisticated */
@@ -745,3 +745,16 @@ html.transitioning *::after {
 .bg-elevated { background: var(--bg-elevated); }
 
 .border-glass { border-color: var(--glass-border); }
+
+/* Adaptive text colors - uses CSS variables set by JS hook */
+.adaptive-title {
+  color: var(--text-title, var(--text-primary));
+}
+
+.adaptive-artist {
+  color: var(--text-artist, var(--text-secondary));
+}
+
+.adaptive-album {
+  color: var(--text-album, var(--text-tertiary));
+}

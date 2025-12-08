@@ -33,7 +33,12 @@
         <% end %>
 
         <!-- Card content -->
-        <div class="song-card-content p-4 sm:p-5">
+        <div
+          class="song-card-content p-4 sm:p-5"
+          phx-hook="AdaptiveTextColor"
+          id={"content-#{song.id}"}
+          data-dominant-color={song.dominant_color}
+        >
           <div class="flex items-center gap-3 sm:gap-4">
             <!-- Album artwork -->
             <div class="flex-shrink-0">
@@ -52,13 +57,13 @@
 
             <!-- Song info -->
             <div class="flex-1 min-w-0">
-              <h3 class="font-display text-lg sm:text-xl font-semibold text-primary truncate">
+              <h3 class="font-display text-lg sm:text-xl font-semibold truncate adaptive-title">
                 {song.title}
               </h3>
-              <p class="text-secondary text-base mt-0.5 truncate">
+              <p class="text-base sm:text-lg font-medium mt-0.5 truncate adaptive-artist">
                 {song.artist}
               </p>
-              <p class="text-tertiary text-xs mt-0.5 truncate">
+              <p class="text-sm font-medium mt-0.5 truncate adaptive-album">
                 {song.album}
               </p>
             </div>

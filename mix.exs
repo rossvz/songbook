@@ -79,7 +79,8 @@ defmodule Songbook.MixProject do
       {:tidewave, "~> 0.4", only: :dev},
       {:tzdata, "~> 1.1"},
       {:igniter, "~> 0.6", only: [:dev, :test]},
-      {:oban, "~> 2.18"}
+      {:oban, "~> 2.18"},
+      {:image, "~> 0.62"}
     ]
   end
 

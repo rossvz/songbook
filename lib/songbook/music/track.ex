@@ -8,8 +8,13 @@ defmodule Songbook.Music.Track do
   end
 
   actions do
-    defaults [:read, :create, :update, :destroy]
+    defaults [:read, :update, :destroy]
     default_accept [:title, :artist, :album, :album_artwork_url, :spotify_id, :hidden]
+
+    create :create do
+      accept [:title, :artist, :album, :album_artwork_url, :spotify_id, :hidden]
+      change Songbook.Music.Changes.QueueDominantColor
+    end
 
     read :list_visible do
       filter expr(hidden != true)
@@ -41,6 +46,10 @@ defmodule Songbook.Music.Track do
                {:ok, result}
              end)
     end
+
+    update :set_dominant_color do
+      accept [:dominant_color]
+    end
   end
 
   preparations do
@@ -66,6 +75,7 @@ defmodule Songbook.Music.Track do
     attribute :album_artwork_url, :string
     attribute :spotify_id, :string
     attribute :hidden, :boolean, default: false
+    attribute :dominant_color, :string
     timestamps(type: :utc_datetime)
   end
 
