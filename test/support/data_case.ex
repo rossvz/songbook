@@ -20,6 +20,8 @@ defmodule Songbook.DataCase do
 
   using do
     quote do
+      use Oban.Testing, repo: Songbook.Repo
+
       import Ecto
       import Ecto.Changeset
       import Ecto.Query

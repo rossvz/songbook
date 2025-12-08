@@ -79,6 +79,19 @@ defmodule Songbook.TracksTest do
       assert track.spotify_id == "some spotify_id"
     end
 
+    test "create_track/1 queues a DominantColorWorker job" do
+      valid_attrs = %{
+        title: "some title",
+        artist: "some artist",
+        album: "some album",
+        album_artwork_url: "some album_artwork_url",
+        spotify_id: "some spotify_id"
+      }
+
+      assert {:ok, track} = Music.create_track(valid_attrs)
+      assert_enqueued(worker: Songbook.Workers.DominantColorWorker, args: %{track_id: track.id})
+    end
+
     test "create_track/1 with invalid data returns error changeset" do
       assert {:error, %Ash.Error.Invalid{}} = Music.create_track(@invalid_attrs)
     end

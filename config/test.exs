@@ -10,8 +10,8 @@ config :logger, level: :warning
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime
 
-# Disable Oban in tests
-config :songbook, Oban, testing: :inline
+# Use manual mode for Oban in tests - jobs are inserted but not executed
+config :songbook, Oban, testing: :manual
 
 # Configure your database
 #
