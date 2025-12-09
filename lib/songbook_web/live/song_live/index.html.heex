@@ -31,16 +31,16 @@
       <div class="flex items-center gap-2">
         <button
           phx-click="sync_playlist"
-          class="admin-button-primary"
+          class="px-3 py-1.5 text-xs font-medium text-secondary bg-glass border border-glass rounded-lg hover:bg-glass-hover hover:text-primary transition-all duration-200"
         >
-          <.icon name="hero-arrow-path" class="h-4 w-4 mr-1.5" /> Sync Now
+          <.icon name="hero-arrow-path" class="h-3.5 w-3.5 mr-1 inline-block" /> Sync
         </button>
         <button
           phx-click="unlink_playlist"
           data-confirm="Are you sure you want to unlink this playlist?"
-          class="admin-button-danger"
+          class="px-3 py-1.5 text-xs font-medium text-tertiary hover:text-secondary hover:bg-glass border border-transparent rounded-lg transition-all duration-200"
         >
-          <.icon name="hero-link-slash" class="h-4 w-4 mr-1.5" /> Unlink
+          <.icon name="hero-x-mark" class="h-3.5 w-3.5 mr-1 inline-block" /> Unlink
         </button>
       </div>
     <% else %>
@@ -53,12 +53,12 @@
   </div>
 
   <%= if @playlist do %>
-    <div class="flex items-start gap-5 p-4 rounded-xl glass">
+    <div class="flex items-start gap-5 p-4 rounded-xl bg-glass backdrop-blur-xl border border-glass">
       <img
         :if={@playlist.image_url}
         src={@playlist.image_url}
         alt={@playlist.name}
-        class="h-20 w-20 rounded-xl shadow-raised object-cover"
+        class="h-20 w-20 rounded-xl object-cover"
       />
       <div class="flex-1">
         <h3 class="font-semibold text-primary mb-1">
@@ -115,13 +115,13 @@
   <div class="flex items-center gap-2">
     <button
       phx-click="reset_votes"
-      class="admin-button-danger"
+      class="admin-button-danger text-sm py-2 px-4"
     >
-      <.icon name="hero-arrow-path" class="h-4 w-4 mr-1.5" /> Reset Votes
+      <.icon name="hero-arrow-path" class="h-3.5 w-3.5 mr-1" /> Reset Votes
     </button>
     <.link patch={~p"/admin/songs/new"}>
-      <button class="admin-button-secondary">
-        <.icon name="hero-plus" class="h-4 w-4 mr-1.5" /> New Song
+      <button class="admin-button-secondary text-sm py-2 px-4">
+        <.icon name="hero-plus" class="h-3.5 w-3.5 mr-1" /> New Song
       </button>
     </.link>
   </div>
