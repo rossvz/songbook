@@ -5,11 +5,13 @@ defmodule Songbook.Music.Changes.QueueDominantColor do
   """
   use Ash.Resource.Change
 
+  alias Songbook.Workers.DominantColorWorker
+
   @impl true
   def change(changeset, _opts, _context) do
     Ash.Changeset.after_action(changeset, fn _changeset, track ->
       %{track_id: track.id}
-      |> Songbook.Workers.DominantColorWorker.new()
+      |> DominantColorWorker.new()
       |> Oban.insert()
 
       {:ok, track}
