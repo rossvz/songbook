@@ -18,8 +18,8 @@
         <!-- Album art blur background -->
         <%= if song.album_artwork_url do %>
           <div
-            class="song-card-blur-bg"
-            style={"background-image: url('#{song.album_artwork_url}');"}
+            class="song-card-blur-bg animate-pan"
+            style={"background-image: url('#{song.album_artwork_url}'); --pan-speed: #{Enum.random(75..200)}s;"}
           >
           </div>
         <% else %>
@@ -31,8 +31,8 @@
           >
           </div>
         <% end %>
-
-        <!-- Card content -->
+        
+<!-- Card content -->
         <div
           class="song-card-content p-4 sm:p-5"
           phx-hook="AdaptiveTextColor"
@@ -42,11 +42,11 @@
           <div class="flex items-center gap-3 sm:gap-4">
             <!-- Album artwork -->
             <.album_artwork url={song.album_artwork_url} alt={song.album} />
-
-            <!-- Song info -->
+            
+<!-- Song info -->
             <.song_info song={song} adaptive={true} />
-
-            <!-- Vote button -->
+            
+<!-- Vote button -->
             <div class="flex-shrink-0 text-center">
               <button
                 type="button"
@@ -68,8 +68,8 @@
       </div>
     <% end %>
   </div>
-
-  <!-- Empty state -->
+  
+<!-- Empty state -->
   <%= if Enum.empty?(@streams.songs.inserts) do %>
     <div class="glass rounded-2xl p-12 text-center">
       <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-accent-soft flex items-center justify-center">

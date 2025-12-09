@@ -3,7 +3,7 @@
 @import "tailwindcss/utilities";
 
 /* Typography: Distinctive font pairing */
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Quicksand:wght@300;400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Quicksand:wght@300;400;500;600;700&display=swap");
 
 /* ============================================
    DESIGN SYSTEM: SONGBOOK IMMERSIVE UI
@@ -46,10 +46,9 @@
 
   /* Skeuomorphic shadows */
   --shadow-raised: 0 1px 2px rgba(26, 22, 18, 0.04),
-                   0 4px 8px rgba(26, 22, 18, 0.04),
-                   0 8px 24px rgba(26, 22, 18, 0.06);
+    0 4px 8px rgba(26, 22, 18, 0.04), 0 8px 24px rgba(26, 22, 18, 0.06);
   --shadow-floating: 0 4px 12px rgba(26, 22, 18, 0.08),
-                     0 16px 48px rgba(26, 22, 18, 0.12);
+    0 16px 48px rgba(26, 22, 18, 0.12);
   --shadow-pressed: inset 0 2px 4px rgba(26, 22, 18, 0.1);
   --shadow-glow: 0 0 40px rgba(74, 124, 140, 0.15);
 
@@ -94,11 +93,10 @@
   --vote-inactive: #6a6058;
 
   /* Skeuomorphic shadows - deeper in dark */
-  --shadow-raised: 0 1px 2px rgba(0, 0, 0, 0.2),
-                   0 4px 8px rgba(0, 0, 0, 0.15),
-                   0 8px 24px rgba(0, 0, 0, 0.2);
+  --shadow-raised: 0 1px 2px rgba(0, 0, 0, 0.2), 0 4px 8px rgba(0, 0, 0, 0.15),
+    0 8px 24px rgba(0, 0, 0, 0.2);
   --shadow-floating: 0 4px 12px rgba(0, 0, 0, 0.3),
-                     0 16px 48px rgba(0, 0, 0, 0.4);
+    0 16px 48px rgba(0, 0, 0, 0.4);
   --shadow-pressed: inset 0 2px 6px rgba(0, 0, 0, 0.4);
   --shadow-glow: 0 0 60px rgba(212, 149, 106, 0.1);
 }
@@ -108,11 +106,11 @@
    ============================================ */
 
 * {
-  font-family: 'Quicksand', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: "Quicksand", -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 .font-display {
-  font-family: 'Fraunces', Georgia, serif;
+  font-family: "Fraunces", Georgia, serif;
   font-optical-sizing: auto;
 }
 
@@ -126,10 +124,8 @@ html.transitioning,
 html.transitioning *,
 html.transitioning *::before,
 html.transitioning *::after {
-  transition: background-color 0.4s ease,
-              border-color 0.4s ease,
-              color 0.2s ease,
-              box-shadow 0.3s ease !important;
+  transition: background-color 0.4s ease, border-color 0.4s ease,
+    color 0.2s ease, box-shadow 0.3s ease !important;
 }
 
 /* ============================================
@@ -140,30 +136,42 @@ html.transitioning *::after {
   position: fixed;
   inset: 0;
   z-index: -1;
-  background:
-    radial-gradient(ellipse 80% 50% at 20% 20%, var(--bg-ambient-from) 0%, transparent 50%),
-    radial-gradient(ellipse 60% 40% at 80% 80%, var(--bg-ambient-to) 0%, transparent 50%),
-    radial-gradient(ellipse 50% 60% at 50% 50%, var(--bg-ambient-via) 0%, transparent 60%),
+  background: radial-gradient(
+      ellipse 80% 50% at 20% 20%,
+      var(--bg-ambient-from) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      ellipse 60% 40% at 80% 80%,
+      var(--bg-ambient-to) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      ellipse 50% 60% at 50% 50%,
+      var(--bg-ambient-via) 0%,
+      transparent 60%
+    ),
     var(--bg-base);
   opacity: 1;
   animation: ambientShift 20s ease-in-out infinite;
 }
 
 @keyframes ambientShift {
-  0%, 100% {
-    background-position: 0% 0%, 100% 100%, 50% 50%;
+  0%,
+  100% {
+    background-position: 0% 0%;
   }
   33% {
-    background-position: 10% 20%, 90% 70%, 40% 60%;
+    background-position: 0% 50%;
   }
   66% {
-    background-position: -5% 10%, 105% 90%, 55% 45%;
+    background-position: 0% 100%;
   }
 }
 
 /* Noise texture overlay for depth */
 .ambient-bg::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
@@ -210,13 +218,11 @@ html.transitioning *::after {
   border: 1px solid var(--glass-border);
 
   /* Chaos transform - set via CSS custom properties */
-  transform:
-    rotate(var(--card-rotate, 0deg))
+  transform: rotate(var(--card-rotate, 0deg))
     translate(var(--card-offset-x, 0px), var(--card-offset-y, 0px));
 
   /* Smooth physics-like transitions */
-  transition:
-    transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
     box-shadow 0.3s ease;
 
   will-change: transform;
@@ -226,17 +232,15 @@ html.transitioning *::after {
 .song-card-blur-bg {
   position: absolute;
   inset: -40px;
-  background-size: cover;
-  background-position: center;
-  filter: blur(30px) saturate(1.6);
+  /* background-size: cover; */
+  background-position: 50% 0%;
+  filter: blur(10px) saturate(1.6);
   opacity: 0.55;
   z-index: 0;
   transition: opacity 0.4s ease, filter 0.4s ease;
-}
-
-.dark .song-card-blur-bg {
-  filter: blur(35px) saturate(1.8);
-  opacity: 0.4;
+  animation-name: subtlePan;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
 }
 
 /* Gradient fallback when no album art */
@@ -278,10 +282,8 @@ html.transitioning *::after {
 }
 
 .song-card:active {
-  transform:
-    rotate(var(--card-rotate, 0deg))
-    translate(var(--card-offset-x, 0px), var(--card-offset-y, 0px))
-    scale(0.98);
+  transform: rotate(var(--card-rotate, 0deg))
+    translate(var(--card-offset-x, 0px), var(--card-offset-y, 0px)) scale(0.98);
 }
 
 /* Vote bounce animation */
@@ -290,10 +292,22 @@ html.transitioning *::after {
 }
 
 @keyframes voteBounce {
-  0% { transform: rotate(var(--card-rotate)) translate(var(--card-offset-x), var(--card-offset-y)) scale(1); }
-  30% { transform: rotate(var(--card-rotate)) translate(var(--card-offset-x), var(--card-offset-y)) scale(0.92); }
-  60% { transform: rotate(var(--card-rotate)) translate(var(--card-offset-x), var(--card-offset-y)) scale(1.02); }
-  100% { transform: rotate(var(--card-rotate)) translate(var(--card-offset-x), var(--card-offset-y)) scale(1); }
+  0% {
+    transform: rotate(var(--card-rotate))
+      translate(var(--card-offset-x), var(--card-offset-y)) scale(1);
+  }
+  30% {
+    transform: rotate(var(--card-rotate))
+      translate(var(--card-offset-x), var(--card-offset-y)) scale(0.92);
+  }
+  60% {
+    transform: rotate(var(--card-rotate))
+      translate(var(--card-offset-x), var(--card-offset-y)) scale(1.02);
+  }
+  100% {
+    transform: rotate(var(--card-rotate))
+      translate(var(--card-offset-x), var(--card-offset-y)) scale(1);
+  }
 }
 
 /* ============================================
@@ -314,19 +328,17 @@ html.transitioning *::after {
 
   /* Skeuomorphic depth */
   background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.15) 0%,
-    rgba(255, 255, 255, 0) 50%,
-    rgba(0, 0, 0, 0.05) 100%
-  ),
-  var(--accent-primary);
+      180deg,
+      rgba(255, 255, 255, 0.15) 0%,
+      rgba(255, 255, 255, 0) 50%,
+      rgba(0, 0, 0, 0.05) 100%
+    ),
+    var(--accent-primary);
 
   color: var(--text-inverse);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.2) inset,
-    0 -1px 0 rgba(0, 0, 0, 0.1) inset,
-    var(--shadow-raised);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset,
+    0 -1px 0 rgba(0, 0, 0, 0.1) inset, var(--shadow-raised);
 
   transition: all 0.2s ease;
   transform: translateY(0);
@@ -334,22 +346,20 @@ html.transitioning *::after {
 
 .btn-tactile:hover {
   transform: translateY(-1px);
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.25) inset,
-    0 -1px 0 rgba(0, 0, 0, 0.1) inset,
-    var(--shadow-floating);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.25) inset,
+    0 -1px 0 rgba(0, 0, 0, 0.1) inset, var(--shadow-floating);
 }
 
 .btn-tactile:active {
   transform: translateY(1px);
   box-shadow: var(--shadow-pressed);
   background: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 0.05) 0%,
-    rgba(0, 0, 0, 0) 50%,
-    rgba(255, 255, 255, 0.05) 100%
-  ),
-  var(--accent-primary);
+      180deg,
+      rgba(0, 0, 0, 0.05) 0%,
+      rgba(0, 0, 0, 0) 50%,
+      rgba(255, 255, 255, 0.05) 100%
+    ),
+    var(--accent-primary);
 }
 
 /* Secondary button variant */
@@ -382,33 +392,29 @@ html.transitioning *::after {
   color: white;
 
   background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.2) 0%,
-    rgba(255, 255, 255, 0) 50%,
-    rgba(0, 0, 0, 0.1) 100%
-  ),
-  var(--vote-inactive);
+      135deg,
+      rgba(255, 255, 255, 0.2) 0%,
+      rgba(255, 255, 255, 0) 50%,
+      rgba(0, 0, 0, 0.1) 100%
+    ),
+    var(--vote-inactive);
 
-  box-shadow:
-    0 2px 0 rgba(255, 255, 255, 0.15) inset,
-    0 -2px 0 rgba(0, 0, 0, 0.15) inset,
-    var(--shadow-raised);
+  box-shadow: 0 2px 0 rgba(255, 255, 255, 0.15) inset,
+    0 -2px 0 rgba(0, 0, 0, 0.15) inset, var(--shadow-raised);
 }
 
 .btn-vote.voted {
   color: white;
   background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.25) 0%,
-    rgba(255, 255, 255, 0) 50%,
-    rgba(0, 0, 0, 0.1) 100%
-  ),
-  var(--vote-active);
+      135deg,
+      rgba(255, 255, 255, 0.25) 0%,
+      rgba(255, 255, 255, 0) 50%,
+      rgba(0, 0, 0, 0.1) 100%
+    ),
+    var(--vote-active);
 
-  box-shadow:
-    0 2px 0 rgba(255, 255, 255, 0.2) inset,
-    0 -2px 0 rgba(0, 0, 0, 0.1) inset,
-    var(--shadow-raised),
+  box-shadow: 0 2px 0 rgba(255, 255, 255, 0.2) inset,
+    0 -2px 0 rgba(0, 0, 0, 0.1) inset, var(--shadow-raised),
     0 0 20px var(--vote-active-soft);
 }
 
@@ -473,12 +479,12 @@ html.transitioning *::after {
   .admin-button-warning {
     @apply btn-tactile;
     background: linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.15) 0%,
-      rgba(255, 255, 255, 0) 50%,
-      rgba(0, 0, 0, 0.05) 100%
-    ),
-    var(--accent-warm);
+        180deg,
+        rgba(255, 255, 255, 0.15) 0%,
+        rgba(255, 255, 255, 0) 50%,
+        rgba(0, 0, 0, 0.05) 100%
+      ),
+      var(--accent-warm);
   }
 
   .admin-nav-tab {
@@ -495,7 +501,7 @@ html.transitioning *::after {
   }
 
   .admin-nav-tab-active::after {
-    content: '';
+    content: "";
     @apply absolute bottom-0 left-2 right-2 h-0.5 rounded-full;
     background: var(--accent-primary);
   }
@@ -569,16 +575,14 @@ html.transitioning *::after {
 
 .album-art {
   border-radius: 12px;
-  box-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.15),
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15),
     0 0 0 1px rgba(255, 255, 255, 0.1) inset;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .album-art:hover {
   transform: scale(1.02);
-  box-shadow:
-    0 8px 24px rgba(0, 0, 0, 0.2),
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2),
     0 0 0 1px rgba(255, 255, 255, 0.15) inset;
 }
 
@@ -602,7 +606,7 @@ html.transitioning *::after {
 }
 
 .calendar-day-has-show::after {
-  content: '';
+  content: "";
   @apply absolute bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full;
   background: var(--accent-warm);
 }
@@ -619,21 +623,26 @@ html.transitioning *::after {
 @keyframes cardSlideUp {
   from {
     opacity: 0;
-    transform:
-      rotate(var(--card-rotate, 0deg))
-      translate(var(--card-offset-x, 0px), calc(var(--card-offset-y, 0px) + 30px));
+    transform: rotate(var(--card-rotate, 0deg))
+      translate(
+        var(--card-offset-x, 0px),
+        calc(var(--card-offset-y, 0px) + 30px)
+      );
   }
   to {
     opacity: 1;
-    transform:
-      rotate(var(--card-rotate, 0deg))
+    transform: rotate(var(--card-rotate, 0deg))
       translate(var(--card-offset-x, 0px), var(--card-offset-y, 0px));
   }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes scaleIn {
@@ -648,18 +657,57 @@ html.transitioning *::after {
 }
 
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-4px); }
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
 }
 
 @keyframes pulse-soft {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes subtlePan {
+  0% {
+    background-position: 0% 0%;
+  }
+  25% {
+    background-position: 100% 100%;
+  }
+  50% {
+    background-position: 0% 100%;
+  }
+  75% {
+    background-position: 100% 0%;
+  }
+  100% {
+    background-position: 0% 0%;
+  }
+}
+
+.animate-pan {
+  animation-name: subtlePan !important;
+  animation-duration: var(--pan-speed, 60s) !important;
+  animation-timing-function: ease-in-out !important;
+  animation-iteration-count: infinite !important;
 }
 
 .animate-slide-up {
@@ -683,12 +731,30 @@ html.transitioning *::after {
 }
 
 /* Stagger delays for lists */
-.stagger-1 { animation-delay: 0.05s; opacity: 0; }
-.stagger-2 { animation-delay: 0.1s; opacity: 0; }
-.stagger-3 { animation-delay: 0.15s; opacity: 0; }
-.stagger-4 { animation-delay: 0.2s; opacity: 0; }
-.stagger-5 { animation-delay: 0.25s; opacity: 0; }
-.stagger-6 { animation-delay: 0.3s; opacity: 0; }
+.stagger-1 {
+  animation-delay: 0.05s;
+  opacity: 0;
+}
+.stagger-2 {
+  animation-delay: 0.1s;
+  opacity: 0;
+}
+.stagger-3 {
+  animation-delay: 0.15s;
+  opacity: 0;
+}
+.stagger-4 {
+  animation-delay: 0.2s;
+  opacity: 0;
+}
+.stagger-5 {
+  animation-delay: 0.25s;
+  opacity: 0;
+}
+.stagger-6 {
+  animation-delay: 0.3s;
+  opacity: 0;
+}
 
 /* ============================================
    REDUCED MOTION SUPPORT
@@ -698,9 +764,9 @@ html.transitioning *::after {
   *,
   *::before,
   *::after {
-    animation-duration: 0.01ms !important;
+    animation-duration: 0.01s !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    transition-duration: 0.01s !important;
   }
 
   .ambient-bg {
@@ -719,7 +785,7 @@ html.transitioning *::after {
 
 @media (max-width: 640px) {
   .song-card-blur-bg {
-    filter: blur(22px) saturate(1.4);
+    filter: blur(14px) saturate(1.4);
   }
 
   .btn-vote {
@@ -738,15 +804,29 @@ html.transitioning *::after {
    UTILITY CLASSES
    ============================================ */
 
-.text-primary { color: var(--text-primary); }
-.text-secondary { color: var(--text-secondary); }
-.text-tertiary { color: var(--text-tertiary); }
-.text-accent { color: var(--accent-primary); }
+.text-primary {
+  color: var(--text-primary);
+}
+.text-secondary {
+  color: var(--text-secondary);
+}
+.text-tertiary {
+  color: var(--text-tertiary);
+}
+.text-accent {
+  color: var(--accent-primary);
+}
 
-.bg-base { background: var(--bg-base); }
-.bg-elevated { background: var(--bg-elevated); }
+.bg-base {
+  background: var(--bg-base);
+}
+.bg-elevated {
+  background: var(--bg-elevated);
+}
 
-.border-glass { border-color: var(--glass-border); }
+.border-glass {
+  border-color: var(--glass-border);
+}
 
 /* Adaptive text colors - uses CSS variables set by JS hook */
 .adaptive-title {
