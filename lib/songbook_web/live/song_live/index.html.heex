@@ -154,50 +154,20 @@
 
     <div class="song-card-content p-5">
       <div class="flex items-start gap-5">
-        <img
-          src={song.album_artwork_url}
-          alt={song.album}
-          class="album-art h-20 w-20 sm:h-24 sm:w-24 object-cover flex-shrink-0"
-        />
+        <.album_artwork url={song.album_artwork_url} alt={song.album} size="large" />
 
-        <div class="flex-1 min-w-0 space-y-1.5">
-          <h3 class="font-display font-semibold text-lg text-primary leading-tight truncate">
-            {song.title}
-          </h3>
-
-          <div class="flex items-center gap-2 text-sm">
-            <span class="text-secondary font-medium truncate">
-              {song.artist}
-            </span>
-            <span class="text-tertiary flex-shrink-0">•</span>
-            <span class="text-tertiary truncate">
-              {song.album}
-            </span>
-          </div>
+        <div class="flex-1 min-w-0">
+          <.song_info song={song} />
 
           <%= if song.hidden do %>
-            <span class="admin-badge-warning text-xs">
+            <span class="admin-badge-warning text-xs mt-1 inline-block">
               <.icon name="hero-eye-slash-mini" class="h-3 w-3 mr-1" /> Hidden
             </span>
           <% end %>
         </div>
 
         <div class="flex items-center gap-4 flex-shrink-0">
-          <div class="text-center">
-            <p class="text-xs font-semibold uppercase tracking-wide text-tertiary mb-1.5">
-              Votes
-            </p>
-            <span class={[
-              "inline-flex items-center justify-center min-w-[3rem] px-3 py-1.5 rounded-full text-base font-bold",
-              if song.vote_count > 0 do
-                "admin-badge-success"
-              else
-                "admin-badge"
-              end
-            ]}>
-              {song.vote_count}
-            </span>
-          </div>
+          <.vote_count count={song.vote_count} />
 
           <div class="flex items-center gap-1.5 pl-4 border-l border-glass">
             <button
