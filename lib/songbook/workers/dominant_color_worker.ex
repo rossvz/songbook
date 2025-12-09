@@ -43,6 +43,7 @@ defmodule Songbook.Workers.DominantColorWorker do
     else
       {:error, reason} ->
         Logger.warning("[DominantColorWorker] Failed to extract color for #{track.title}: #{inspect(reason)}")
+
         :ok
     end
   end

@@ -3,6 +3,7 @@ defmodule Songbook.TracksTest do
 
   import Songbook.MusicFixtures
 
+  alias Ash.Error.Invalid
   alias Songbook.Music
 
   describe "tracks" do
@@ -93,7 +94,7 @@ defmodule Songbook.TracksTest do
     end
 
     test "create_track/1 with invalid data returns error changeset" do
-      assert {:error, %Ash.Error.Invalid{}} = Music.create_track(@invalid_attrs)
+      assert {:error, %Invalid{}} = Music.create_track(@invalid_attrs)
     end
 
     test "cast_vote/1 creates a vote for a track" do
@@ -158,21 +159,23 @@ defmodule Songbook.TracksTest do
       # Verify votes exist in the database
       votes_before = Music.list_votes!()
       track_vote_ids = [vote1.id, vote2.id, vote3.id]
+
       assert Enum.all?(track_vote_ids, fn id ->
-        Enum.any?(votes_before, fn v -> v.id == id end)
-      end)
+               Enum.any?(votes_before, fn v -> v.id == id end)
+             end)
 
       # Delete the track
       assert Music.delete_track(track) == :ok
 
       # Verify all votes for that track are gone
       votes_after = Music.list_votes!()
+
       refute Enum.any?(track_vote_ids, fn id ->
-        Enum.any?(votes_after, fn v -> v.id == id end)
-      end)
+               Enum.any?(votes_after, fn v -> v.id == id end)
+             end)
 
       # Verify the track no longer exists
-      assert_raise Ash.Error.Invalid, fn ->
+      assert_raise Invalid, fn ->
         Music.get_track!(track.id)
       end
     end

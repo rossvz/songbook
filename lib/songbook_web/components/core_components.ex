@@ -128,17 +128,24 @@ defmodule SongbookWeb.CoreComponents do
       ]}
       {@rest}
     >
-      <p :if={@title} class={[
-        "flex items-center gap-2 text-sm font-semibold leading-6",
-        @kind == :info && "text-emerald-700 dark:text-emerald-400",
-        @kind == :error && "text-rose-700 dark:text-rose-400"
-      ]}>
+      <p
+        :if={@title}
+        class={[
+          "flex items-center gap-2 text-sm font-semibold leading-6",
+          @kind == :info && "text-emerald-700 dark:text-emerald-400",
+          @kind == :error && "text-rose-700 dark:text-rose-400"
+        ]}
+      >
         <.icon :if={@kind == :info} name="hero-check-circle-mini" class="h-5 w-5" />
         <.icon :if={@kind == :error} name="hero-exclamation-circle-mini" class="h-5 w-5" />
         {@title}
       </p>
       <p class="mt-1.5 text-sm leading-5 text-secondary">{msg}</p>
-      <button type="button" class="group absolute top-3 right-3 p-1.5 rounded-lg hover:bg-accent-soft transition-colors" aria-label={gettext("close")}>
+      <button
+        type="button"
+        class="group absolute top-3 right-3 p-1.5 rounded-lg hover:bg-accent-soft transition-colors"
+        aria-label={gettext("close")}
+      >
         <.icon name="hero-x-mark-solid" class="h-4 w-4 text-tertiary group-hover:text-primary" />
       </button>
     </div>
@@ -855,7 +862,8 @@ defmodule SongbookWeb.CoreComponents do
               @size == "small" -> "w-6 h-6"
               true -> "w-8 h-8"
             end
-          } />
+          }
+        />
       </div>
     <% end %>
     """
