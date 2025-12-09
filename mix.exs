@@ -99,6 +99,7 @@ defmodule Songbook.MixProject do
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
       "assets.build": ["tailwind songbook", "esbuild songbook"],
       "assets.deploy": [
+        "npm install --prefix assets",
         "tailwind songbook --minify",
         "esbuild songbook --minify",
         "phx.digest"
