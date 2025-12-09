@@ -100,7 +100,10 @@
 </div>
 
 <!-- Song Library Header -->
-<div class="mb-6 flex items-center justify-between animate-slide-up" style="animation-delay: 0.1s;">
+<div
+  class="mb-6 flex items-center justify-between animate-slide-up"
+  style="animation-delay: 0.1s;"
+>
   <div>
     <h1 class="text-2xl font-display font-semibold text-primary">
       Song Library
@@ -113,7 +116,6 @@
     <button
       phx-click="reset_votes"
       class="admin-button-danger"
-      data-confirm="Are you sure you want to reset all votes? This cannot be undone."
     >
       <.icon name="hero-arrow-path" class="h-4 w-4 mr-1.5" /> Reset Votes
     </button>
@@ -212,7 +214,10 @@
               ]}
               title={if song.hidden, do: "Show song", else: "Hide song"}
             >
-              <.icon name={if song.hidden, do: "hero-eye-slash", else: "hero-eye"} class="h-5 w-5" />
+              <.icon
+                name={if song.hidden, do: "hero-eye-slash", else: "hero-eye"}
+                class="h-5 w-5"
+              />
             </button>
             <button
               type="button"
@@ -234,7 +239,10 @@
 <!-- Empty state -->
 <%= if @streams.songs.inserts == [] do %>
   <div class="glass rounded-2xl p-12 text-center animate-scale-in">
-    <div class="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style="background: var(--accent-primary-soft);">
+    <div
+      class="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center"
+      style="background: var(--accent-primary-soft);"
+    >
       <.icon name="hero-musical-note" class="w-8 h-8 text-accent" />
     </div>
     <h3 class="font-display text-xl font-semibold text-primary">No songs yet</h3>

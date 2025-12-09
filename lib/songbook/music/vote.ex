@@ -14,10 +14,19 @@ defmodule Songbook.Music.Vote do
     create :cast_vote do
       accept [:voter_id, :track_id]
 
-      change after_action(fn _changeset, vote, _context ->
-               Phoenix.PubSub.broadcast(Songbook.PubSub, "votes", {:vote_updated, vote})
-               {:ok, vote}
-             end)
+      validate fn changeset, _context ->
+        track_id = Ash.Changeset.get_attribute(changeset, :track_id)
+
+        case Songbook.Music.get_track(track_id) do
+          {:ok, %{hidden: true}} ->
+            {:error, field: :track_id, message: "This song is not available for voting"}
+
+          _ ->
+            :ok
+        end
+      end
+
+      change after_action(&broadcast_vote_updated/3)
     end
 
     read :by_voter do
@@ -32,6 +41,23 @@ defmodule Songbook.Music.Vote do
       get? true
 
       filter expr(voter_id == ^arg(:voter_id) and track_id == ^arg(:track_id))
+    end
+
+    action :destroy_all, :integer do
+      run fn _input, _context ->
+        result =
+          Ash.bulk_destroy!(
+            Songbook.Music.Vote,
+            :destroy,
+            %{},
+            domain: Songbook.Music,
+            return_records?: true
+          )
+
+        {:ok, Enum.count(result.records)}
+      end
+
+      prepare after_action(&broadcast_votes_reset/3)
     end
   end
 
@@ -56,5 +82,15 @@ defmodule Songbook.Music.Vote do
 
   identities do
     identity :unique_vote, [:voter_id, :track_id]
+  end
+
+  defp broadcast_vote_updated(_changeset, result, _context) do
+    Phoenix.PubSub.broadcast(Songbook.PubSub, "votes", {:vote_updated, result})
+    {:ok, result}
+  end
+
+  defp broadcast_votes_reset(_changeset, result, _context) do
+    Phoenix.PubSub.broadcast(Songbook.PubSub, "votes", :votes_reset)
+    {:ok, result}
   end
 end

@@ -95,17 +95,12 @@ defmodule SongbookWeb.SongLive.Index do
 
   @impl true
   def handle_event("reset_votes", _params, socket) do
-    Enum.each(Music.list_tracks!(), fn track ->
-      Music.reset_votes(track)
-    end)
-
-    # Broadcast vote reset to all connected voting clients
-    Phoenix.PubSub.broadcast(Songbook.PubSub, "votes", :votes_reset)
+    {:ok, result} = Music.destroy_all_votes()
 
     # Reload the songs list to show updated vote counts
     {:noreply,
      socket
-     |> put_flash(:info, "All votes have been reset to 0")
+     |> put_flash(:info, "Votes Reset (#{result} votes deleted)")
      |> stream(:songs, Music.list_tracks!(), reset: true)}
   end
 

@@ -48,21 +48,12 @@ defmodule SongbookWeb.VoteLive.Index do
     voter_id = socket.assigns.voter_id
     voted_tracks = socket.assigns.voted_tracks
 
-    cond do
-      is_nil(voter_id) or voter_id == "" ->
-        {:noreply, put_flash(socket, :error, "Unable to identify voter")}
-
-      MapSet.member?(voted_tracks, id) ->
-        remove_vote(socket, id, voter_id, voted_tracks)
-
-      true ->
-        song = Music.get_track!(id)
-        cast_vote(socket, song, voter_id, voted_tracks)
+    if MapSet.member?(voted_tracks, id) do
+      remove_vote(socket, id, voter_id, voted_tracks)
+    else
+      song = Music.get_track!(id)
+      cast_vote(socket, song, voter_id, voted_tracks)
     end
-  end
-
-  defp cast_vote(socket, %{hidden: true}, _voter_id, _voted_tracks) do
-    {:noreply, put_flash(socket, :error, "This song is not available for voting")}
   end
 
   defp cast_vote(socket, song, voter_id, voted_tracks) do

@@ -26,6 +26,7 @@ defmodule Songbook.Music do
       define :has_voted?, action: :read, get_by: [:voter_id, :track_id]
       define :find_vote, action: :find_vote, args: [:voter_id, :track_id]
       define :destroy_vote, action: :destroy
+      define :destroy_all_votes, action: :destroy_all
     end
 
     resource Songbook.Music.Show do
