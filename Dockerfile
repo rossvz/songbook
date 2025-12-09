@@ -20,8 +20,14 @@ ARG RUNNER_IMAGE="debian:${DEBIAN_VERSION}"
 
 FROM ${BUILDER_IMAGE} AS builder
 
-# install build dependencies
-RUN apt-get update -y && apt-get install -y build-essential git \
+# install build dependencies and Node.js
+RUN apt-get update -y && apt-get install -y build-essential git curl \
+  && apt-get clean && rm -f /var/lib/apt/lists/*_*
+
+# install Node.js (LTS)
+ARG NODE_VERSION=20
+RUN curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - \
+  && apt-get install -y nodejs \
   && apt-get clean && rm -f /var/lib/apt/lists/*_*
 
 # prepare build dir
@@ -49,6 +55,11 @@ COPY priv priv
 
 COPY lib lib
 
+# copy assets and install npm dependencies (cached layer)
+COPY assets/package.json assets/package-lock.json* assets/
+RUN cd assets && npm install
+
+# copy remaining assets
 COPY assets assets
 
 # compile assets
