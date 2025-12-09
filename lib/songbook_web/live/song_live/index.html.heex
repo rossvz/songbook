@@ -53,7 +53,7 @@
   </div>
 
   <%= if @playlist do %>
-    <div class="flex items-start gap-5 p-4 rounded-xl bg-glass backdrop-blur-xl border border-glass">
+    <div class="flex items-start gap-5 p-4 rounded-xl bg-glass/50 backdrop-blur-xl">
       <img
         :if={@playlist.image_url}
         src={@playlist.image_url}
