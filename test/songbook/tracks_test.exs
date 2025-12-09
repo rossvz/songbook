@@ -142,6 +142,41 @@ defmodule Songbook.TracksTest do
       assert Music.delete_track(track) == :ok
     end
 
+    test "delete_track/1 cascades and deletes all associated votes" do
+      # Create a track
+      track = track_fixture()
+
+      # Cast multiple votes for the track
+      {:ok, vote1} = Music.cast_vote(%{voter_id: "voter1", track_id: track.id})
+      {:ok, vote2} = Music.cast_vote(%{voter_id: "voter2", track_id: track.id})
+      {:ok, vote3} = Music.cast_vote(%{voter_id: "voter3", track_id: track.id})
+
+      # Verify the track has 3 votes
+      track_with_votes = Music.get_track!(track.id)
+      assert track_with_votes.vote_count == 3
+
+      # Verify votes exist in the database
+      votes_before = Music.list_votes!()
+      track_vote_ids = [vote1.id, vote2.id, vote3.id]
+      assert Enum.all?(track_vote_ids, fn id ->
+        Enum.any?(votes_before, fn v -> v.id == id end)
+      end)
+
+      # Delete the track
+      assert Music.delete_track(track) == :ok
+
+      # Verify all votes for that track are gone
+      votes_after = Music.list_votes!()
+      refute Enum.any?(track_vote_ids, fn id ->
+        Enum.any?(votes_after, fn v -> v.id == id end)
+      end)
+
+      # Verify the track no longer exists
+      assert_raise Ash.Error.Invalid, fn ->
+        Music.get_track!(track.id)
+      end
+    end
+
     test "list_visible_tracks!/0 returns only non-hidden tracks" do
       visible_track = track_fixture()
       hidden_track = track_fixture(%{hidden: true})
