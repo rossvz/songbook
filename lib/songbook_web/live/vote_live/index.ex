@@ -10,6 +10,7 @@ defmodule SongbookWeb.VoteLive.Index do
 
     # Get voter_id from session (set by our plug)
     voter_id = session["voter_id"]
+    all_tracks = Music.list_visible_tracks!()
 
     socket =
       socket
@@ -17,7 +18,9 @@ defmodule SongbookWeb.VoteLive.Index do
       |> assign(:voted_tracks, get_voted_tracks(voter_id))
       |> assign(:playlist, get_linked_playlist())
       |> assign(:player_visible, true)
-      |> stream(:songs, Music.list_visible_tracks!())
+      |> assign(:search_query, "")
+      |> assign(:all_tracks, all_tracks)
+      |> stream(:songs, all_tracks)
 
     {:ok, socket}
   end
@@ -44,6 +47,18 @@ defmodule SongbookWeb.VoteLive.Index do
   end
 
   @impl true
+  def handle_event("search", %{"query" => query}, socket) do
+    filtered = filter_tracks(socket.assigns.all_tracks, query)
+
+    socket =
+      socket
+      |> assign(:search_query, query)
+      |> stream(:songs, filtered, reset: true)
+
+    {:noreply, socket}
+  end
+
+  @impl true
   def handle_event("vote", %{"id" => id}, socket) do
     voter_id = socket.assigns.voter_id
     voted_tracks = socket.assigns.voted_tracks
@@ -60,11 +75,14 @@ defmodule SongbookWeb.VoteLive.Index do
     case Music.cast_vote(%{voter_id: voter_id, track_id: song.id}) do
       {:ok, _vote} ->
         updated_voted_tracks = MapSet.put(voted_tracks, song.id)
+        all_tracks = Music.list_visible_tracks!()
+        filtered = filter_tracks(all_tracks, socket.assigns.search_query)
 
         socket =
           socket
           |> assign(:voted_tracks, updated_voted_tracks)
-          |> stream(:songs, Music.list_visible_tracks!(), reset: true)
+          |> assign(:all_tracks, all_tracks)
+          |> stream(:songs, filtered, reset: true)
 
         {:noreply, socket}
 
@@ -77,11 +95,14 @@ defmodule SongbookWeb.VoteLive.Index do
     with {:ok, vote} <- Music.find_vote(voter_id, track_id),
          :ok <- Music.destroy_vote(vote) do
       updated_voted_tracks = MapSet.delete(voted_tracks, track_id)
+      all_tracks = Music.list_visible_tracks!()
+      filtered = filter_tracks(all_tracks, socket.assigns.search_query)
 
       socket =
         socket
         |> assign(:voted_tracks, updated_voted_tracks)
-        |> stream(:songs, Music.list_visible_tracks!(), reset: true)
+        |> assign(:all_tracks, all_tracks)
+        |> stream(:songs, filtered, reset: true)
 
       Phoenix.PubSub.broadcast(Songbook.PubSub, "votes", {:vote_updated, nil})
 
@@ -95,7 +116,15 @@ defmodule SongbookWeb.VoteLive.Index do
   @impl true
   def handle_info({:vote_updated, _song}, socket) do
     # Reload the entire sorted list for all connected clients
-    {:noreply, stream(socket, :songs, Music.list_visible_tracks!(), reset: true)}
+    all_tracks = Music.list_visible_tracks!()
+    filtered = filter_tracks(all_tracks, socket.assigns.search_query)
+
+    socket =
+      socket
+      |> assign(:all_tracks, all_tracks)
+      |> stream(:songs, filtered, reset: true)
+
+    {:noreply, socket}
   end
 
   @impl true
@@ -103,11 +132,14 @@ defmodule SongbookWeb.VoteLive.Index do
     # Reload the entire sorted list when votes are reset
     # Also reload the voted_tracks for this user since they should now be able to vote again
     voter_id = socket.assigns.voter_id
+    all_tracks = Music.list_visible_tracks!()
+    filtered = filter_tracks(all_tracks, socket.assigns.search_query)
 
     socket =
       socket
       |> assign(:voted_tracks, get_voted_tracks(voter_id))
-      |> stream(:songs, Music.list_visible_tracks!(), reset: true)
+      |> assign(:all_tracks, all_tracks)
+      |> stream(:songs, filtered, reset: true)
 
     {:noreply, socket}
   end
@@ -120,4 +152,16 @@ defmodule SongbookWeb.VoteLive.Index do
   end
 
   defp get_voted_tracks(_), do: MapSet.new()
+
+  defp filter_tracks(tracks, ""), do: tracks
+
+  defp filter_tracks(tracks, query) do
+    query = String.downcase(query)
+
+    Enum.filter(tracks, fn track ->
+      String.contains?(String.downcase(track.title), query) or
+        String.contains?(String.downcase(track.artist), query) or
+        String.contains?(String.downcase(track.album), query)
+    end)
+  end
 end
