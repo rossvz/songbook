@@ -159,9 +159,12 @@ defmodule SongbookWeb.VoteLive.Index do
     query = String.downcase(query)
 
     Enum.filter(tracks, fn track ->
+      genres_string = Enum.join(track.genres || [], " ")
+
       String.contains?(String.downcase(track.title), query) or
         String.contains?(String.downcase(track.artist), query) or
-        String.contains?(String.downcase(track.album), query)
+        String.contains?(String.downcase(track.album), query) or
+        String.contains?(String.downcase(genres_string), query)
     end)
   end
 end

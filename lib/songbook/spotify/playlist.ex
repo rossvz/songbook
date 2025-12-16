@@ -56,7 +56,7 @@ defmodule Songbook.Spotify.Playlist do
 
   defp fetch_all_tracks(playlist_id, offset, acc) do
     url =
-      "https://api.spotify.com/v1/playlists/#{playlist_id}/tracks?offset=#{offset}&limit=100&fields=items(track(id,name,album(name,images),artists(name))),total"
+      "https://api.spotify.com/v1/playlists/#{playlist_id}/tracks?offset=#{offset}&limit=100&fields=items(track(id,name,album(name,images),artists(id,name))),total"
 
     case Req.get(url, headers: auth_headers()) do
       {:ok, %{status: 200, body: body}} ->
@@ -91,6 +91,7 @@ defmodule Songbook.Spotify.Playlist do
         spotify_id: track["id"],
         title: track["name"],
         artist: get_in(track, ["artists", Access.at(0), "name"]),
+        spotify_artist_id: get_in(track, ["artists", Access.at(0), "id"]),
         album: get_in(track, ["album", "name"]),
         album_artwork_url: get_in(track, ["album", "images", Access.at(0), "url"])
       }

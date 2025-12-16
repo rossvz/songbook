@@ -121,6 +121,7 @@ defmodule SongbookWeb.SongLive.FormComponent do
       %{
         title: result["name"],
         spotify_id: result["id"],
+        spotify_artist_id: get_in(result, ["artists", Access.at(0), "id"]),
         album_artwork_url: get_in(result, ["album", "images", Access.at(0), "url"]),
         album: get_in(result, ["album", "name"]),
         artist: get_in(result, ["artists", Access.at(0), "name"])
