@@ -10,6 +10,18 @@ defmodule Songbook.Music.QuickSearch do
   actions do
     defaults [:read, :create, :destroy]
     default_accept [:term, :source_type, :match_count]
+
+    read :random do
+      argument :limit, :integer, default: 3
+
+      prepare fn query, _context ->
+        limit = Ash.Query.get_argument(query, :limit)
+
+        query
+        |> Ash.Query.sort(random_order: :asc)
+        |> Ash.Query.limit(limit)
+      end
+    end
   end
 
   attributes do
@@ -23,6 +35,10 @@ defmodule Songbook.Music.QuickSearch do
 
     attribute :match_count, :integer, allow_nil?: false, public?: true
     timestamps()
+  end
+
+  calculations do
+    calculate :random_order, :float, expr(fragment("RANDOM()"))
   end
 
   identities do

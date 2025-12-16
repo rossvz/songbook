@@ -10,7 +10,7 @@ defmodule SongbookWeb.VoteLive.Index do
 
     voter_id = session["voter_id"]
     all_tracks = Music.list_visible_tracks!()
-    quick_searches = get_random_quick_searches(3)
+    quick_searches = Music.list_random_quick_searches!(3)
 
     socket =
       socket
@@ -165,17 +165,6 @@ defmodule SongbookWeb.VoteLive.Index do
   end
 
   defp get_voted_tracks(_), do: MapSet.new()
-
-  defp get_random_quick_searches(count) do
-    import Ecto.Query
-
-    Songbook.Music.QuickSearch
-    |> order_by(fragment("RANDOM()"))
-    |> limit(^count)
-    |> Songbook.Repo.all()
-  rescue
-    _ -> []
-  end
 
   defp filter_tracks(tracks, ""), do: tracks
 
