@@ -44,8 +44,8 @@ config :songbook, Oban,
   plugins: [
     {Oban.Plugins.Cron,
      crontab: [
-       # Run playlist sync every 30 minutes
-       {"*/30 * * * *", Songbook.Workers.PlaylistSyncWorker}
+       {"*/30 * * * *", Songbook.Workers.PlaylistSyncWorker},
+       {"0 0 * * *", Songbook.Workers.QuickSearchWorker}
      ]}
   ]
 

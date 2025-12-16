@@ -47,6 +47,8 @@ defmodule SongbookWeb.Router do
     live "/shows", ShowLive.Admin, :index
     live "/shows/new", ShowLive.Admin, :new
     live "/shows/:id/edit", ShowLive.Admin, :edit
+
+    live "/quick-searches", QuickSearchLive.Index, :index
   end
 
   # Other scopes may use custom stacks.

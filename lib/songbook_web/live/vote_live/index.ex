@@ -8,9 +8,9 @@ defmodule SongbookWeb.VoteLive.Index do
   def mount(_params, session, socket) do
     if connected?(socket), do: Phoenix.PubSub.subscribe(Songbook.PubSub, "votes")
 
-    # Get voter_id from session (set by our plug)
     voter_id = session["voter_id"]
     all_tracks = Music.list_visible_tracks!()
+    quick_searches = get_random_quick_searches(3)
 
     socket =
       socket
@@ -20,6 +20,7 @@ defmodule SongbookWeb.VoteLive.Index do
       |> assign(:player_visible, true)
       |> assign(:search_query, "")
       |> assign(:all_tracks, all_tracks)
+      |> assign(:quick_searches, quick_searches)
       |> stream(:songs, all_tracks)
 
     {:ok, socket}
@@ -53,6 +54,18 @@ defmodule SongbookWeb.VoteLive.Index do
     socket =
       socket
       |> assign(:search_query, query)
+      |> stream(:songs, filtered, reset: true)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("quick_search", %{"term" => term}, socket) do
+    filtered = filter_tracks(socket.assigns.all_tracks, term)
+
+    socket =
+      socket
+      |> assign(:search_query, term)
       |> stream(:songs, filtered, reset: true)
 
     {:noreply, socket}
@@ -152,6 +165,17 @@ defmodule SongbookWeb.VoteLive.Index do
   end
 
   defp get_voted_tracks(_), do: MapSet.new()
+
+  defp get_random_quick_searches(count) do
+    import Ecto.Query
+
+    Songbook.Music.QuickSearch
+    |> order_by(fragment("RANDOM()"))
+    |> limit(^count)
+    |> Songbook.Repo.all()
+  rescue
+    _ -> []
+  end
 
   defp filter_tracks(tracks, ""), do: tracks
 
