@@ -11,6 +11,20 @@
     />
   </form>
   
+<!-- Quick searches -->
+  <div :if={@quick_searches != []} class="mb-4 flex flex-wrap items-center gap-2">
+    <span class="text-sm text-white/60">Try searching for</span>
+    <button
+      :for={qs <- @quick_searches}
+      type="button"
+      phx-click="quick_search"
+      phx-value-term={qs.term}
+      class="px-3 py-1.5 text-sm rounded-full bg-white/10 backdrop-blur border border-white/20 text-white/80 hover:bg-white/20 hover:text-white transition-all duration-200"
+    >
+      {qs.term}
+    </button>
+  </div>
+  
 <!-- Song cards with physics and chaos -->
   <div
     class="space-y-4 pb-8"

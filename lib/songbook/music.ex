@@ -46,5 +46,12 @@ defmodule Songbook.Music do
       define :sync_playlist, action: :sync
       define :delete_playlist, action: :destroy
     end
+
+    resource Songbook.Music.QuickSearch do
+      define :list_quick_searches, action: :read
+      define :list_random_quick_searches, action: :random, args: [:limit]
+      define :create_quick_search, action: :create
+      define :delete_quick_search, action: :destroy
+    end
   end
 end
