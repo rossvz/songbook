@@ -8,6 +8,8 @@ defmodule Songbook.Music do
     resource Songbook.Music.Track do
       define :list_tracks, action: :read
       define :list_visible_tracks, action: :list_visible
+      define :list_expired_hidden_tracks, action: :list_expired_hidden
+      define :list_hidden_tracks, action: :list_hidden
       define :get_track, action: :read, get_by: :id
       define :get_track_by_spotify_id, action: :read, get_by: :spotify_id
       define :create_track, action: :create
@@ -16,6 +18,8 @@ defmodule Songbook.Music do
       define :toggle_visibility, action: :toggle_visibility
       define :set_dominant_color, action: :set_dominant_color
       define :set_genres, action: :set_genres
+      define :mark_as_played, action: :mark_as_played
+      define :unhide_track, action: :unhide_track
 
       define :delete_track, action: :destroy
     end
@@ -53,5 +57,13 @@ defmodule Songbook.Music do
       define :create_quick_search, action: :create
       define :delete_quick_search, action: :destroy
     end
+  end
+
+  def unhide_expired_tracks do
+    Enum.map(list_expired_hidden_tracks!(), &unhide_track!/1)
+  end
+
+  def unhide_all_tracks do
+    Enum.map(list_hidden_tracks!(), &unhide_track!/1)
   end
 end

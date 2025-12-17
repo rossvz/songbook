@@ -16,8 +16,7 @@ defmodule Songbook.Music.Track do
       :album,
       :album_artwork_url,
       :spotify_id,
-      :spotify_artist_id,
-      :hidden
+      :spotify_artist_id
     ]
 
     create :create do
@@ -27,8 +26,7 @@ defmodule Songbook.Music.Track do
         :album,
         :album_artwork_url,
         :spotify_id,
-        :spotify_artist_id,
-        :hidden
+        :spotify_artist_id
       ]
 
       change Songbook.Music.Changes.QueueDominantColor
@@ -36,7 +34,15 @@ defmodule Songbook.Music.Track do
     end
 
     read :list_visible do
-      filter expr(hidden != true)
+      filter expr(hidden? == false)
+    end
+
+    read :list_expired_hidden do
+      filter expr(not is_nil(hidden_until) and hidden_until < now())
+    end
+
+    read :list_hidden do
+      filter expr(hidden? == true)
     end
 
     update :toggle_visibility do
@@ -44,8 +50,14 @@ defmodule Songbook.Music.Track do
       require_atomic? false
 
       change fn changeset, _context ->
-        current_hidden = changeset.data.hidden == true
-        Ash.Changeset.force_change_attribute(changeset, :hidden, not current_hidden)
+        current_hidden = changeset.data.hidden_until != nil
+
+        if current_hidden do
+          Ash.Changeset.force_change_attribute(changeset, :hidden_until, nil)
+        else
+          hidden_until = DateTime.add(DateTime.utc_now(), 24 * 60 * 60, :second)
+          Ash.Changeset.force_change_attribute(changeset, :hidden_until, hidden_until)
+        end
       end
     end
 
@@ -73,12 +85,39 @@ defmodule Songbook.Music.Track do
     update :set_genres do
       accept [:genres]
     end
+
+    update :mark_as_played do
+      accept []
+      require_atomic? false
+
+      change fn changeset, _context ->
+        hidden_until = DateTime.add(DateTime.utc_now(), 12 * 60 * 60, :second)
+        Ash.Changeset.force_change_attribute(changeset, :hidden_until, hidden_until)
+      end
+
+      change after_action(fn _changeset, result, _context ->
+               track_with_votes = Songbook.Music.get_track!(result.id, load: [:track_votes])
+
+               Enum.each(track_with_votes.track_votes, fn vote ->
+                 vote
+                 |> Ash.Changeset.for_destroy(:destroy)
+                 |> Songbook.Music.destroy!()
+               end)
+
+               {:ok, result}
+             end)
+    end
+
+    update :unhide_track do
+      accept []
+      change set_attribute(:hidden_until, nil)
+    end
   end
 
   preparations do
     prepare build(
-              sort: [hidden: :asc, vote_count: :desc, inserted_at: :desc],
-              load: [:vote_count]
+              sort: [vote_count: :desc, inserted_at: :desc],
+              load: [:vote_count, :hidden?]
             )
   end
 
@@ -98,7 +137,7 @@ defmodule Songbook.Music.Track do
     attribute :album_artwork_url, :string
     attribute :spotify_id, :string
     attribute :spotify_artist_id, :string
-    attribute :hidden, :boolean, default: false
+    attribute :hidden_until, :utc_datetime
     attribute :dominant_color, :string
     attribute :genres, {:array, :string}, default: []
     timestamps(type: :utc_datetime)
@@ -109,6 +148,10 @@ defmodule Songbook.Music.Track do
       source_attribute :id
       destination_attribute :track_id
     end
+  end
+
+  calculations do
+    calculate :hidden?, :boolean, expr(not is_nil(hidden_until) and hidden_until > now())
   end
 
   aggregates do

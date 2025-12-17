@@ -182,7 +182,10 @@ defmodule Songbook.TracksTest do
 
     test "list_visible_tracks!/0 returns only non-hidden tracks" do
       visible_track = track_fixture()
-      hidden_track = track_fixture(%{hidden: true})
+
+      # Create a hidden track by toggling visibility
+      hidden_track = track_fixture()
+      {:ok, hidden_track} = Music.toggle_visibility(hidden_track)
 
       tracks = Music.list_visible_tracks!()
       assert length(tracks) == 1
@@ -191,19 +194,23 @@ defmodule Songbook.TracksTest do
     end
 
     test "toggle_visibility/1 hides a visible track" do
-      track = track_fixture()
-      assert track.hidden == false
+      track = Music.get_track!(track_fixture().id)
+      assert track.hidden? == false
 
       {:ok, updated_track} = Music.toggle_visibility(track)
-      assert updated_track.hidden == true
+      updated_track = Music.get_track!(updated_track.id)
+      assert updated_track.hidden? == true
     end
 
     test "toggle_visibility/1 shows a hidden track" do
-      track = track_fixture(%{hidden: true})
-      assert track.hidden == true
+      track = Music.get_track!(track_fixture().id)
+      {:ok, track} = Music.toggle_visibility(track)
+      track = Music.get_track!(track.id)
+      assert track.hidden? == true
 
       {:ok, updated_track} = Music.toggle_visibility(track)
-      assert updated_track.hidden == false
+      updated_track = Music.get_track!(updated_track.id)
+      assert updated_track.hidden? == false
     end
   end
 end

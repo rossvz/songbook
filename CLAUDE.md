@@ -65,3 +65,4 @@ Songbook is a Phoenix LiveView application for collaborative music voting, integ
 - Follow Ash resource patterns for data access (use domain functions like `Songbook.Music.list_tracks/1`)
 - Use LiveView streams for collections to avoid memory issues
 - All forms should use `to_form/2` and `<.input>` components
+- this app runs on port 4200 locally

@@ -45,7 +45,8 @@ config :songbook, Oban,
     {Oban.Plugins.Cron,
      crontab: [
        {"*/30 * * * *", Songbook.Workers.PlaylistSyncWorker},
-       {"0 0 * * *", Songbook.Workers.QuickSearchWorker}
+       {"0 0 * * *", Songbook.Workers.QuickSearchWorker},
+       {"*/10 * * * *", Songbook.Workers.UnhideTracksWorker}
      ]}
   ]
 

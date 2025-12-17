@@ -9,12 +9,14 @@ defmodule SongbookWeb.VoteLive.Index do
     if connected?(socket), do: Phoenix.PubSub.subscribe(Songbook.PubSub, "votes")
 
     voter_id = session["voter_id"]
+    is_admin = session["is_admin"] == true
     all_tracks = Music.list_visible_tracks!()
     quick_searches = Music.list_random_quick_searches!(3)
 
     socket =
       socket
       |> assign(:voter_id, voter_id)
+      |> assign(:is_admin, is_admin)
       |> assign(:voted_tracks, get_voted_tracks(voter_id))
       |> assign(:playlist, get_linked_playlist())
       |> assign(:player_visible, true)
@@ -81,6 +83,33 @@ defmodule SongbookWeb.VoteLive.Index do
     else
       song = Music.get_track!(id)
       cast_vote(socket, song, voter_id, voted_tracks)
+    end
+  end
+
+  @impl true
+  def handle_event("mark_as_played", %{"id" => id}, socket) do
+    if socket.assigns.is_admin do
+      track = Music.get_track!(id)
+
+      case Music.mark_as_played(track) do
+        {:ok, _updated_track} ->
+          all_tracks = Music.list_visible_tracks!()
+          filtered = filter_tracks(all_tracks, socket.assigns.search_query)
+
+          Phoenix.PubSub.broadcast(Songbook.PubSub, "votes", {:track_hidden, id})
+
+          socket =
+            socket
+            |> assign(:all_tracks, all_tracks)
+            |> stream(:songs, filtered, reset: true)
+
+          {:noreply, socket}
+
+        {:error, _changeset} ->
+          {:noreply, put_flash(socket, :error, "Unable to mark song as played")}
+      end
+    else
+      {:noreply, socket}
     end
   end
 
@@ -151,6 +180,34 @@ defmodule SongbookWeb.VoteLive.Index do
     socket =
       socket
       |> assign(:voted_tracks, get_voted_tracks(voter_id))
+      |> assign(:all_tracks, all_tracks)
+      |> stream(:songs, filtered, reset: true)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info({:track_hidden, _track_id}, socket) do
+    voter_id = socket.assigns.voter_id
+    all_tracks = Music.list_visible_tracks!()
+    filtered = filter_tracks(all_tracks, socket.assigns.search_query)
+
+    socket =
+      socket
+      |> assign(:voted_tracks, get_voted_tracks(voter_id))
+      |> assign(:all_tracks, all_tracks)
+      |> stream(:songs, filtered, reset: true)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info({:track_unhidden, _track_id}, socket) do
+    all_tracks = Music.list_visible_tracks!()
+    filtered = filter_tracks(all_tracks, socket.assigns.search_query)
+
+    socket =
+      socket
       |> assign(:all_tracks, all_tracks)
       |> stream(:songs, filtered, reset: true)
 
