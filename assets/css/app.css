@@ -2,6 +2,13 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+/* Prevent horizontal overscroll/bounce on mobile */
+html,
+body {
+  overscroll-behavior-x: none;
+  overflow-x: hidden;
+}
+
 /* Typography: Distinctive font pairing */
 @import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Quicksand:wght@300;400;500;600;700&display=swap");
 

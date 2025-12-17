@@ -35,12 +35,18 @@
     <%= for {id, song} <- @streams.songs do %>
       <div
         id={id}
-        class="song-card cursor-pointer"
-        phx-hook="CardChaos"
+        class={["song-card relative", !@is_admin && "cursor-pointer"]}
+        phx-hook={if @is_admin, do: "SwipeToHide", else: "CardChaos"}
         data-stagger
-        phx-click="vote"
+        data-track-id={song.id}
+        phx-click={unless @is_admin, do: "vote"}
         phx-value-id={song.id}
       >
+        <%= if @is_admin do %>
+          <div class="swipe-indicator absolute inset-y-0 right-0 w-16 flex items-center justify-center opacity-0 bg-gradient-to-l from-amber-500/80 to-transparent rounded-r-2xl z-10 pointer-events-none">
+            <.icon name="hero-check" class="w-6 h-6 text-white" />
+          </div>
+        <% end %>
         <!-- Album art blur background -->
         <%= if song.album_artwork_url do %>
           <div
@@ -73,7 +79,7 @@
             <.song_info song={song} adaptive={true} />
             
 <!-- Vote button -->
-            <div class="flex-shrink-0 text-center">
+            <div class="flex-shrink-0 text-center" phx-click="vote" phx-value-id={song.id}>
               <button
                 type="button"
                 class={[

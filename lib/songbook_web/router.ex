@@ -17,6 +17,7 @@ defmodule SongbookWeb.Router do
 
   pipeline :admin do
     plug :basic_auth
+    plug SongbookWeb.Plugs.AdminSession
   end
 
   defp basic_auth(conn, _opts) do

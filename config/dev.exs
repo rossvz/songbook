@@ -33,9 +33,8 @@ config :songbook, Songbook.Repo,
   pool_size: 10
 
 config :songbook, SongbookWeb.Endpoint,
-  # Binding to loopback ipv4 address prevents access from other machines.
-  # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
-  http: [ip: {127, 0, 0, 1}, port: String.to_integer(System.get_env("PORT") || "4000")],
+  # Binding to all interfaces to allow access from other machines (e.g., mobile testing).
+  http: [ip: {0, 0, 0, 0}, port: String.to_integer(System.get_env("PORT") || "4000")],
   # ## SSL Support
   #
   # In order to use HTTPS in development, a self-signed

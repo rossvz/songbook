@@ -146,7 +146,7 @@
     data-stagger
     class={[
       "song-card group",
-      song.hidden && "opacity-50"
+      song.hidden? && "opacity-50"
     ]}
   >
     <!-- Subtle album blur for admin cards too -->
@@ -165,7 +165,7 @@
         <div class="flex-1 min-w-0">
           <.song_info song={song} />
 
-          <%= if song.hidden do %>
+          <%= if song.hidden? do %>
             <span class="admin-badge-warning text-xs mt-1 inline-block">
               <.icon name="hero-eye-slash-mini" class="h-3 w-3 mr-1" /> Hidden
             </span>
@@ -182,16 +182,16 @@
               phx-value-id={song.id}
               class={[
                 "p-2.5 rounded-xl transition-all duration-200",
-                if song.hidden do
+                if song.hidden? do
                   "text-tertiary hover:text-primary hover:bg-accent-soft"
                 else
                   "text-accent hover:bg-accent-soft"
                 end
               ]}
-              title={if song.hidden, do: "Show song", else: "Hide song"}
+              title={if song.hidden?, do: "Show song", else: "Hide song"}
             >
               <.icon
-                name={if song.hidden, do: "hero-eye-slash", else: "hero-eye"}
+                name={if song.hidden?, do: "hero-eye-slash", else: "hero-eye"}
                 class="h-5 w-5"
               />
             </button>
