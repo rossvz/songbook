@@ -43,7 +43,6 @@
         </button>
         <button
           phx-click="unlink_playlist"
-          data-confirm="Are you sure you want to unlink this playlist?"
           class="px-3 py-1.5 text-xs font-medium text-tertiary hover:text-secondary hover:bg-glass border border-transparent rounded-lg transition-all duration-200"
         >
           <.icon name="hero-x-mark" class="h-3.5 w-3.5 mr-1 inline-block" /> Unlink
@@ -196,7 +195,6 @@
               type="button"
               phx-click="delete"
               phx-value-id={song.id}
-              data-confirm="Delete this song?"
               class="p-2.5 rounded-xl text-tertiary hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200"
               title="Delete song"
             >

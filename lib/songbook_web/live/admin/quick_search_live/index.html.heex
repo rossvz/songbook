@@ -68,7 +68,6 @@
       <button
         type="button"
         phx-click={JS.push("delete", value: %{id: qs.id}) |> hide("##{id}")}
-        data-confirm="Remove this quick search?"
         class="p-2.5 rounded-xl text-tertiary hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
         title="Delete"
       >
