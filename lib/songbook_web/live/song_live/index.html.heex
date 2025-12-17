@@ -77,14 +77,11 @@
         </div>
         <p class="text-xs text-tertiary mb-2">
           Last synced:
-          <span
+          <.local_time
             id="last-synced-time"
-            phx-hook="LocalTime"
-            data-datetime={SongbookWeb.SongLive.Index.format_sync_time(@playlist.last_synced_at)}
+            datetime={@playlist.last_synced_at}
             class="font-medium text-secondary"
-          >
-            {SongbookWeb.SongLive.Index.format_sync_time(@playlist.last_synced_at)}
-          </span>
+          />
         </p>
         <a
           href={@playlist.external_url}

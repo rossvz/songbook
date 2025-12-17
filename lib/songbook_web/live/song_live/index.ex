@@ -2,6 +2,8 @@ defmodule SongbookWeb.SongLive.Index do
   @moduledoc false
   use SongbookWeb, :live_view
 
+  import SongbookWeb.Components.LocalTime
+
   alias Songbook.Music
   alias Songbook.Music.Track
   alias Songbook.Workers.PlaylistSyncWorker
