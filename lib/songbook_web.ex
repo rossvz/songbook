@@ -86,6 +86,7 @@ defmodule SongbookWeb do
       import Phoenix.HTML
       # Core UI components and translation
       import SongbookWeb.CoreComponents
+      import SongbookWeb.TrackComponents
       import SongbookWeb.Gettext
 
       # Shortcut for generating JS commands
