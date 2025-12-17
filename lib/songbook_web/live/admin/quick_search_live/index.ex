@@ -1,4 +1,4 @@
-defmodule SongbookWeb.QuickSearchLive.Index do
+defmodule SongbookWeb.Admin.QuickSearchLive.Index do
   @moduledoc false
   use SongbookWeb, :live_view
 

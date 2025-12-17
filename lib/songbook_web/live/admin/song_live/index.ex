@@ -1,4 +1,4 @@
-defmodule SongbookWeb.SongLive.Index do
+defmodule SongbookWeb.Admin.SongLive.Index do
   @moduledoc false
   use SongbookWeb, :live_view
 
@@ -51,12 +51,12 @@ defmodule SongbookWeb.SongLive.Index do
   end
 
   @impl true
-  def handle_info({SongbookWeb.SongLive.FormComponent, {:saved, song}}, socket) do
+  def handle_info({SongbookWeb.Admin.Components.SongFormComponent, {:saved, song}}, socket) do
     {:noreply, stream_insert(socket, :songs, song)}
   end
 
   @impl true
-  def handle_info({SongbookWeb.SongLive.LinkPlaylistComponent, {:linked, playlist}}, socket) do
+  def handle_info({SongbookWeb.Admin.Components.LinkPlaylistComponent, {:linked, playlist}}, socket) do
     {:noreply,
      socket
      |> assign(:playlist, playlist)
@@ -99,7 +99,6 @@ defmodule SongbookWeb.SongLive.Index do
   def handle_event("reset_votes", _params, socket) do
     {:ok, result} = Music.destroy_all_votes()
 
-    # Reload the songs list to show updated vote counts
     {:noreply,
      socket
      |> put_flash(:info, "Votes Reset (#{result} votes deleted)")
@@ -108,7 +107,6 @@ defmodule SongbookWeb.SongLive.Index do
 
   @impl true
   def handle_event("sync_playlist", _params, socket) do
-    # Queue an Oban job for full track sync
     %{}
     |> PlaylistSyncWorker.new()
     |> Oban.insert()

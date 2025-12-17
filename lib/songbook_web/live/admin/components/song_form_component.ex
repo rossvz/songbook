@@ -1,4 +1,4 @@
-defmodule SongbookWeb.SongLive.FormComponent do
+defmodule SongbookWeb.Admin.Components.SongFormComponent do
   @moduledoc false
   use SongbookWeb, :live_component
 

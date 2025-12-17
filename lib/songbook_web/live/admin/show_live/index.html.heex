@@ -116,7 +116,7 @@
   on_cancel={JS.patch(~p"/admin/shows")}
 >
   <.live_component
-    module={SongbookWeb.ShowLive.FormComponent}
+    module={SongbookWeb.Admin.Components.ShowFormComponent}
     id={@show.id || :new}
     title={@page_title}
     action={@live_action}

@@ -38,16 +38,16 @@ defmodule SongbookWeb.Router do
   end
 
   # Admin routes - protected by BasicAuth
-  scope "/admin", SongbookWeb do
+  scope "/admin", SongbookWeb.Admin do
     pipe_through [:browser, :admin]
 
     live "/songs", SongLive.Index, :index
     live "/songs/new", SongLive.Index, :new
     live "/songs/link-playlist", SongLive.Index, :link_playlist
 
-    live "/shows", ShowLive.Admin, :index
-    live "/shows/new", ShowLive.Admin, :new
-    live "/shows/:id/edit", ShowLive.Admin, :edit
+    live "/shows", ShowLive.Index, :index
+    live "/shows/new", ShowLive.Index, :new
+    live "/shows/:id/edit", ShowLive.Index, :edit
 
     live "/quick-searches", QuickSearchLive.Index, :index
   end

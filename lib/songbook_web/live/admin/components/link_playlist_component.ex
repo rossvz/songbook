@@ -1,4 +1,4 @@
-defmodule SongbookWeb.SongLive.LinkPlaylistComponent do
+defmodule SongbookWeb.Admin.Components.LinkPlaylistComponent do
   @moduledoc false
   use SongbookWeb, :live_component
 

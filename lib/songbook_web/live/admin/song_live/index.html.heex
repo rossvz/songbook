@@ -230,7 +230,7 @@
 
 <.modal :if={@live_action == :new} id="song-modal" show on_cancel={JS.patch(~p"/admin/songs")}>
   <.live_component
-    module={SongbookWeb.SongLive.FormComponent}
+    module={SongbookWeb.Admin.Components.SongFormComponent}
     id="new-song-form"
     title={@page_title}
     action={@live_action}
@@ -245,7 +245,7 @@
   on_cancel={JS.patch(~p"/admin/songs")}
 >
   <.live_component
-    module={SongbookWeb.SongLive.LinkPlaylistComponent}
+    module={SongbookWeb.Admin.Components.LinkPlaylistComponent}
     id="link-playlist-form"
     patch={~p"/admin/songs"}
   />

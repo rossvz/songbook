@@ -1,4 +1,4 @@
-defmodule SongbookWeb.ShowLive.FormComponent do
+defmodule SongbookWeb.Admin.Components.ShowFormComponent do
   @moduledoc false
   use SongbookWeb, :live_component
 
@@ -71,7 +71,6 @@ defmodule SongbookWeb.ShowLive.FormComponent do
 
   @impl true
   def handle_event("place_selected", %{"venue" => venue, "latitude" => lat, "longitude" => lng}, socket) do
-    # Update the form with the place data
     form =
       socket.assigns.form.source
       |> AshPhoenix.Form.validate(%{

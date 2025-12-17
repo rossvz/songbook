@@ -1,4 +1,4 @@
-defmodule SongbookWeb.ShowLive.Admin do
+defmodule SongbookWeb.Admin.ShowLive.Index do
   @moduledoc false
   use SongbookWeb, :live_view
 
@@ -21,7 +21,7 @@ defmodule SongbookWeb.ShowLive.Admin do
   end
 
   @impl true
-  def handle_info({SongbookWeb.ShowLive.FormComponent, {:saved, show}}, socket) do
+  def handle_info({SongbookWeb.Admin.Components.ShowFormComponent, {:saved, show}}, socket) do
     {:noreply, stream_insert(socket, :shows, show)}
   end
 
