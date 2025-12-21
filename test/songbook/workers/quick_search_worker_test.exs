@@ -29,8 +29,7 @@ defmodule Songbook.Workers.QuickSearchWorkerTest do
       assert {:ok, 5} = QuickSearchWorker.perform(%Oban.Job{})
 
       quick_searches =
-        Music.list_quick_searches!()
-        |> Map.new(fn qs -> {qs.term, qs} end)
+        Map.new(Music.list_quick_searches!(), fn qs -> {qs.term, qs} end)
 
       assert map_size(quick_searches) == 5
 
@@ -68,7 +67,7 @@ defmodule Songbook.Workers.QuickSearchWorkerTest do
       assert {:ok, count} = QuickSearchWorker.perform(%Oban.Job{})
       assert count >= 1
 
-      terms = Music.list_quick_searches!() |> Enum.map(& &1.term)
+      terms = Enum.map(Music.list_quick_searches!(), & &1.term)
 
       assert "rock" in terms
       assert "Visible Artist" in terms
@@ -96,7 +95,7 @@ defmodule Songbook.Workers.QuickSearchWorkerTest do
 
       assert {:ok, 2} = QuickSearchWorker.perform(%Oban.Job{})
 
-      terms = Music.list_quick_searches!() |> Enum.map(& &1.term)
+      terms = Enum.map(Music.list_quick_searches!(), & &1.term)
 
       refute "stale-term" in terms
       assert "fresh-genre" in terms
@@ -104,4 +103,3 @@ defmodule Songbook.Workers.QuickSearchWorkerTest do
     end
   end
 end
-
