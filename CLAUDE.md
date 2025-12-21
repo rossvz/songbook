@@ -9,7 +9,7 @@ Songbook is a Phoenix LiveView application for collaborative music voting, integ
 
 ### Setup and Running
 - `mix setup` - Install dependencies, setup database, build assets
-- `mix phx.server` - Start Phoenix server (available at localhost:4000)
+- `mix phx.server` - Start Phoenix server (available at localhost:4200)
 - `iex -S mix phx.server` - Start server in IEx session
 
 ### Database

@@ -34,7 +34,7 @@ config :songbook, Songbook.Repo,
 
 config :songbook, SongbookWeb.Endpoint,
   # Binding to all interfaces to allow access from other machines (e.g., mobile testing).
-  http: [ip: {0, 0, 0, 0}, port: String.to_integer(System.get_env("PORT") || "4000")],
+  http: [ip: {0, 0, 0, 0}, port: String.to_integer(System.get_env("PORT") || "4200")],
   # ## SSL Support
   #
   # In order to use HTTPS in development, a self-signed

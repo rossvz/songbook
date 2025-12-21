@@ -1,0 +1,14 @@
+{
+  "install": "mix deps.get && mix compile && MIX_ENV=test mix compile && mix tailwind.install --if-missing && mix esbuild.install --if-missing && npm --prefix assets install",
+  "start": "sudo service postgresql start && until pg_isready -q; do sleep 1; done && mix ash.setup",
+  "terminals": [
+    {
+      "name": "Phoenix Server",
+      "command": "mix phx.server"
+    }
+  ],
+  "build": {
+    "context": ".",
+    "dockerfile": "Dockerfile"
+  }
+}
