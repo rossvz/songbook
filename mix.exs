@@ -11,6 +11,7 @@ defmodule Songbook.MixProject do
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
+      listeners: listeners(Mix.env()),
       consolidate_protocols: Mix.env() != :dev
     ]
   end
@@ -36,6 +37,26 @@ defmodule Songbook.MixProject do
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
+
+  # Phoenix' Mix listener improves the dev code reloader experience, but it can
+  # break fresh checkouts (before deps are compiled). We enable it only when the
+  # compiled Phoenix ebin is present.
+  defp listeners(:dev) do
+    phoenix_ebin =
+      Path.expand(Path.join([__DIR__, "_build", "dev", "lib", "phoenix", "ebin"]))
+
+    if File.dir?(phoenix_ebin) do
+      _ = Code.append_path(phoenix_ebin)
+    end
+
+    if Code.ensure_loaded?(Phoenix.CodeReloader) do
+      [Phoenix.CodeReloader]
+    else
+      []
+    end
+  end
+
+  defp listeners(_), do: []
 
   # Specifies your project dependencies.
   #
