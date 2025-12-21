@@ -23,6 +23,26 @@ defmodule Songbook.MusicFixtures do
   end
 
   @doc """
+  Generate a visible track with genres set.
+
+  Note: genres are set via the `:set_genres` update action because the `:create`
+  action doesn't accept `:genres`.
+  """
+  def track_with_genres_fixture(genres, attrs \\ %{}) when is_list(genres) do
+    track = track_fixture(attrs)
+    Songbook.Music.set_genres!(track, %{genres: genres})
+  end
+
+  @doc """
+  Generate a hidden track (excluded from `list_visible_tracks!/0`).
+  """
+  def hidden_track_fixture(attrs \\ %{}) do
+    track = track_fixture(attrs)
+    {:ok, track} = Songbook.Music.toggle_visibility(track)
+    track
+  end
+
+  @doc """
   Generate a show.
   """
   def show_fixture(attrs \\ %{}) do
