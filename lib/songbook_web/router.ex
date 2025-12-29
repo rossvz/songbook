@@ -35,6 +35,8 @@ defmodule SongbookWeb.Router do
     get "/search", SpotifyController, :search
     live "/vote", VoteLive.Index, :index
     live "/shows", ShowLive.Index, :index
+    get "/health", HealthController, :health
+    get "/up", HealthController, :up
   end
 
   # Admin routes - protected by BasicAuth
