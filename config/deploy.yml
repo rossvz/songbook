@@ -4,7 +4,10 @@ image: rossvz/songbook
 
 servers:
   web:
-    - 147.93.47.41
+    hosts:
+      - 147.93.47.41
+    options:
+      network: songbook-network
 
 proxy:
   ssl: true
@@ -47,7 +50,8 @@ accessories:
   db:
     image: postgres:16
     host: 147.93.47.41
-    port: 5432
+    options:
+      network: songbook-network
     env:
       clear:
         POSTGRES_DB: songbook_prod
