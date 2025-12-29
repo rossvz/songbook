@@ -5,11 +5,28 @@ defmodule Songbook.Release do
   """
   @app :songbook
 
+  def setup do
+    load_app()
+
+    for repo <- repos() do
+      create_db(repo)
+      {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :up, all: true))
+    end
+  end
+
   def migrate do
     load_app()
 
     for repo <- repos() do
       {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :up, all: true))
+    end
+  end
+
+  defp create_db(repo) do
+    case repo.__adapter__().storage_up(repo.config()) do
+      :ok -> :ok
+      {:error, :already_up} -> :ok
+      {:error, term} -> {:error, term}
     end
   end
 

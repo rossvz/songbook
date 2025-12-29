@@ -3,8 +3,8 @@ set -eu
 
 cd -P -- "$(dirname -- "$0")"
 
-echo "Running migrations..."
-./songbook eval "Songbook.Release.migrate"
+echo "Running database setup..."
+./songbook eval "Songbook.Release.setup"
 
 echo "Starting server..."
 PHX_SERVER=true exec ./songbook start
