@@ -30,7 +30,7 @@ config :esbuild,
     env: %{
       "NODE_PATH" =>
         Enum.join(
-          [Path.expand("../deps", __DIR__), Path.expand("../_build/dev", __DIR__)],
+          [Path.expand("../deps", __DIR__), Path.expand("../_build/#{Mix.env()}", __DIR__)],
           ":"
         )
     }
