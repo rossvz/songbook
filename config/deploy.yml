@@ -1,0 +1,57 @@
+service: songbook
+
+image: rossvz/songbook
+
+servers:
+  web:
+    - 147.93.47.41
+
+proxy:
+  ssl: true
+  host: songbook.rosscodes.com
+  app_port: 4200
+
+registry:
+  username: rossvz
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+builder:
+  arch:
+    - amd64
+  remote:
+    ssh://rossvz@100.101.203.64
+
+env:
+  clear:
+    PORT: 4200
+    MIX_ENV: prod
+    PHX_HOST: songbook.rosscodes.com
+  secret:
+    - SECRET_KEY_BASE
+    - DATABASE_URL
+    - SPOTIFY_CLIENT_ID
+    - SPOTIFY_SECRET_KEY
+    - GOOGLE_MAPS_API_KEY
+    - ADMIN_USERNAME
+    - ADMIN_PASSWORD
+
+aliases:
+  iex: app exec -q -p -i --reuse "/app/bin/songbook remote"
+  logs: app logs -f
+
+ssh:
+  user: rossvz
+
+accessories:
+  db:
+    image: postgres:16
+    host: 147.93.47.41
+    port: 5432
+    env:
+      clear:
+        POSTGRES_DB: songbook_prod
+      secret:
+        - POSTGRES_PASSWORD
+    directories:
+      - data:/var/lib/postgresql/data

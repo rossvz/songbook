@@ -104,7 +104,8 @@ defmodule Songbook.MixProject do
         "esbuild songbook --minify",
         "phx.digest"
       ],
-      ci: ["format --check-formatted", "credo --strict", "test"]
+      ci: ["format --check-formatted", "credo --strict", "test"],
+      release: ["compile", "assets.deploy", "release"]
     ]
   end
 end
