@@ -30,14 +30,12 @@
     class="space-y-4 pb-8"
     id="songs-list"
     phx-update="stream"
-    phx-hook="StaggerList"
   >
     <%= for {id, song} <- @streams.songs do %>
       <div
         id={id}
         class={["song-card relative", !@is_admin && "cursor-pointer"]}
         phx-hook={if @is_admin, do: "SwipeToHide", else: "CardChaos"}
-        data-stagger
         data-track-id={song.id}
         phx-click={unless @is_admin, do: "vote"}
         phx-value-id={song.id}
