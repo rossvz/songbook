@@ -35,9 +35,17 @@ const PlacesAutocomplete = {
       // Update the input value
       input.value = venueName;
 
+      // Update hidden inputs directly in the DOM so they're included in form submission
+      const form = this.el.closest("form");
+      if (form) {
+        const latInput = form.querySelector('input[name="show[latitude]"]');
+        const lngInput = form.querySelector('input[name="show[longitude]"]');
+        if (latInput) latInput.value = lat;
+        if (lngInput) lngInput.value = lng;
+      }
+
       // Push the location data to the LiveComponent
       // The phx-target attribute tells us which component to target
-      const form = this.el.closest("form");
       const target = form ? form.getAttribute("phx-target") : null;
 
       if (target) {
