@@ -39,19 +39,21 @@ defmodule SongbookWeb.Router do
     get "/up", HealthController, :up
   end
 
-  # Admin routes - protected by BasicAuth
+  # Admin routes - protected by BasicAuth and LiveView on_mount hook
   scope "/admin", SongbookWeb.Admin do
     pipe_through [:browser, :admin]
 
-    live "/songs", SongLive.Index, :index
-    live "/songs/new", SongLive.Index, :new
-    live "/songs/link-playlist", SongLive.Index, :link_playlist
+    live_session :admin, on_mount: {SongbookWeb.AdminAuth, :default} do
+      live "/songs", SongLive.Index, :index
+      live "/songs/new", SongLive.Index, :new
+      live "/songs/link-playlist", SongLive.Index, :link_playlist
 
-    live "/shows", ShowLive.Index, :index
-    live "/shows/new", ShowLive.Index, :new
-    live "/shows/:id/edit", ShowLive.Index, :edit
+      live "/shows", ShowLive.Index, :index
+      live "/shows/new", ShowLive.Index, :new
+      live "/shows/:id/edit", ShowLive.Index, :edit
 
-    live "/quick-searches", QuickSearchLive.Index, :index
+      live "/quick-searches", QuickSearchLive.Index, :index
+    end
   end
 
   # Other scopes may use custom stacks.
