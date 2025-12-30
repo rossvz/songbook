@@ -13,10 +13,11 @@ defmodule SongbookWeb.Components.ThemeToggle do
       <.theme_toggle class="ml-4" />
   """
   attr :class, :string, default: nil
+  attr :id, :string, default: "theme-toggle"
 
   def theme_toggle(assigns) do
     ~H"""
-    <div id="theme-toggle" phx-hook=".ThemeToggle" class={["flex items-center", @class]}>
+    <div id={@id} phx-hook=".ThemeToggle" class={["flex items-center", @class]}>
       <button
         type="button"
         class="relative inline-flex items-center justify-center w-10 h-10 rounded-xl glass transition-all duration-200 hover:scale-105 active:scale-95"

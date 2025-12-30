@@ -1,7 +1,8 @@
 <header class="fixed top-0 left-0 right-0 z-50 header-glass">
   <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
     <div class="flex justify-between items-center">
-      <nav class="flex items-center gap-2">
+      <!-- Desktop Navigation -->
+      <nav class="hidden sm:flex items-center gap-2">
         <.link
           navigate={~p"/"}
           class="nav-link flex items-center gap-2"
@@ -25,8 +26,24 @@
         </.link>
       </nav>
 
-      <nav class="flex items-center gap-3">
-        <.theme_toggle />
+      <!-- Mobile Hamburger Button -->
+      <button
+        type="button"
+        class="sm:hidden p-2 rounded-xl glass"
+        phx-click={JS.toggle(to: "#mobile-menu") |> JS.toggle(to: "#menu-icon-open") |> JS.toggle(to: "#menu-icon-close")}
+        aria-label="Toggle menu"
+      >
+        <span id="menu-icon-open">
+          <.icon name="hero-bars-3" class="w-6 h-6 text-primary" />
+        </span>
+        <span id="menu-icon-close" class="hidden">
+          <.icon name="hero-x-mark" class="w-6 h-6 text-primary" />
+        </span>
+      </button>
+
+      <!-- Desktop Right Nav -->
+      <nav class="hidden sm:flex items-center gap-3">
+        <.theme_toggle id="theme-toggle-desktop" />
         <.link
           navigate={~p"/admin/songs"}
           class="btn-tactile text-sm px-4 py-2"
@@ -34,7 +51,44 @@
           Admin
         </.link>
       </nav>
+
+      <!-- Mobile: Theme toggle only (always visible) -->
+      <div class="sm:hidden">
+        <.theme_toggle id="theme-toggle-mobile" />
+      </div>
     </div>
+
+    <!-- Mobile Menu Panel -->
+    <nav id="mobile-menu" class="hidden sm:hidden mt-4 pb-2 border-t border-glass pt-4 space-y-2">
+      <.link
+        navigate={~p"/"}
+        class="nav-link flex items-center gap-3 py-3"
+      >
+        <.icon name="hero-musical-note" class="w-5 h-5" />
+        <span class="font-medium">Songs</span>
+      </.link>
+      <.link
+        navigate={~p"/shows"}
+        class="nav-link flex items-center gap-3 py-3"
+      >
+        <.icon name="hero-calendar-days" class="w-5 h-5" />
+        <span class="font-medium">Shows</span>
+      </.link>
+      <.link
+        navigate={~p"/about"}
+        class="nav-link flex items-center gap-3 py-3"
+      >
+        <.icon name="hero-user" class="w-5 h-5" />
+        <span class="font-medium">About</span>
+      </.link>
+      <.link
+        navigate={~p"/admin/songs"}
+        class="nav-link flex items-center gap-3 py-3"
+      >
+        <.icon name="hero-cog-6-tooth" class="w-5 h-5" />
+        <span class="font-medium">Admin</span>
+      </.link>
+    </nav>
   </div>
 </header>
 
