@@ -237,4 +237,22 @@ defmodule SongbookWeb.VoteLive.Index do
         String.contains?(String.downcase(genres_string), query)
     end)
   end
+
+  defp admin_indicator(assigns) do
+    ~H"""
+    <div class={[
+      "flex",
+      "items-center",
+      "gap-2",
+      "bg-base",
+      "text-accent",
+      "p-2",
+      "font-bold",
+      "#{if not @is_admin, do: "hidden"}"
+    ]}>
+      <.icon name="hero-shield-check" class="w-6 h-6" />
+      <span>Admin</span>
+    </div>
+    """
+  end
 end
