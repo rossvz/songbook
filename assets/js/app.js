@@ -31,8 +31,13 @@ let liveSocket = new LiveSocket("/live", Socket, {
   hooks: Hooks,
 });
 
+const accentColor =
+  getComputedStyle(document.documentElement)
+    .getPropertyValue("--accent-primary")
+    .trim() || "#4a7c8c";
+
 topbar.config({
-  barColors: { 0: "var(--accent-primary, #4a7c8c)" },
+  barColors: { 0: accentColor },
   shadowColor: "rgba(0, 0, 0, .2)",
 });
 
