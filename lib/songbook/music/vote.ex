@@ -70,7 +70,7 @@ defmodule Songbook.Music.Vote do
     uuid_primary_key :id
     attribute :voter_id, :string, allow_nil?: false
     attribute :track_id, :uuid, allow_nil?: false
-    timestamps(type: :utc_datetime)
+    timestamps type: :utc_datetime
   end
 
   relationships do

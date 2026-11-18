@@ -6,8 +6,8 @@
       <div class="text-center font-display text-xl font-semibold mb-4 text-accent">
         {@calendar_data.month_name}
       </div>
-      
-<!-- Weekday Labels -->
+
+      <!-- Weekday Labels -->
       <div class="grid grid-cols-7 gap-1 mb-2">
         <div class="text-center text-xs font-medium text-tertiary">Su</div>
         <div class="text-center text-xs font-medium text-tertiary">Mo</div>
@@ -17,8 +17,8 @@
         <div class="text-center text-xs font-medium text-tertiary">Fr</div>
         <div class="text-center text-xs font-medium text-tertiary">Sa</div>
       </div>
-      
-<!-- Calendar Grid -->
+
+      <!-- Calendar Grid -->
       <div class="grid grid-cols-7 gap-1.5">
         <div
           :for={day <- @calendar_data.days}
@@ -48,8 +48,8 @@
       </div>
     </div>
   </div>
-  
-<!-- Filter Header -->
+
+  <!-- Filter Header -->
   <div
     :if={@selected_date}
     class="flex-shrink-0 mt-5 flex items-center justify-center gap-4 animate-fade-in"
@@ -64,8 +64,8 @@
       View All Upcoming
     </button>
   </div>
-  
-<!-- Scrollable Shows Container -->
+
+  <!-- Scrollable Shows Container -->
   <div id="shows-container" class="flex-1 mt-5 overflow-y-auto px-4 pb-6" phx-hook="StaggerList">
     <div class="max-w-2xl mx-auto">
       <div class="space-y-4" id="shows-list" phx-update="stream">
@@ -86,8 +86,8 @@
                 {format_date(show.date)}
               </h3>
             </div>
-            
-<!-- Venue & Time -->
+
+            <!-- Venue & Time -->
             <div class="space-y-3">
               <div class="flex items-start gap-3">
                 <.icon name="hero-map-pin" class="w-5 h-5 text-tertiary flex-shrink-0 mt-0.5" />
@@ -111,8 +111,8 @@
       </div>
     </div>
   </div>
-  
-<!-- Empty State -->
+
+  <!-- Empty State -->
   <div :if={!@has_shows} class="flex-1 flex items-center justify-center px-4">
     <div class="glass rounded-2xl p-12 text-center animate-scale-in">
       <div

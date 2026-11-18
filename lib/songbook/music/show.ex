@@ -30,7 +30,7 @@ defmodule Songbook.Music.Show do
     attribute :venue, :string, allow_nil?: false
     attribute :latitude, :decimal
     attribute :longitude, :decimal
-    timestamps(type: :utc_datetime)
+    timestamps type: :utc_datetime
   end
 
   calculations do

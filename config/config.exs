@@ -16,14 +16,15 @@ config :ash,
   keep_read_action_loads_when_loading?: false,
   default_actions_require_atomic?: true,
   read_action_after_action_hooks_in_order?: true,
-  bulk_actions_default_to_errors?: true
+  bulk_actions_default_to_errors?: true,
+  default_string_length_count: :codepoints
 
 # Configure timezone database
 config :elixir, :time_zone_database, Tzdata.TimeZoneDatabase
 
 # Configure esbuild (the version is required)
 config :esbuild,
-  version: "0.17.11",
+  version: "0.28.2",
   songbook: [
     args: ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
     cd: Path.expand("../assets", __DIR__),
@@ -108,7 +109,7 @@ config :spark,
 
 # Configure tailwind (the version is required)
 config :tailwind,
-  version: "3.4.0",
+  version: "3.4.19",
   songbook: [
     args: ~w(
       --config=tailwind.config.js

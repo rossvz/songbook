@@ -55,7 +55,7 @@ defmodule Songbook.Music.Track do
         if current_hidden do
           Ash.Changeset.force_change_attribute(changeset, :hidden_until, nil)
         else
-          hidden_until = DateTime.add(DateTime.utc_now(), 24 * 60 * 60, :second)
+          hidden_until = DateTime.shift(DateTime.utc_now(), day: 1)
           Ash.Changeset.force_change_attribute(changeset, :hidden_until, hidden_until)
         end
       end
@@ -91,7 +91,7 @@ defmodule Songbook.Music.Track do
       require_atomic? false
 
       change fn changeset, _context ->
-        hidden_until = DateTime.add(DateTime.utc_now(), 12 * 60 * 60, :second)
+        hidden_until = DateTime.shift(DateTime.utc_now(), hour: 12)
         Ash.Changeset.force_change_attribute(changeset, :hidden_until, hidden_until)
       end
 
@@ -140,7 +140,7 @@ defmodule Songbook.Music.Track do
     attribute :hidden_until, :utc_datetime
     attribute :dominant_color, :string
     attribute :genres, {:array, :string}, default: []
-    timestamps(type: :utc_datetime)
+    timestamps type: :utc_datetime
   end
 
   relationships do

@@ -25,8 +25,8 @@
           <span class="font-medium">About</span>
         </.link>
       </nav>
-      
-<!-- Mobile Hamburger Button -->
+
+      <!-- Mobile Hamburger Button -->
       <button
         type="button"
         class="sm:hidden p-2 rounded-xl glass"
@@ -44,8 +44,8 @@
           <.icon name="hero-x-mark" class="w-6 h-6 text-primary" />
         </span>
       </button>
-      
-<!-- Desktop Right Nav -->
+
+      <!-- Desktop Right Nav -->
       <nav class="hidden sm:flex items-center gap-3">
         <.theme_toggle id="theme-toggle-desktop" />
         <.link
@@ -55,14 +55,14 @@
           Admin
         </.link>
       </nav>
-      
-<!-- Mobile: Theme toggle only (always visible) -->
+
+      <!-- Mobile: Theme toggle only (always visible) -->
       <div class="sm:hidden">
         <.theme_toggle id="theme-toggle-mobile" />
       </div>
     </div>
-    
-<!-- Mobile Menu Panel -->
+
+    <!-- Mobile Menu Panel -->
     <nav id="mobile-menu" class="hidden sm:hidden mt-4 pb-2 border-t border-glass pt-4 space-y-2">
       <.link
         navigate={~p"/"}

@@ -38,7 +38,7 @@ defmodule Songbook.Music.Playlist do
     attribute :track_count, :integer
     attribute :external_url, :string
     attribute :last_synced_at, :utc_datetime
-    timestamps(type: :utc_datetime)
+    timestamps type: :utc_datetime
   end
 
   identities do

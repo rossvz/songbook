@@ -57,5 +57,5 @@ defmodule Songbook.Spotify.Auth do
     end
   end
 
-  defp in_one_hour, do: DateTime.utc_now() |> DateTime.add(3600, :second) |> DateTime.to_unix()
+  defp in_one_hour, do: DateTime.utc_now() |> DateTime.shift(hour: 1) |> DateTime.to_unix()
 end
