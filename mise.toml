@@ -1,0 +1,6 @@
+[tools]
+elixir = "1.19.5-otp-28"
+erlang = "28.3.1"
+
+[env]
+_.file = { path = "{{ env.SONGBOOK_ENV_FILE | default(value='~/.local/share/envs/songbook.env') }}", redact = true }
