@@ -1,5 +1,8 @@
 # Songbook
 
+Local development and tests use an existing PostgreSQL server on `localhost:5432`.
+They use separate databases, `songbook_dev` and `songbook_test`.
+
 To start your Phoenix server:
 
   * Run `mix setup` to install and setup dependencies
